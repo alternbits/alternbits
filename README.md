@@ -58,3 +58,5 @@ A hands-on introduction to Zig via annotated examples. Zig is a general-purpose,
 ---
 
 *Zig by Example* is inspired by [Go by Example](https://gobyexample.com) by Mark McGranaghan. Examples target **Zig 0.14**.
+
+Written by [Dariush Abbasi](https://github.com/dariubs) for [Boring College](https://boring.college)

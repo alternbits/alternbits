@@ -5,7 +5,7 @@ const std = @import("std");
 
 pub fn main() void {
     // Seed from the OS
-    var prng = std.rand.DefaultPrng.init(blk: {
+    var prng = std.Random.DefaultPrng.init(blk: {
         var seed: u64 = undefined;
         std.posix.getrandom(std.mem.asBytes(&seed)) catch unreachable;
         break :blk seed;

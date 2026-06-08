@@ -21,7 +21,7 @@ pub fn main() void {
     std.debug.print("cos(0)       = {d:.4}\n", .{math.cos(@as(f64, 0))});
 
     // Integer math
-    std.debug.print("gcd(12,8)    = {}\n", .{math.gcd(u32, 12, 8)});     // 4
+    std.debug.print("gcd(12,8)    = {}\n", .{math.gcd(12, 8)});           // 4
     std.debug.print("clamp(15,0,10)= {}\n", .{math.clamp(@as(i32, 15), 0, 10)}); // 10
     std.debug.print("maxInt(u8)   = {}\n", .{math.maxInt(u8)});           // 255
     std.debug.print("minInt(i8)   = {}\n", .{math.minInt(i8)});           // -128

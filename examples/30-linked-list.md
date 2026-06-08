@@ -5,11 +5,6 @@ Zig's standard library provides an intrusive doubly-linked list.
 ```zig
 const std = @import("std");
 
-const Node = struct {
-    data: i32,
-    link: std.DoublyLinkedList(i32).Node = .{},
-};
-
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();

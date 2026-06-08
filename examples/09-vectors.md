@@ -1,6 +1,6 @@
 # Vectors
 
-SIMD vectors allow data-parallel math. The size must be a power of two.
+SIMD vectors allow data-parallel math.
 
 ```zig
 const std = @import("std");

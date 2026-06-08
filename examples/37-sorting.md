@@ -33,7 +33,11 @@ pub fn main() void {
 
     // Binary search (slice must be sorted)
     const sorted = [_]i32{ 1, 3, 5, 7, 9, 11 };
-    const pos = std.sort.binarySearch(i32, 7, &sorted, {}, std.sort.asc(i32));
+    const pos = std.sort.binarySearch(i32, 7, &sorted, {}, struct {
+        fn order(_: void, key: i32, mid: i32) std.math.Order {
+            return std.math.order(key, mid);
+        }
+    }.order);
     std.debug.print("found 7 at index: {?}\n", .{pos}); // 3
 }
 ```
