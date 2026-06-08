@@ -1,6 +1,10 @@
 # Zig by Example
 
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE)
+
 A hands-on introduction to Zig via annotated examples. Zig is a general-purpose, compiled systems language focused on robustness, optimality, and simplicity — no hidden control flow, no hidden allocations, no preprocessor.
+
+Written by [Dariush Abbasi](https://github.com/dariubs) for [Boring College](https://boring.college)
 
 ---
 
@@ -59,4 +63,4 @@ A hands-on introduction to Zig via annotated examples. Zig is a general-purpose,
 
 *Zig by Example* is inspired by [Go by Example](https://gobyexample.com) by Mark McGranaghan. Examples target **Zig 0.14**.
 
-Written by [Dariush Abbasi](https://github.com/dariubs) for [Boring College](https://boring.college)
+Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
