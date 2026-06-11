@@ -9,6 +9,10 @@ import (
 )
 
 type Config struct {
+	App struct {
+		Name   string
+		Domain string
+	}
 	Database struct {
 		DSN string
 	}
@@ -34,6 +38,15 @@ func Load() error {
 	_ = godotenv.Load()
 
 	C = &Config{}
+
+	C.App.Name = os.Getenv("APP_NAME")
+	if C.App.Name == "" {
+		C.App.Name = "Altern"
+	}
+	C.App.Domain = os.Getenv("APP_DOMAIN")
+	if C.App.Domain == "" {
+		C.App.Domain = "altern.ai"
+	}
 
 	C.Database.DSN = os.Getenv("DB_DSN")
 

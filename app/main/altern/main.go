@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 
@@ -22,6 +23,10 @@ func main() {
 	database.InitDB()
 
 	r := gin.Default()
+	r.SetFuncMap(template.FuncMap{
+		"appName":   func() string { return config.C.App.Name },
+		"appDomain": func() string { return config.C.App.Domain },
+	})
 	r.LoadHTMLGlob("views/root/*.html")
 
 	store := cookie.NewStore([]byte(config.C.Session.Secret))
@@ -39,7 +44,7 @@ func main() {
 		rootGroup.GET("/login", root.LoginPage())
 		rootGroup.GET("/auth/github", root.GitHubLogin())
 		rootGroup.GET("/auth/github/callback", root.GitHubCallback(database.DB))
-		rootGroup.GET("/logout", root.Logout())
+		rootGroup.POST("/logout", root.Logout())
 
 		rootGroup.GET("/2fa", totp.Dispatch(database.DB, rootTOTPOpts))
 		rootGroup.POST("/2fa/setup", totp.Setup(database.DB, rootTOTPOpts))

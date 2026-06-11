@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/models"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -32,9 +33,10 @@ import (
 const (
 	PendingUserIDKey   = "pending_user_id"
 	pendingRecoveryKey = "pending_recovery_view"
-	issuer             = "Altern"
 	recoveryCodeCount  = 8
 )
+
+func issuer() string { return config.C.App.Name }
 
 // Options configures a TOTP handler set.
 type Options struct {
@@ -67,7 +69,7 @@ func Dispatch(db *gorm.DB, opts Options) gin.HandlerFunc {
 
 		if user.TOTPSecret == "" {
 			key, err := totp.Generate(totp.GenerateOpts{
-				Issuer:      issuer,
+				Issuer:      issuer(),
 				AccountName: accountLabel(user),
 			})
 			if err != nil {
@@ -269,8 +271,9 @@ func accountLabel(u *models.User) string {
 func otpAuthURL(u *models.User) string {
 	// Build manually so the URL persists across Generate calls.
 	// otpauth://totp/Issuer:account?secret=...&issuer=Issuer
-	return "otpauth://totp/" + issuer + ":" + accountLabel(u) +
-		"?secret=" + u.TOTPSecret + "&issuer=" + issuer
+	iss := issuer()
+	return "otpauth://totp/" + iss + ":" + accountLabel(u) +
+		"?secret=" + u.TOTPSecret + "&issuer=" + iss
 }
 
 // qrCodePNGBase64 renders a 220x220 PNG of the user's otpauth URL,
