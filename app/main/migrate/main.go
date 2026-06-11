@@ -19,6 +19,7 @@ func main() {
 		&models.Category{},
 		&models.Tool{},
 		&models.List{},
+		&models.ListTool{},
 	); err != nil {
 		log.Fatal("migrate:", err)
 	}
