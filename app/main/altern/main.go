@@ -56,6 +56,7 @@ func main() {
 			authed.GET("", root.DashboardHandler(database.DB))
 			authed.GET("/", root.DashboardHandler(database.DB))
 			authed.GET("/users", root.UsersListHandler(database.DB))
+			authed.GET("/tools", root.ToolsListHandler(database.DB))
 		}
 	}
 
