@@ -13,6 +13,9 @@ type User struct {
 	Bio       string
 	IsAdmin   bool `gorm:"default:false"`
 
+	GitHubID    string `gorm:"uniqueIndex"`
+	GitHubLogin string `gorm:"index"`
+
 	Tools []Tool `gorm:"foreignKey:UserID"`
 	Lists []List `gorm:"foreignKey:UserID"`
 }
