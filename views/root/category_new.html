@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ appName }} · New category</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_navbar.html" . }}
+
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8">
+      <h1 class="text-2xl font-semibold tracking-tight">New category</h1>
+      <p class="mt-1 text-sm text-zinc-500">Add a category to organize tools.</p>
+    </header>
+
+    {{ if .Error }}
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
+    {{ end }}
+
+    <form method="POST" action="/root/categories"
+          class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+      {{ with .Form }}
+      <div>
+        <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
+        <input type="text" id="name" name="name" required value="{{ .Name }}"
+               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+      </div>
+
+      <div>
+        <label for="slug" class="block text-sm font-medium text-zinc-700">Slug</label>
+        <input type="text" id="slug" name="slug" value="{{ .Slug }}" placeholder="auto from name"
+               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        <p class="mt-1 text-xs text-zinc-500">Leave blank to derive from the name.</p>
+      </div>
+
+      <div>
+        <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
+        <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
+               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+      </div>
+
+      <div>
+        <label for="parent_id" class="block text-sm font-medium text-zinc-700">Parent</label>
+        <select id="parent_id" name="parent_id"
+                class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          <option value="">— None (top-level) —</option>
+          {{ $selected := .ParentID }}
+          {{ range $.Parents }}
+          <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $selected }}selected{{ end }}>{{ .Name }}</option>
+          {{ end }}
+        </select>
+        <p class="mt-1 text-xs text-zinc-500">Optional — nest under an existing category.</p>
+      </div>
+      {{ end }}
+
+      <div class="flex items-center justify-between pt-2">
+        <a href="/root/categories" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
+        <button type="submit"
+                class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+          Create category
+        </button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
