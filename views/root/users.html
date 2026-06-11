@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ appName }} · Users</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_navbar.html" . }}
+
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8">
+      <h1 class="text-2xl font-semibold tracking-tight">Users</h1>
+      {{ with .Page }}
+      <p class="mt-1 text-sm text-zinc-500">{{ .Total }} total &middot; page {{ .Page }} of {{ .TotalPages }}.</p>
+      {{ end }}
+    </header>
+
+    {{ if .Error }}
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
+    {{ end }}
+
+    {{ with .Page }}
+    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+      <!-- Mobile: card list -->
+      <ul class="divide-y divide-zinc-100 md:hidden">
+        {{ range .Users }}
+        <li class="flex items-start gap-3 px-4 py-3">
+          {{ if .AvatarURL }}
+          <img src="{{ .AvatarURL }}" alt="" class="h-10 w-10 shrink-0 rounded-full bg-zinc-100">
+          {{ else }}
+          <div class="h-10 w-10 shrink-0 rounded-full bg-zinc-200"></div>
+          {{ end }}
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2">
+              <div class="truncate font-medium text-zinc-900">{{ if .Name }}{{ .Name }}{{ else }}{{ .Username }}{{ end }}</div>
+              {{ if .IsAdmin }}
+              <span class="inline-flex shrink-0 items-center rounded-full bg-zinc-900 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white">Superuser</span>
+              {{ end }}
+            </div>
+            <div class="truncate text-sm text-zinc-500">{{ .Email }}</div>
+            <div class="mt-1 flex items-center gap-3 text-xs text-zinc-500">
+              {{ if .GitHubLogin }}<a href="https://github.com/{{ .GitHubLogin }}" target="_blank" rel="noopener" class="hover:underline">@{{ .GitHubLogin }}</a>{{ end }}
+              <span>{{ .CreatedAt.Format "2006-01-02" }}</span>
+            </div>
+          </div>
+        </li>
+        {{ else }}
+        <li class="px-4 py-8 text-center text-zinc-500">No users yet.</li>
+        {{ end }}
+      </ul>
+
+      <!-- Desktop: table -->
+      <div class="hidden md:block">
+        <table class="w-full text-sm">
+          <thead class="bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
+            <tr>
+              <th class="px-5 py-2 font-medium">User</th>
+              <th class="px-5 py-2 font-medium">Email</th>
+              <th class="px-5 py-2 font-medium">GitHub</th>
+              <th class="px-5 py-2 font-medium">Role</th>
+              <th class="px-5 py-2 font-medium">Joined</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100">
+            {{ range .Users }}
+            <tr class="hover:bg-zinc-50">
+              <td class="px-5 py-3">
+                <div class="flex items-center gap-3">
+                  {{ if .AvatarURL }}
+                  <img src="{{ .AvatarURL }}" alt="" class="h-8 w-8 rounded-full bg-zinc-100">
+                  {{ else }}
+                  <div class="h-8 w-8 rounded-full bg-zinc-200"></div>
+                  {{ end }}
+                  <div>
+                    <div class="font-medium text-zinc-900">{{ if .Name }}{{ .Name }}{{ else }}{{ .Username }}{{ end }}</div>
+                    {{ if .Username }}<div class="text-xs text-zinc-500">@{{ .Username }}</div>{{ end }}
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-3 text-zinc-700">{{ .Email }}</td>
+              <td class="px-5 py-3 text-zinc-700">
+                {{ if .GitHubLogin }}<a href="https://github.com/{{ .GitHubLogin }}" target="_blank" rel="noopener" class="hover:underline">@{{ .GitHubLogin }}</a>{{ else }}<span class="text-zinc-400">&mdash;</span>{{ end }}
+              </td>
+              <td class="px-5 py-3">
+                {{ if .IsAdmin }}
+                <span class="inline-flex items-center rounded-full bg-zinc-900 px-2 py-0.5 text-xs font-medium text-white">Superuser</span>
+                {{ else }}
+                <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">User</span>
+                {{ end }}
+              </td>
+              <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
+            </tr>
+            {{ else }}
+            <tr>
+              <td colspan="5" class="px-5 py-8 text-center text-zinc-500">No users yet.</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+
+      {{ if or .HasPrev .HasNext }}
+      <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
+        {{ if .HasPrev }}
+        <a href="?page={{ .PrevPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
+        {{ else }}
+        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
+        {{ end }}
+        {{ if .HasNext }}
+        <a href="?page={{ .NextPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
+        {{ else }}
+        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
+        {{ end }}
+      </div>
+      {{ end }}
+    </section>
+    {{ end }}
+  </div>
+</body>
+</html>

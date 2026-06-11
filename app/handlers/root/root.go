@@ -16,6 +16,7 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 		db.Model(&models.Category{}).Count(&categories)
 
 		c.HTML(http.StatusOK, "dashboard.html", gin.H{
+			"ActiveNav":  "dashboard",
 			"Users":      users,
 			"Tools":      tools,
 			"Categories": categories,

@@ -55,6 +55,7 @@ func main() {
 		{
 			authed.GET("", root.DashboardHandler(database.DB))
 			authed.GET("/", root.DashboardHandler(database.DB))
+			authed.GET("/users", root.UsersListHandler(database.DB))
 		}
 	}
 
