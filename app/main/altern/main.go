@@ -68,6 +68,7 @@ func main() {
 			authed.GET("/", root.DashboardHandler(database.DB))
 			authed.GET("/users", root.UsersListHandler(database.DB))
 			authed.GET("/tools", root.ToolsListHandler(database.DB))
+			authed.GET("/categories", root.CategoriesListHandler(database.DB))
 			authed.GET("/tools/new", root.ToolNewForm())
 			authed.POST("/tools", root.ToolCreate(database.DB, r2svc))
 		}
