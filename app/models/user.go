@@ -16,6 +16,10 @@ type User struct {
 	GitHubID    string `gorm:"uniqueIndex"`
 	GitHubLogin string `gorm:"index"`
 
+	TOTPSecret     string
+	TOTPEnabled    bool `gorm:"default:false"`
+	RecoveryCodes  string
+
 	Tools []Tool `gorm:"foreignKey:UserID"`
 	Lists []List `gorm:"foreignKey:UserID"`
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/dariubs/altern/app/config"
+	"github.com/dariubs/altern/app/handlers/totp"
 	"github.com/dariubs/altern/app/models"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -114,9 +115,9 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 		isSuperuser := config.C.IsSuperuserLogin(gu.Login)
 
 		var user models.User
-		err = db.Where("github_id = ?", githubID).First(&user).Error
+		err = db.Where(&models.User{GitHubID: githubID}).First(&user).Error
 		if err != nil {
-			if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+			if err := db.Where(&models.User{Email: email}).First(&user).Error; err != nil {
 				user = models.User{
 					Username:    gu.Login,
 					Email:       email,
@@ -155,12 +156,13 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		session.Set(sessionUserIDKey, user.ID)
+		session.Delete(sessionUserIDKey)
+		session.Set(totp.PendingUserIDKey, user.ID)
 		if err := session.Save(); err != nil {
 			c.Redirect(http.StatusFound, "/root/login?error=session")
 			return
 		}
-		c.Redirect(http.StatusFound, "/root")
+		c.Redirect(http.StatusFound, "/root/2fa")
 	}
 }
 
