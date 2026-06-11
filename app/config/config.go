@@ -30,6 +30,14 @@ type Config struct {
 	Superuser struct {
 		GitHubLogins []string
 	}
+	CloudflareR2 struct {
+		AccountID       string
+		AccessKeyID     string
+		SecretAccessKey string
+		Bucket          string
+		Region          string
+		PublicURL       string
+	}
 }
 
 var C *Config
@@ -65,6 +73,16 @@ func Load() error {
 	C.GitHubOAuth.ClientSecret = os.Getenv("GITHUB_CLIENT_SECRET")
 	C.GitHubOAuth.RedirectURL = os.Getenv("GITHUB_REDIRECT_URL")
 
+	C.CloudflareR2.AccountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	C.CloudflareR2.AccessKeyID = os.Getenv("CLOUDFLARE_ACCESS_KEY_ID")
+	C.CloudflareR2.SecretAccessKey = os.Getenv("CLOUDFLARE_SECRET_ACCESS_KEY")
+	C.CloudflareR2.Bucket = os.Getenv("CLOUDFLARE_R2_BUCKET")
+	C.CloudflareR2.Region = os.Getenv("CLOUDFLARE_R2_REGION")
+	if C.CloudflareR2.Region == "" {
+		C.CloudflareR2.Region = "auto"
+	}
+	C.CloudflareR2.PublicURL = strings.TrimRight(os.Getenv("CLOUDFLARE_R2_PUBLIC_URL"), "/")
+
 	for login := range strings.SplitSeq(os.Getenv("SUPERUSER_GITHUB_LOGINS"), ",") {
 		login = strings.TrimSpace(login)
 		if login != "" {
@@ -77,6 +95,13 @@ func Load() error {
 
 func (c *Config) OAuthGitHubEnabled() bool {
 	return c.GitHubOAuth.ClientID != "" && c.GitHubOAuth.ClientSecret != "" && c.GitHubOAuth.RedirectURL != ""
+}
+
+func (c *Config) R2Enabled() bool {
+	return c.CloudflareR2.AccountID != "" &&
+		c.CloudflareR2.AccessKeyID != "" &&
+		c.CloudflareR2.SecretAccessKey != "" &&
+		c.CloudflareR2.Bucket != ""
 }
 
 func (c *Config) IsSuperuserLogin(login string) bool {

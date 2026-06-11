@@ -11,6 +11,7 @@ import (
 	"github.com/dariubs/altern/app/handlers/totp"
 	"github.com/dariubs/altern/app/middleware"
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -51,12 +52,24 @@ func main() {
 		rootGroup.POST("/2fa/setup/done", totp.SetupDone(database.DB, rootTOTPOpts))
 		rootGroup.POST("/2fa/verify", totp.Verify(database.DB, rootTOTPOpts))
 
+		var r2svc *utils.R2Service
+		if config.C.R2Enabled() {
+			svc, err := utils.NewR2Service()
+			if err != nil {
+				log.Printf("r2: %v (uploads disabled)", err)
+			} else {
+				r2svc = svc
+			}
+		}
+
 		authed := rootGroup.Group("", middleware.RequireSuperuser(database.DB))
 		{
 			authed.GET("", root.DashboardHandler(database.DB))
 			authed.GET("/", root.DashboardHandler(database.DB))
 			authed.GET("/users", root.UsersListHandler(database.DB))
 			authed.GET("/tools", root.ToolsListHandler(database.DB))
+			authed.GET("/tools/new", root.ToolNewForm())
+			authed.POST("/tools", root.ToolCreate(database.DB, r2svc))
 		}
 	}
 

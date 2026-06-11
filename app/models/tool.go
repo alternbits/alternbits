@@ -11,6 +11,7 @@ type Tool struct {
 	Slug        string `gorm:"uniqueIndex;not null"`
 	Subtitle    string
 	Description string
+	LogoURL     string
 
 	Categories []Category `gorm:"many2many:tool_categories;"`
 
