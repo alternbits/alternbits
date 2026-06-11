@@ -1,0 +1,5 @@
+bin/
+tmp/
+log/
+.env
+.env.local
