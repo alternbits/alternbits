@@ -70,6 +70,8 @@ func main() {
 			authed.GET("/tools", root.ToolsListHandler(database.DB))
 			authed.GET("/categories", root.CategoriesListHandler(database.DB))
 			authed.GET("/lists", root.ListsListHandler(database.DB))
+			authed.GET("/lists/new", root.ListNewForm(database.DB))
+			authed.POST("/lists", root.ListCreate(database.DB))
 			authed.GET("/categories/new", root.CategoryNewForm(database.DB))
 			authed.POST("/categories", root.CategoryCreate(database.DB))
 			authed.GET("/tools/new", root.ToolNewForm())
