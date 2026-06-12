@@ -3,6 +3,7 @@ package root
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/dariubs/altern/app/models"
 	"github.com/gin-gonic/gin"
@@ -33,9 +34,15 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 		if page < 1 {
 			page = 1
 		}
+		q := strings.TrimSpace(c.Query("q"))
+
+		base := db.Table("lists").Where("lists.deleted_at IS NULL")
+		if q != "" {
+			base = base.Where("lists.name ILIKE ?", "%"+q+"%")
+		}
 
 		var total int64
-		if err := db.Model(&models.List{}).Count(&total).Error; err != nil {
+		if err := base.Count(&total).Error; err != nil {
 			c.HTML(http.StatusInternalServerError, "lists.tmpl", gin.H{"Error": "Failed to count lists"})
 			return
 		}
@@ -46,11 +53,9 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		var lists []listRow
-		if err := db.
-			Table("lists").
+		if err := base.
 			Select("lists.*, (SELECT COUNT(*) FROM list_tools WHERE list_tools.list_id = lists.id) AS item_count").
 			Preload("User").
-			Where("lists.deleted_at IS NULL").
 			Order("lists.created_at DESC").
 			Offset((page - 1) * listsPerPage).
 			Limit(listsPerPage).
@@ -61,6 +66,7 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		c.HTML(http.StatusOK, "lists.tmpl", gin.H{
 			"ActiveNav": "lists",
+			"Query":     q,
 			"Page": listsPage{
 				Lists:      lists,
 				Page:       page,
