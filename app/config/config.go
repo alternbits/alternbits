@@ -60,7 +60,6 @@ func Load() error {
 	if C.App.Domain == "" {
 		C.App.Domain = "altern.ai"
 	}
-
 	C.Database.DSN = os.Getenv("DB_DSN")
 
 	C.Server.Port = os.Getenv("PORT")

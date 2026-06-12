@@ -1,12 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{{ appName }} · Lists</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <style>[x-cloak] { display: none !important; }</style>
+  {{ template "_root_head.tmpl" . }}
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_navbar.tmpl" . }}
