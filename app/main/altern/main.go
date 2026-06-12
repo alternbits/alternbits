@@ -8,6 +8,7 @@ import (
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/database"
 	"github.com/dariubs/altern/app/handlers/root"
+	"github.com/dariubs/altern/app/handlers/slash"
 	"github.com/dariubs/altern/app/handlers/totp"
 	"github.com/dariubs/altern/app/middleware"
 	"github.com/dariubs/altern/app/models"
@@ -28,7 +29,7 @@ func main() {
 		"appName":   func() string { return config.C.App.Name },
 		"appDomain": func() string { return config.C.App.Domain },
 	})
-	r.LoadHTMLGlob("views/root/*.tmpl")
+	r.LoadHTMLGlob("views/*/*.tmpl")
 
 	store := cookie.NewStore([]byte(config.C.Session.Secret))
 	store.Options(sessions.Options{Path: "/", HttpOnly: true, MaxAge: 60 * 60 * 24 * 7})
@@ -39,6 +40,8 @@ func main() {
 		LoginRedirect:   "/root/login",
 		FinalizeSession: finalizeRootSession,
 	}
+
+	r.GET("/", slash.Handler(database.DB))
 
 	rootGroup := r.Group("/root")
 	{
