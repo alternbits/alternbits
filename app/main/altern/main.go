@@ -122,6 +122,8 @@ func main() {
 			authed.POST("/genera", root.GenusCreate(database.DB))
 			authed.GET("/ais/new", root.AINewForm(database.DB))
 			authed.POST("/ais", root.AICreate(database.DB, r2svc))
+			authed.GET("/ais/:id/edit", root.AIEditForm(database.DB))
+			authed.POST("/ais/:id", root.AIUpdate(database.DB, r2svc))
 		}
 	}
 
