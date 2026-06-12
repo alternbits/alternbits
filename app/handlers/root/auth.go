@@ -46,6 +46,7 @@ func GitHubLogin() gin.HandlerFunc {
 		state := uuid.New().String()
 		session := sessions.Default(c)
 		session.Set("oauth_state", state)
+		session.Set("oauth_flow", "root")
 		if err := session.Save(); err != nil {
 			c.Redirect(http.StatusFound, "/root/login?error=session")
 			return
@@ -62,33 +63,46 @@ type githubUser struct {
 	AvatarURL string `json:"avatar_url"`
 }
 
+// GitHubCallback handles the single shared OAuth callback for both the root
+// (superuser + TOTP) and public (direct sign-in) flows.
+// The flow is determined by the "oauth_flow" session key set before the redirect.
 func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !config.C.OAuthGitHubEnabled() {
-			c.Redirect(http.StatusFound, "/root/login?error=github_disabled")
+			c.Redirect(http.StatusFound, "/signin?error=github_disabled")
 			return
+		}
+
+		session := sessions.Default(c)
+		flow, _ := session.Get("oauth_flow").(string)
+
+		errTo := func(code string) {
+			if flow == "root" {
+				c.Redirect(http.StatusFound, "/root/login?error="+code)
+			} else {
+				c.Redirect(http.StatusFound, "/signin?error="+code)
+			}
 		}
 
 		code := c.Query("code")
 		state := c.Query("state")
 		if code == "" {
-			c.Redirect(http.StatusFound, "/root/login?error=code")
+			errTo("code")
 			return
 		}
 
-		session := sessions.Default(c)
 		savedState, _ := session.Get("oauth_state").(string)
 		if savedState == "" || savedState != state {
-			c.Redirect(http.StatusFound, "/root/login?error=state")
+			errTo("state")
 			return
 		}
 		session.Delete("oauth_state")
+		session.Delete("oauth_flow")
 		_ = session.Save()
 
-		cfg := githubOAuthConfig()
-		token, err := cfg.Exchange(context.Background(), code)
+		token, err := githubOAuthConfig().Exchange(context.Background(), code)
 		if err != nil {
-			c.Redirect(http.StatusFound, "/root/login?error=exchange")
+			errTo("exchange")
 			return
 		}
 
@@ -96,14 +110,14 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 		token.SetAuthHeader(req)
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil || resp.StatusCode != http.StatusOK {
-			c.Redirect(http.StatusFound, "/root/login?error=userinfo")
+			errTo("userinfo")
 			return
 		}
 		defer resp.Body.Close()
 
 		var gu githubUser
 		if json.NewDecoder(resp.Body).Decode(&gu) != nil || gu.Login == "" {
-			c.Redirect(http.StatusFound, "/root/login?error=userinfo")
+			errTo("userinfo")
 			return
 		}
 
@@ -117,7 +131,7 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 		var user models.User
 		err = db.Where(&models.User{GitHubID: githubID}).First(&user).Error
 		if err != nil {
-			if err := db.Where(&models.User{Email: email}).First(&user).Error; err != nil {
+			if db.Where(&models.User{Email: email}).First(&user).Error != nil {
 				user = models.User{
 					Username:    gu.Login,
 					Email:       email,
@@ -128,7 +142,7 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 					IsAdmin:     isSuperuser,
 				}
 				if err := db.Create(&user).Error; err != nil {
-					c.Redirect(http.StatusFound, "/root/login?error=create")
+					errTo("create")
 					return
 				}
 			} else {
@@ -151,18 +165,39 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 			db.Save(&user)
 		}
 
-		if !isSuperuser {
-			c.Redirect(http.StatusFound, "/root/login?error=forbidden")
+		if flow == "root" {
+			if !isSuperuser {
+				c.Redirect(http.StatusFound, "/root/login?error=forbidden")
+				return
+			}
+			session.Delete(sessionUserIDKey)
+			session.Set(totp.PendingUserIDKey, user.ID)
+			if err := session.Save(); err != nil {
+				c.Redirect(http.StatusFound, "/root/login?error=session")
+				return
+			}
+			c.Redirect(http.StatusFound, "/root/2fa")
 			return
 		}
 
-		session.Delete(sessionUserIDKey)
-		session.Set(totp.PendingUserIDKey, user.ID)
-		if err := session.Save(); err != nil {
-			c.Redirect(http.StatusFound, "/root/login?error=session")
+		// public flow — require TOTP only if the user has it enabled
+		if user.TOTPEnabled {
+			session.Delete(sessionUserIDKey)
+			session.Set(totp.PendingUserIDKey, user.ID)
+			if err := session.Save(); err != nil {
+				c.Redirect(http.StatusFound, "/signin?error=session")
+				return
+			}
+			c.Redirect(http.StatusFound, "/2fa")
 			return
 		}
-		c.Redirect(http.StatusFound, "/root/2fa")
+
+		session.Set(sessionUserIDKey, user.ID)
+		if err := session.Save(); err != nil {
+			c.Redirect(http.StatusFound, "/signin?error=session")
+			return
+		}
+		c.Redirect(http.StatusFound, "/")
 	}
 }
 

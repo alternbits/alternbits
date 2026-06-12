@@ -97,6 +97,7 @@ func (c *Config) OAuthGitHubEnabled() bool {
 	return c.GitHubOAuth.ClientID != "" && c.GitHubOAuth.ClientSecret != "" && c.GitHubOAuth.RedirectURL != ""
 }
 
+
 func (c *Config) R2Enabled() bool {
 	return c.CloudflareR2.AccountID != "" &&
 		c.CloudflareR2.AccessKeyID != "" &&

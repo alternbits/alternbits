@@ -20,11 +20,48 @@
         </span>
         {{ appName }}
       </a>
-      <nav class="hidden items-center gap-1 md:flex">
-        <a href="/#tools" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Tools</a>
-        <a href="/#categories" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Categories</a>
-        <a href="/#lists" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Lists</a>
-      </nav>
+      <div class="flex items-center gap-1">
+        <nav class="hidden items-center gap-1 md:flex">
+          <a href="/#tools" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Tools</a>
+          <a href="/#categories" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Categories</a>
+          <a href="/#lists" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Lists</a>
+        </nav>
+        <div class="ml-3 flex items-center">
+          {{ if .CurrentUser }}
+          <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" class="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-zinc-50">
+              {{ if .CurrentUser.AvatarURL }}
+              <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200">
+              {{ else }}
+              <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 text-xs font-semibold text-zinc-600">
+                {{ if .CurrentUser.Name }}{{ slice .CurrentUser.Name 0 1 }}{{ else }}?{{ end }}
+              </span>
+              {{ end }}
+              <span class="hidden text-zinc-700 sm:inline">{{ if .CurrentUser.Name }}{{ .CurrentUser.Name }}{{ else }}{{ .CurrentUser.Username }}{{ end }}</span>
+              <svg class="h-3.5 w-3.5 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <div x-show="open" x-cloak @click.outside="open = false"
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg">
+              <form method="POST" action="/signout">
+                <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50">
+                  Sign out
+                </button>
+              </form>
+            </div>
+          </div>
+          {{ else }}
+          <a href="/signin"
+             class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50">
+            Sign in
+          </a>
+          {{ end }}
+        </div>
+      </div>
     </div>
   </header>
 

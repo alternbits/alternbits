@@ -41,13 +41,27 @@ func main() {
 		FinalizeSession: finalizeRootSession,
 	}
 
+	publicTOTPOpts := totp.Options{
+		BaseURL:         "/2fa",
+		LoginRedirect:   "/signin",
+		FinalizeSession: finalizePublicSession,
+	}
+
 	r.GET("/", slash.Handler(database.DB))
+	r.GET("/2fa", totp.Dispatch(database.DB, publicTOTPOpts))
+	r.POST("/2fa/setup", totp.Setup(database.DB, publicTOTPOpts))
+	r.POST("/2fa/setup/done", totp.SetupDone(database.DB, publicTOTPOpts))
+	r.POST("/2fa/verify", totp.Verify(database.DB, publicTOTPOpts))
+
+	r.GET("/signin", slash.SignInPage())
+	r.GET("/auth/github", slash.GitHubUserLogin())
+	r.GET("/auth/github/callback", root.GitHubCallback(database.DB))
+	r.POST("/signout", slash.SignOut())
 
 	rootGroup := r.Group("/root")
 	{
 		rootGroup.GET("/login", root.LoginPage())
 		rootGroup.GET("/auth/github", root.GitHubLogin())
-		rootGroup.GET("/auth/github/callback", root.GitHubCallback(database.DB))
 		rootGroup.POST("/logout", root.Logout())
 
 		rootGroup.GET("/2fa", totp.Dispatch(database.DB, rootTOTPOpts))
@@ -99,4 +113,17 @@ func finalizeRootSession(c *gin.Context, user *models.User) {
 		return
 	}
 	c.Redirect(http.StatusFound, "/root")
+}
+
+// finalizePublicSession promotes the TOTP-pending user into the public
+// session and sends them to the home page.
+func finalizePublicSession(c *gin.Context, user *models.User) {
+	session := sessions.Default(c)
+	session.Delete(totp.PendingUserIDKey)
+	session.Set("user_id", user.ID)
+	if err := session.Save(); err != nil {
+		c.Redirect(http.StatusFound, "/signin?error=session")
+		return
+	}
+	c.Redirect(http.StatusFound, "/")
 }
