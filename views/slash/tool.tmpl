@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {{ with .Tool }}
+  <title>{{ .Name }} — {{ appName }}</title>
+  <meta name="description" content="{{ .Subtitle }}">
+  {{ else }}
+  <title>Not found — {{ appName }}</title>
+  {{ end }}
+  {{ template "_slash_head.tmpl" . }}
+</head>
+<body x-data="{
+  darkMode: document.documentElement.classList.contains('dark'),
+  toggle() {
+    this.darkMode = !this.darkMode;
+    this.darkMode
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  }
+}" class="min-h-screen bg-white dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
+
+  {{ template "_header.tmpl" . }}
+
+  {{ if .Error }}
+  <div class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+    <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ .Error }}</p>
+    <a href="/" class="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-400">← Back home</a>
+  </div>
+  {{ else }}
+  {{ with .Tool }}
+
+  <!-- Tool header -->
+  <div class="border-b border-zinc-100 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#32303A] px-4 py-8 sm:px-6">
+    <div class="mx-auto max-w-5xl">
+      <a href="/" class="mb-5 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Home
+      </a>
+      <div class="flex items-start gap-5">
+        {{ if .LogoURL }}
+        <img src="{{ .LogoURL }}" alt="{{ .Name }}"
+             class="h-16 w-16 shrink-0 rounded-2xl bg-zinc-100 dark:bg-[#4A4854] object-cover shadow-sm">
+        {{ else }}
+        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-zinc-200 dark:bg-[#4A4854] text-2xl font-black text-zinc-500 dark:text-zinc-300 shadow-sm">
+          {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
+        </div>
+        {{ end }}
+
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-3xl">{{ .Name }}</h1>
+              {{ if .Subtitle }}
+              <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+              {{ end }}
+            </div>
+            <a href="#"
+               class="shrink-0 rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-400 transition-colors">
+              Visit →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body: main + sidebar -->
+  <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+
+      <!-- Main content -->
+      <div class="min-w-0 flex-1">
+        {{ if .Description }}
+        <section class="mb-6 rounded-xl border border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-6 py-5">
+          <h2 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">About</h2>
+          <p class="text-sm leading-relaxed text-zinc-700 dark:text-white">{{ .Description }}</p>
+        </section>
+        {{ else }}
+        <section class="mb-6 rounded-xl border border-dashed border-zinc-200 dark:border-[#4A4854] px-6 py-10 text-center">
+          <p class="text-sm text-zinc-400 dark:text-zinc-500">No description yet.</p>
+        </section>
+        {{ end }}
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="w-full shrink-0 space-y-4 lg:w-64">
+
+        <!-- Visit -->
+        <a href="#"
+           class="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white hover:bg-orange-400 transition-colors">
+          Visit {{ .Name }}
+          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+          </svg>
+        </a>
+
+        <!-- Categories -->
+        {{ if .Categories }}
+        <div class="rounded-xl border border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-4 py-4">
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Categories</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {{ range .Categories }}
+            <a href="/categories/{{ .Slug }}"
+               class="rounded-full border border-zinc-200 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#32303A] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
+              {{ .Name }}
+            </a>
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
+
+        <!-- Genera -->
+        {{ if .Genera }}
+        <div class="rounded-xl border border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-4 py-4">
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Type</h3>
+          <div class="flex flex-wrap gap-1.5">
+            {{ range .Genera }}
+            <span class="rounded-full border border-zinc-200 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#32303A] px-3 py-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              {{ .Name }}
+            </span>
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
+
+        <!-- Meta -->
+        <div class="rounded-xl border border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] divide-y divide-zinc-100 dark:divide-[#4A4854]">
+          <div class="flex items-center justify-between px-4 py-3">
+            <span class="text-xs text-zinc-400 dark:text-zinc-500">Added</span>
+            <span class="text-xs font-medium text-zinc-700 dark:text-white">{{ .CreatedAt.Format "Jan 2, 2006" }}</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3">
+            <span class="text-xs text-zinc-400 dark:text-zinc-500">Slug</span>
+            <code class="rounded bg-zinc-100 dark:bg-[#32303A] px-1.5 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-400">{{ .Slug }}</code>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+
+  {{ end }}
+  {{ end }}
+
+  {{ template "_footer.tmpl" . }}
+
+</body>
+</html>

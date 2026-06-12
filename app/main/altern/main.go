@@ -49,6 +49,7 @@ func main() {
 	}
 
 	r.GET("/", slash.Handler(database.DB))
+	r.GET("/ai/:slug", slash.ToolHandler(database.DB))
 	r.GET("/2fa", totp.Dispatch(database.DB, publicTOTPOpts))
 	r.POST("/2fa/setup", totp.Setup(database.DB, publicTOTPOpts))
 	r.POST("/2fa/setup/done", totp.SetupDone(database.DB, publicTOTPOpts))
