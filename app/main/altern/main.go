@@ -56,6 +56,8 @@ func main() {
 	r.GET("/signin", slash.SignInPage())
 	r.GET("/auth/github", slash.GitHubUserLogin())
 	r.GET("/auth/github/callback", root.GitHubCallback(database.DB))
+	r.GET("/auth/google", slash.GoogleLogin())
+	r.GET("/auth/google/callback", slash.GoogleCallback(database.DB))
 	r.POST("/signout", slash.SignOut())
 
 	rootGroup := r.Group("/root")

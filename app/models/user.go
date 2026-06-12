@@ -13,8 +13,9 @@ type User struct {
 	Bio       string
 	IsAdmin   bool `gorm:"default:false"`
 
-	GitHubID    string `gorm:"uniqueIndex"`
-	GitHubLogin string `gorm:"index"`
+	GitHubID    string  `gorm:"uniqueIndex"`
+	GitHubLogin string  `gorm:"index"`
+	GoogleID    *string `gorm:"uniqueIndex"`
 
 	TOTPSecret     string
 	TOTPEnabled    bool `gorm:"default:false"`

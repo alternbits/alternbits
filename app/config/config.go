@@ -27,6 +27,11 @@ type Config struct {
 		ClientSecret string
 		RedirectURL  string
 	}
+	GoogleOAuth struct {
+		ClientID     string
+		ClientSecret string
+		RedirectURL  string
+	}
 	Superuser struct {
 		GitHubLogins []string
 	}
@@ -73,6 +78,13 @@ func Load() error {
 	C.GitHubOAuth.ClientSecret = os.Getenv("GITHUB_CLIENT_SECRET")
 	C.GitHubOAuth.RedirectURL = os.Getenv("GITHUB_REDIRECT_URL")
 
+	C.GoogleOAuth.ClientID = os.Getenv("GOOGLE_CLIENT_ID")
+	C.GoogleOAuth.ClientSecret = os.Getenv("GOOGLE_CLIENT_SECRET")
+	C.GoogleOAuth.RedirectURL = os.Getenv("GOOGLE_REDIRECT_URL")
+	if C.GoogleOAuth.RedirectURL == "" {
+		C.GoogleOAuth.RedirectURL = "http://localhost:1337/auth/google/callback"
+	}
+
 	C.CloudflareR2.AccountID = os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	C.CloudflareR2.AccessKeyID = os.Getenv("CLOUDFLARE_ACCESS_KEY_ID")
 	C.CloudflareR2.SecretAccessKey = os.Getenv("CLOUDFLARE_SECRET_ACCESS_KEY")
@@ -95,6 +107,10 @@ func Load() error {
 
 func (c *Config) OAuthGitHubEnabled() bool {
 	return c.GitHubOAuth.ClientID != "" && c.GitHubOAuth.ClientSecret != "" && c.GitHubOAuth.RedirectURL != ""
+}
+
+func (c *Config) OAuthGoogleEnabled() bool {
+	return c.GoogleOAuth.ClientID != "" && c.GoogleOAuth.ClientSecret != ""
 }
 
 
