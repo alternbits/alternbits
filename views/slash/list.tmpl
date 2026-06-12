@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {{ with .List }}
+  <title>{{ .Name }} — {{ appName }}</title>
+  <meta name="description" content="{{ .Subtitle }}">
+  {{ else }}
+  <title>Not found — {{ appName }}</title>
+  {{ end }}
+  {{ template "_slash_head.tmpl" . }}
+</head>
+<body x-data="{
+  darkMode: document.documentElement.classList.contains('dark'),
+  toggle() {
+    this.darkMode = !this.darkMode;
+    this.darkMode
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  }
+}" class="min-h-screen bg-white dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
+
+  {{ template "_header.tmpl" . }}
+  {{ template "_sidebar.tmpl" . }}
+
+  {{ if .Error }}
+  <div class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+    <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ .Error }}</p>
+    <a href="/lists" class="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-400">← All lists</a>
+  </div>
+  {{ else }}
+  {{ with .List }}
+
+  <!-- List header -->
+  <div class="border-b border-zinc-100 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#32303A] px-4 py-8 sm:px-6">
+    <div class="mx-auto max-w-5xl">
+      <a href="/lists" class="mb-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        All lists
+      </a>
+      <div class="flex items-start gap-4">
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-100 dark:bg-orange-500/10 text-orange-500 dark:text-orange-400">
+          <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-3xl">{{ .Name }}</h1>
+          {{ if .Subtitle }}
+          <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+          {{ end }}
+          <p class="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{{ len .Items }} tools</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tools -->
+  <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    {{ if .Items }}
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {{ range .Items }}
+      {{ if .Tool }}
+      <a href="/ai/{{ .Tool.Slug }}"
+         class="group flex items-start gap-4 rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] p-4 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+        {{ if .Tool.LogoURL }}
+        <img src="{{ .Tool.LogoURL }}" alt="{{ .Tool.Name }}"
+             class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover">
+        {{ else }}
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#4A4854] text-base font-semibold text-zinc-500 dark:text-zinc-400">
+          {{ if .Tool.Name }}{{ slice .Tool.Name 0 1 }}{{ end }}
+        </div>
+        {{ end }}
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-2">
+            <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white">{{ .Tool.Name }}</span>
+            <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#4A4854] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+          {{ if .Tool.Subtitle }}
+          <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .Tool.Subtitle }}</p>
+          {{ end }}
+          {{ if .Tool.Categories }}
+          <div class="mt-2 flex flex-wrap gap-1">
+            {{ range .Tool.Categories }}
+            <span class="rounded-full bg-zinc-100 dark:bg-[#4A4854] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ .Name }}</span>
+            {{ end }}
+          </div>
+          {{ end }}
+        </div>
+      </a>
+      {{ end }}
+      {{ end }}
+    </div>
+    {{ else }}
+    <div class="rounded-xl border border-dashed border-zinc-200 dark:border-[#4A4854] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
+      No tools in this list yet.
+    </div>
+    {{ end }}
+  </div>
+
+  {{ end }}
+  {{ end }}
+
+  {{ template "_footer.tmpl" . }}
+
+</body>
+</html>
