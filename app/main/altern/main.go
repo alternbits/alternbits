@@ -120,7 +120,7 @@ func main() {
 			authed.GET("/genera", root.GeneraListHandler(database.DB))
 			authed.GET("/genera/new", root.GenusNewForm())
 			authed.POST("/genera", root.GenusCreate(database.DB))
-			authed.GET("/ais/new", root.AINewForm())
+			authed.GET("/ais/new", root.AINewForm(database.DB))
 			authed.POST("/ais", root.AICreate(database.DB, r2svc))
 		}
 	}

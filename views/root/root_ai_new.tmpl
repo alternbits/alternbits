@@ -7,7 +7,7 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+  <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
     <header class="mb-8">
       <h1 class="text-2xl font-semibold tracking-tight">New AI</h1>
       <p class="mt-1 text-sm text-zinc-500">Add an AI to the directory.</p>
@@ -17,55 +17,116 @@
     <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
     {{ end }}
 
-    <form method="POST" action="/root/ais" enctype="multipart/form-data"
-          class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-      {{ with .Form }}
-      <div>
-        <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
-        <input type="text" id="name" name="name" required value="{{ .Name }}"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+    <form method="POST" action="/root/ais" enctype="multipart/form-data" class="space-y-6">
+
+      <!-- Core details -->
+      <div class="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="text-sm font-semibold text-zinc-700">Details</h2>
+
+        {{ with .Form }}
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
+            <input type="text" id="name" name="name" required value="{{ .Name }}"
+                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          </div>
+          <div>
+            <label for="slug" class="block text-sm font-medium text-zinc-700">Slug</label>
+            <input type="text" id="slug" name="slug" value="{{ .Slug }}" placeholder="auto from name"
+                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          </div>
+        </div>
+
+        <div>
+          <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
+          <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
+                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-medium text-zinc-700">Description</label>
+          <textarea id="description" name="description" rows="5"
+                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 font-mono">{{ .Description }}</textarea>
+        </div>
+
+        <div>
+          <label for="owner_id" class="block text-sm font-medium text-zinc-700">Owner</label>
+          <select id="owner_id" name="owner_id"
+                  class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+            <option value="">— None —</option>
+            {{ $sel := .OwnerID }}
+            {{ range $.Users }}
+            <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $sel }}selected{{ end }}>
+              {{ if .Username }}@{{ .Username }}{{ else if .Name }}{{ .Name }}{{ else }}{{ .Email }}{{ end }}
+            </option>
+            {{ end }}
+          </select>
+        </div>
+        {{ end }}
       </div>
 
-      <div>
-        <label for="slug" class="block text-sm font-medium text-zinc-700">Slug</label>
-        <input type="text" id="slug" name="slug" value="{{ .Slug }}" placeholder="auto from name"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-        <p class="mt-1 text-xs text-zinc-500">Leave blank to derive from the name.</p>
-      </div>
-
-      <div>
-        <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
-        <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-      </div>
-
-      <div>
-        <label for="description" class="block text-sm font-medium text-zinc-700">Description</label>
-        <textarea id="description" name="description" rows="4"
-                  class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">{{ .Description }}</textarea>
-      </div>
-      {{ end }}
-
-      <div>
-        <label class="block text-sm font-medium text-zinc-700">Logo</label>
+      <!-- Logo -->
+      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Logo</h2>
         {{ if .R2Enabled }}
         <input type="file" name="logo" accept=".jpg,.jpeg,.png,.gif,.webp,.svg,image/*"
-               class="mt-1 block w-full text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-zinc-800">
+               class="block w-full text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-zinc-800">
         <p class="mt-1 text-xs text-zinc-500">JPG, PNG, GIF, WebP, or SVG. Max 5 MB. Stored in Cloudflare R2.</p>
         {{ else }}
-        <div class="mt-1 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
           Logo upload disabled — set the <code class="font-mono">CLOUDFLARE_*</code> env vars to enable.
         </div>
         {{ end }}
       </div>
 
-      <div class="flex items-center justify-between pt-2">
+      <!-- Categories -->
+      <div class="rounded-xl border border-zinc-200 bg-white shadow-sm"
+           x-data="{ search: '' }">
+        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
+          <h2 class="text-sm font-semibold text-zinc-700">Categories</h2>
+          <input type="text" x-model="search" placeholder="Filter…"
+                 class="w-40 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs placeholder-zinc-400 focus:border-zinc-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        </div>
+        <div class="grid grid-cols-2 gap-px bg-zinc-100 sm:grid-cols-3">
+          {{ $selCats := .Form.CategoryIDs }}
+          {{ range .Categories }}
+          {{ $id := .ID }}
+          <label x-show="!search || '{{ .Name }}'.toLowerCase().includes(search.toLowerCase())"
+                 class="flex cursor-pointer items-center gap-2 bg-white px-4 py-2.5 hover:bg-zinc-50 transition-colors">
+            <input type="checkbox" name="category_ids" value="{{ .ID }}"
+                   {{ range $selCats }}{{ if eq . $id }}checked{{ end }}{{ end }}
+                   class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+            <span class="text-sm text-zinc-700">{{ .Name }}</span>
+          </label>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- Genera -->
+      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Genera</h2>
+        <div class="flex flex-wrap gap-2">
+          {{ $selGens := .Form.GenusIDs }}
+          {{ range .Genera }}
+          {{ $id := .ID }}
+          <label class="flex cursor-pointer items-center gap-1.5 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-sm hover:bg-zinc-100 transition-colors has-[:checked]:border-zinc-900 has-[:checked]:bg-zinc-900 has-[:checked]:text-white">
+            <input type="checkbox" name="genus_ids" value="{{ .ID }}"
+                   {{ range $selGens }}{{ if eq . $id }}checked{{ end }}{{ end }}
+                   class="sr-only">
+            {{ .Name }}
+          </label>
+          {{ end }}
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
         <a href="/root/ais" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
         <button type="submit"
-                class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+                class="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:bg-zinc-800">
           Create AI
         </button>
       </div>
+
     </form>
   </div>
 
