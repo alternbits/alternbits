@@ -10,10 +10,11 @@ import (
 
 func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var users, tools, categories, admins, uncategorized int64
+		var users, tools, categories, admins, uncategorized, lists int64
 		db.Model(&models.User{}).Count(&users)
 		db.Model(&models.Tool{}).Count(&tools)
 		db.Model(&models.Category{}).Count(&categories)
+		db.Model(&models.List{}).Count(&lists)
 		db.Model(&models.User{}).Where(&models.User{IsAdmin: true}).Count(&admins)
 		db.Model(&models.Tool{}).
 			Where("id NOT IN (SELECT tool_id FROM tool_categories)").
@@ -35,6 +36,7 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			"Users":         users,
 			"Tools":         tools,
 			"Categories":    categories,
+			"Lists":         lists,
 			"Admins":        admins,
 			"Uncategorized": uncategorized,
 			"RecentTools":   recentTools,
