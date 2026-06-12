@@ -17,6 +17,7 @@ func main() {
 	if err := database.DB.AutoMigrate(
 		&models.User{},
 		&models.Category{},
+		&models.Genus{},
 		&models.Tool{},
 		&models.List{},
 		&models.ListTool{},

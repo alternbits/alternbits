@@ -14,6 +14,7 @@ type Tool struct {
 	LogoURL     string
 
 	Categories []Category `gorm:"many2many:tool_categories;"`
+	Genera     []Genus    `gorm:"many2many:tool_genera;"`
 
 	Data datatypes.JSON `gorm:"type:jsonb"`
 
