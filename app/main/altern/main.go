@@ -7,6 +7,7 @@ import (
 
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/database"
+	"github.com/dariubs/altern/app/handlers/auth"
 	"github.com/dariubs/altern/app/handlers/root"
 	"github.com/dariubs/altern/app/handlers/slash"
 	"github.com/dariubs/altern/app/handlers/totp"
@@ -55,18 +56,18 @@ func main() {
 	r.POST("/2fa/setup/done", totp.SetupDone(database.DB, publicTOTPOpts))
 	r.POST("/2fa/verify", totp.Verify(database.DB, publicTOTPOpts))
 
-	r.GET("/signin", slash.SignInPage())
-	r.GET("/auth/github", slash.GitHubUserLogin())
-	r.GET("/auth/github/callback", root.GitHubCallback(database.DB))
-	r.GET("/auth/google", slash.GoogleLogin())
-	r.GET("/auth/google/callback", slash.GoogleCallback(database.DB))
-	r.POST("/signout", slash.SignOut())
+	r.GET("/signin", auth.SignInPage())
+	r.GET("/auth/github", auth.GitHubUserLogin())
+	r.GET("/auth/github/callback", auth.GitHubCallback(database.DB))
+	r.GET("/auth/google", auth.GoogleLogin())
+	r.GET("/auth/google/callback", auth.GoogleCallback(database.DB))
+	r.POST("/signout", auth.SignOut())
 
 	rootGroup := r.Group("/root")
 	{
-		rootGroup.GET("/login", root.LoginPage())
-		rootGroup.GET("/auth/github", root.GitHubLogin())
-		rootGroup.POST("/logout", root.Logout())
+		rootGroup.GET("/login", auth.LoginPage())
+		rootGroup.GET("/auth/github", auth.GitHubLogin())
+		rootGroup.POST("/logout", auth.Logout())
 
 		rootGroup.GET("/2fa", totp.Dispatch(database.DB, rootTOTPOpts))
 		rootGroup.POST("/2fa/setup", totp.Setup(database.DB, rootTOTPOpts))
@@ -109,8 +110,6 @@ func main() {
 	}
 }
 
-// finalizeRootSession promotes the TOTP-pending user into the final
-// /root session and sends them to the dashboard.
 func finalizeRootSession(c *gin.Context, user *models.User) {
 	session := sessions.Default(c)
 	session.Delete(totp.PendingUserIDKey)
@@ -122,8 +121,6 @@ func finalizeRootSession(c *gin.Context, user *models.User) {
 	c.Redirect(http.StatusFound, "/root")
 }
 
-// finalizePublicSession promotes the TOTP-pending user into the public
-// session and sends them to the home page.
 func finalizePublicSession(c *gin.Context, user *models.User) {
 	session := sessions.Default(c)
 	session.Delete(totp.PendingUserIDKey)
