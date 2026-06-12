@@ -7,9 +7,28 @@
       }
     })();
   </script>
+  <style>
+    html { font-size: 18px; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-Light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-Semibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+    @font-face { font-family: 'TildaSans'; src: url('/static/fonts/TildaSans-Black.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+    [x-cloak] { display: none !important; }
+  </style>
   <script src="/static/js/tailwind.3.4.17.js"></script>
   <script>
-    tailwind.config = { darkMode: 'class' }
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['TildaSans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
   </script>
   <script defer src="/static/js/cdn.min.js"></script>
-  <style>[x-cloak] { display: none !important; }</style>
