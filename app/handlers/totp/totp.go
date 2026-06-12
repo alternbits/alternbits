@@ -60,7 +60,7 @@ func Dispatch(db *gorm.DB, opts Options) gin.HandlerFunc {
 		}
 
 		if user.TOTPEnabled {
-			c.HTML(http.StatusOK, "2fa_verify.tmpl", gin.H{
+			c.HTML(http.StatusOK, "root_2fa_verify.tmpl", gin.H{
 				"Title": "Two-factor verification",
 				"Post":  opts.BaseURL + "/verify",
 			})
@@ -73,7 +73,7 @@ func Dispatch(db *gorm.DB, opts Options) gin.HandlerFunc {
 				AccountName: accountLabel(user),
 			})
 			if err != nil {
-				c.HTML(http.StatusInternalServerError, "2fa_setup.tmpl", gin.H{
+				c.HTML(http.StatusInternalServerError, "root_2fa_setup.tmpl", gin.H{
 					"Title": "Set up two-factor auth",
 					"Error": "Failed to generate secret",
 				})
@@ -81,7 +81,7 @@ func Dispatch(db *gorm.DB, opts Options) gin.HandlerFunc {
 			}
 			user.TOTPSecret = key.Secret()
 			if err := db.Save(user).Error; err != nil {
-				c.HTML(http.StatusInternalServerError, "2fa_setup.tmpl", gin.H{
+				c.HTML(http.StatusInternalServerError, "root_2fa_setup.tmpl", gin.H{
 					"Title": "Set up two-factor auth",
 					"Error": "Failed to save secret",
 				})
@@ -91,14 +91,14 @@ func Dispatch(db *gorm.DB, opts Options) gin.HandlerFunc {
 
 		qr, err := qrCodePNGBase64(user)
 		if err != nil {
-			c.HTML(http.StatusInternalServerError, "2fa_setup.tmpl", gin.H{
+			c.HTML(http.StatusInternalServerError, "root_2fa_setup.tmpl", gin.H{
 				"Title": "Set up two-factor auth",
 				"Error": "Failed to render QR code",
 			})
 			return
 		}
 
-		c.HTML(http.StatusOK, "2fa_setup.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_2fa_setup.tmpl", gin.H{
 			"Title":  "Set up two-factor auth",
 			"Secret": user.TOTPSecret,
 			"QR":     qr,
@@ -123,7 +123,7 @@ func Setup(db *gorm.DB, opts Options) gin.HandlerFunc {
 		code := strings.TrimSpace(c.PostForm("code"))
 		if !totp.Validate(code, user.TOTPSecret) {
 			qr, _ := qrCodePNGBase64(user)
-			c.HTML(http.StatusOK, "2fa_setup.tmpl", gin.H{
+			c.HTML(http.StatusOK, "root_2fa_setup.tmpl", gin.H{
 				"Title":  "Set up two-factor auth",
 				"Secret": user.TOTPSecret,
 				"QR":     qr,
@@ -135,7 +135,7 @@ func Setup(db *gorm.DB, opts Options) gin.HandlerFunc {
 
 		plain, hashed, err := generateRecoveryCodes(recoveryCodeCount)
 		if err != nil {
-			c.HTML(http.StatusInternalServerError, "2fa_setup.tmpl", gin.H{
+			c.HTML(http.StatusInternalServerError, "root_2fa_setup.tmpl", gin.H{
 				"Title": "Set up two-factor auth",
 				"Error": "Failed to generate recovery codes",
 			})
@@ -143,7 +143,7 @@ func Setup(db *gorm.DB, opts Options) gin.HandlerFunc {
 		}
 		encoded, err := json.Marshal(hashed)
 		if err != nil {
-			c.HTML(http.StatusInternalServerError, "2fa_setup.tmpl", gin.H{
+			c.HTML(http.StatusInternalServerError, "root_2fa_setup.tmpl", gin.H{
 				"Title": "Set up two-factor auth",
 				"Error": "Failed to encode recovery codes",
 			})
@@ -153,7 +153,7 @@ func Setup(db *gorm.DB, opts Options) gin.HandlerFunc {
 		user.TOTPEnabled = true
 		user.RecoveryCodes = string(encoded)
 		if err := db.Save(user).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "2fa_setup.tmpl", gin.H{
+			c.HTML(http.StatusInternalServerError, "root_2fa_setup.tmpl", gin.H{
 				"Title": "Set up two-factor auth",
 				"Error": "Failed to enable 2FA",
 			})
@@ -164,7 +164,7 @@ func Setup(db *gorm.DB, opts Options) gin.HandlerFunc {
 		session.Set(pendingRecoveryKey, true)
 		_ = session.Save()
 
-		c.HTML(http.StatusOK, "2fa_recovery.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_2fa_recovery.tmpl", gin.H{
 			"Title": "Save your recovery codes",
 			"Codes": plain,
 			"Post":  opts.BaseURL + "/setup/done",
@@ -202,7 +202,7 @@ func Verify(db *gorm.DB, opts Options) gin.HandlerFunc {
 
 		code := strings.TrimSpace(c.PostForm("code"))
 		if code == "" {
-			c.HTML(http.StatusOK, "2fa_verify.tmpl", gin.H{
+			c.HTML(http.StatusOK, "root_2fa_verify.tmpl", gin.H{
 				"Title": "Two-factor verification",
 				"Post":  opts.BaseURL + "/verify",
 				"Error": "Enter a code.",
@@ -223,7 +223,7 @@ func Verify(db *gorm.DB, opts Options) gin.HandlerFunc {
 			}
 		}
 
-		c.HTML(http.StatusOK, "2fa_verify.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_2fa_verify.tmpl", gin.H{
 			"Title": "Two-factor verification",
 			"Post":  opts.BaseURL + "/verify",
 			"Error": "Invalid code.",

@@ -47,7 +47,7 @@ func ListNewForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var owners []models.User
 		if err := db.Order("username ASC, name ASC").Find(&owners).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "list_new.tmpl", gin.H{
+			c.HTML(http.StatusInternalServerError, "root_list_new.tmpl", gin.H{
 				"ActiveNav": "lists",
 				"Form":      listFormData{},
 				"Error":     "Failed to load owners.",
@@ -56,7 +56,7 @@ func ListNewForm(db *gorm.DB) gin.HandlerFunc {
 		}
 		toolsRaw, _ := loadToolsJSON(db)
 		toolsJSON := template.JS(toolsRaw)
-		c.HTML(http.StatusOK, "list_new.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_list_new.tmpl", gin.H{
 			"ActiveNav": "lists",
 			"Form":      listFormData{},
 			"Owners":    owners,
@@ -80,7 +80,7 @@ func ListCreate(db *gorm.DB) gin.HandlerFunc {
 			_ = db.Order("username ASC, name ASC").Find(&owners).Error
 			toolsRaw, _ := loadToolsJSON(db)
 			toolsJSON := template.JS(toolsRaw)
-			c.HTML(status, "list_new.tmpl", gin.H{
+			c.HTML(status, "root_list_new.tmpl", gin.H{
 				"ActiveNav": "lists",
 				"Form":      form,
 				"Owners":    owners,

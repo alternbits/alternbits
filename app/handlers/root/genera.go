@@ -31,7 +31,7 @@ func GeneraListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		var total int64
 		if err := db.Model(&models.Genus{}).Count(&total).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "genera.tmpl", gin.H{"Error": "Failed to count genera"})
+			c.HTML(http.StatusInternalServerError, "root_genera.tmpl", gin.H{"Error": "Failed to count genera"})
 			return
 		}
 
@@ -46,11 +46,11 @@ func GeneraListHandler(db *gorm.DB) gin.HandlerFunc {
 			Offset((page - 1) * generaPerPage).
 			Limit(generaPerPage).
 			Find(&genera).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "genera.tmpl", gin.H{"Error": "Failed to load genera"})
+			c.HTML(http.StatusInternalServerError, "root_genera.tmpl", gin.H{"Error": "Failed to load genera"})
 			return
 		}
 
-		c.HTML(http.StatusOK, "genera.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_genera.tmpl", gin.H{
 			"ActiveNav": "genera",
 			"Page": generaPage{
 				Genera:     genera,

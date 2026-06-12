@@ -17,7 +17,7 @@ type genusFormData struct {
 
 func GenusNewForm() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, "genus_new.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_genus_new.tmpl", gin.H{
 			"ActiveNav": "genera",
 			"Form":      genusFormData{},
 		})
@@ -33,7 +33,7 @@ func GenusCreate(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		renderErr := func(status int, msg string) {
-			c.HTML(status, "genus_new.tmpl", gin.H{
+			c.HTML(status, "root_genus_new.tmpl", gin.H{
 				"ActiveNav": "genera",
 				"Form":      form,
 				"Error":     msg,

@@ -29,7 +29,7 @@ func ListsHandler(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 
-		c.HTML(http.StatusOK, "lists.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_lists.tmpl", gin.H{
 			"Lists":       lists,
 			"Categories":  categories,
 			"ToolCount":   toolCount,

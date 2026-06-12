@@ -15,7 +15,7 @@ const SessionUserIDKey = "user_id"
 // LoginPage renders the /root/login page.
 func LoginPage() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, "login.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_login.tmpl", gin.H{
 			"Title":         "Sign in",
 			"GitHubEnabled": config.C.OAuthGitHubEnabled(),
 			"Error":         c.Query("error"),

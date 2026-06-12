@@ -31,7 +31,7 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			Limit(5).
 			Find(&recentUsers)
 
-		c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_dashboard.tmpl", gin.H{
 			"ActiveNav":     "dashboard",
 			"Users":         users,
 			"Tools":         tools,

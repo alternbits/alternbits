@@ -43,7 +43,7 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		var total int64
 		if err := base.Count(&total).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "lists.tmpl", gin.H{"Error": "Failed to count lists"})
+			c.HTML(http.StatusInternalServerError, "root_lists.tmpl", gin.H{"Error": "Failed to count lists"})
 			return
 		}
 
@@ -60,11 +60,11 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 			Offset((page - 1) * listsPerPage).
 			Limit(listsPerPage).
 			Find(&lists).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "lists.tmpl", gin.H{"Error": "Failed to load lists"})
+			c.HTML(http.StatusInternalServerError, "root_lists.tmpl", gin.H{"Error": "Failed to load lists"})
 			return
 		}
 
-		c.HTML(http.StatusOK, "lists.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_lists.tmpl", gin.H{
 			"ActiveNav": "lists",
 			"Query":     q,
 			"Page": listsPage{

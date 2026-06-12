@@ -16,7 +16,7 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
-			c.HTML(http.StatusNotFound, "list_edit.tmpl", gin.H{"ActiveNav": "lists", "Error": "List not found."})
+			c.HTML(http.StatusNotFound, "root_list_edit.tmpl", gin.H{"ActiveNav": "lists", "Error": "List not found."})
 			return
 		}
 
@@ -25,7 +25,7 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 			Preload("Items", func(db *gorm.DB) *gorm.DB { return db.Order("sort ASC") }).
 			Preload("Items.Tool").
 			First(&list, id).Error; err != nil {
-			c.HTML(http.StatusNotFound, "list_edit.tmpl", gin.H{"ActiveNav": "lists", "Error": "List not found."})
+			c.HTML(http.StatusNotFound, "root_list_edit.tmpl", gin.H{"ActiveNav": "lists", "Error": "List not found."})
 			return
 		}
 
@@ -52,7 +52,7 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 			ownerID = strconv.FormatUint(uint64(*list.UserID), 10)
 		}
 
-		c.HTML(http.StatusOK, "list_edit.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_list_edit.tmpl", gin.H{
 			"ActiveNav":    "lists",
 			"List":         list,
 			"OwnerID":      ownerID,
@@ -112,7 +112,7 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 			}
 			selRaw, _ := json.Marshal(selected)
 
-			c.HTML(http.StatusBadRequest, "list_edit.tmpl", gin.H{
+			c.HTML(http.StatusBadRequest, "root_list_edit.tmpl", gin.H{
 				"ActiveNav":    "lists",
 				"List":         list,
 				"OwnerID":      ownerID,

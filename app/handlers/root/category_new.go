@@ -21,14 +21,14 @@ func CategoryNewForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var parents []models.Category
 		if err := db.Order("name ASC").Find(&parents).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "category_new.tmpl", gin.H{
+			c.HTML(http.StatusInternalServerError, "root_category_new.tmpl", gin.H{
 				"ActiveNav": "categories",
 				"Form":      categoryFormData{},
 				"Error":     "Failed to load parent categories.",
 			})
 			return
 		}
-		c.HTML(http.StatusOK, "category_new.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_category_new.tmpl", gin.H{
 			"ActiveNav": "categories",
 			"Form":      categoryFormData{},
 			"Parents":   parents,
@@ -48,7 +48,7 @@ func CategoryCreate(db *gorm.DB) gin.HandlerFunc {
 		renderErr := func(status int, msg string) {
 			var parents []models.Category
 			_ = db.Order("name ASC").Find(&parents).Error
-			c.HTML(status, "category_new.tmpl", gin.H{
+			c.HTML(status, "root_category_new.tmpl", gin.H{
 				"ActiveNav": "categories",
 				"Form":      form,
 				"Parents":   parents,

@@ -30,7 +30,7 @@ type toolFormData struct {
 
 func ToolNewForm() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, "tool_new.tmpl", gin.H{
+		c.HTML(http.StatusOK, "root_tool_new.tmpl", gin.H{
 			"ActiveNav": "tools",
 			"R2Enabled": config.C.R2Enabled(),
 			"Form":      toolFormData{},
@@ -48,7 +48,7 @@ func ToolCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		}
 
 		renderErr := func(status int, msg string) {
-			c.HTML(status, "tool_new.tmpl", gin.H{
+			c.HTML(status, "root_tool_new.tmpl", gin.H{
 				"ActiveNav": "tools",
 				"R2Enabled": config.C.R2Enabled(),
 				"Form":      form,
