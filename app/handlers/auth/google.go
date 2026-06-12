@@ -43,6 +43,26 @@ func GoogleLogin() gin.HandlerFunc {
 	}
 }
 
+// ConnectGoogle initiates a Google connect flow for an already-authenticated user.
+func ConnectGoogle() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !config.C.OAuthGoogleEnabled() {
+			c.Redirect(http.StatusFound, "/settings?error=google_disabled")
+			return
+		}
+		user := c.MustGet("user").(*models.User)
+		state := uuid.New().String()
+		session := sessions.Default(c)
+		session.Set("google_oauth_state", state)
+		session.Set(connectUserIDKey, user.ID)
+		if err := session.Save(); err != nil {
+			c.Redirect(http.StatusFound, "/settings?error=session")
+			return
+		}
+		c.Redirect(http.StatusTemporaryRedirect, googleOAuthConfig().AuthCodeURL(state))
+	}
+}
+
 type googleUser struct {
 	ID      string `json:"id"`
 	Email   string `json:"email"`
@@ -73,9 +93,19 @@ func GoogleCallback(db *gorm.DB) gin.HandlerFunc {
 		session.Delete("google_oauth_state")
 		_ = session.Save()
 
+		// Check if this is a connect flow (connectUserIDKey set by ConnectGoogle).
+		rawUID := session.Get(connectUserIDKey)
+		isConnect := rawUID != nil
+		session.Delete(connectUserIDKey)
+		_ = session.Save()
+
 		token, err := googleOAuthConfig().Exchange(context.Background(), code)
 		if err != nil {
-			c.Redirect(http.StatusFound, "/signin?error=exchange")
+			if isConnect {
+				c.Redirect(http.StatusFound, "/settings?error=exchange")
+			} else {
+				c.Redirect(http.StatusFound, "/signin?error=exchange")
+			}
 			return
 		}
 
@@ -83,14 +113,53 @@ func GoogleCallback(db *gorm.DB) gin.HandlerFunc {
 		token.SetAuthHeader(req)
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil || resp.StatusCode != http.StatusOK {
-			c.Redirect(http.StatusFound, "/signin?error=userinfo")
+			if isConnect {
+				c.Redirect(http.StatusFound, "/settings?error=userinfo")
+			} else {
+				c.Redirect(http.StatusFound, "/signin?error=userinfo")
+			}
 			return
 		}
 		defer resp.Body.Close()
 
 		var gu googleUser
 		if json.NewDecoder(resp.Body).Decode(&gu) != nil || gu.Email == "" {
-			c.Redirect(http.StatusFound, "/signin?error=userinfo")
+			if isConnect {
+				c.Redirect(http.StatusFound, "/settings?error=userinfo")
+			} else {
+				c.Redirect(http.StatusFound, "/signin?error=userinfo")
+			}
+			return
+		}
+
+		// Connect flow: link Google to an already-authenticated user.
+		if isConnect {
+			uid, ok := rawUID.(uint)
+			if !ok {
+				c.Redirect(http.StatusFound, "/settings?error=connect")
+				return
+			}
+			var user models.User
+			if db.First(&user, uid).Error != nil {
+				c.Redirect(http.StatusFound, "/settings?error=connect")
+				return
+			}
+			// Reject if this Google account is already used by a different user.
+			var existing models.User
+			if db.Where("google_id = ?", gu.ID).First(&existing).Error == nil && existing.ID != uid {
+				c.Redirect(http.StatusFound, "/settings?error=google_taken")
+				return
+			}
+			gid := gu.ID
+			user.GoogleID = &gid
+			if user.AvatarURL == "" {
+				user.AvatarURL = gu.Picture
+			}
+			if user.Name == "" {
+				user.Name = gu.Name
+			}
+			db.Save(&user)
+			c.Redirect(http.StatusFound, "/settings?connected=google")
 			return
 		}
 

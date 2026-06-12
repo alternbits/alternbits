@@ -51,6 +51,21 @@ func main() {
 
 	r.GET("/", slash.Handler(database.DB))
 	r.GET("/ai/:slug", slash.ToolHandler(database.DB))
+
+	userRoutes := r.Group("", middleware.RequireAuth(database.DB))
+	{
+		userRoutes.GET("/settings", slash.SettingsPage(database.DB))
+		userRoutes.GET("/settings/2fa/setup", slash.Settings2FASetupGet(database.DB))
+		userRoutes.POST("/settings/2fa/setup", slash.Settings2FASetupPost(database.DB))
+		userRoutes.POST("/settings/2fa/done", slash.Settings2FASetupDone())
+		userRoutes.POST("/settings/2fa/disable", slash.Settings2FADisable(database.DB))
+		if config.C.OAuthGitHubEnabled() {
+			userRoutes.GET("/settings/connect/github", auth.ConnectGitHub())
+		}
+		if config.C.OAuthGoogleEnabled() {
+			userRoutes.GET("/settings/connect/google", auth.ConnectGoogle())
+		}
+	}
 	r.GET("/2fa", totp.Dispatch(database.DB, publicTOTPOpts))
 	r.POST("/2fa/setup", totp.Setup(database.DB, publicTOTPOpts))
 	r.POST("/2fa/setup/done", totp.SetupDone(database.DB, publicTOTPOpts))

@@ -17,6 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const connectUserIDKey = "oauth_connect_user_id"
+
 func githubOAuthConfig() *oauth2.Config {
 	return &oauth2.Config{
 		ClientID:     config.C.GitHubOAuth.ClientID,
@@ -65,6 +67,27 @@ func GitHubUserLogin() gin.HandlerFunc {
 	}
 }
 
+// ConnectGitHub initiates a GitHub connect flow for an already-authenticated user.
+func ConnectGitHub() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !config.C.OAuthGitHubEnabled() {
+			c.Redirect(http.StatusFound, "/settings?error=github_disabled")
+			return
+		}
+		user := c.MustGet("user").(*models.User)
+		state := uuid.New().String()
+		session := sessions.Default(c)
+		session.Set("oauth_state", state)
+		session.Set("oauth_flow", "connect")
+		session.Set(connectUserIDKey, user.ID)
+		if err := session.Save(); err != nil {
+			c.Redirect(http.StatusFound, "/settings?error=session")
+			return
+		}
+		c.Redirect(http.StatusTemporaryRedirect, githubOAuthConfig().AuthCodeURL(state))
+	}
+}
+
 type githubUser struct {
 	ID        int64  `json:"id"`
 	Login     string `json:"login"`
@@ -73,7 +96,7 @@ type githubUser struct {
 	AvatarURL string `json:"avatar_url"`
 }
 
-// GitHubCallback handles the shared OAuth callback for both root and public flows.
+// GitHubCallback handles the shared OAuth callback for root, public, and connect flows.
 // The flow is determined by the "oauth_flow" session key set before the redirect.
 func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -86,9 +109,12 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 		flow, _ := session.Get("oauth_flow").(string)
 
 		errTo := func(code string) {
-			if flow == "root" {
+			switch flow {
+			case "root":
 				c.Redirect(http.StatusFound, "/root/login?error="+code)
-			} else {
+			case "connect":
+				c.Redirect(http.StatusFound, "/settings?error="+code)
+			default:
 				c.Redirect(http.StatusFound, "/signin?error="+code)
 			}
 		}
@@ -131,6 +157,42 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		githubID := fmt.Sprintf("%d", gu.ID)
+
+		// Connect flow: link GitHub to an already-authenticated user.
+		if flow == "connect" {
+			rawUID := session.Get(connectUserIDKey)
+			session.Delete(connectUserIDKey)
+			_ = session.Save()
+
+			uid, ok := rawUID.(uint)
+			if !ok {
+				c.Redirect(http.StatusFound, "/settings?error=connect")
+				return
+			}
+			var user models.User
+			if db.First(&user, uid).Error != nil {
+				c.Redirect(http.StatusFound, "/settings?error=connect")
+				return
+			}
+			// Reject if this GitHub account is already used by a different user.
+			var existing models.User
+			if db.Where(&models.User{GitHubID: githubID}).First(&existing).Error == nil && existing.ID != uid {
+				c.Redirect(http.StatusFound, "/settings?error=github_taken")
+				return
+			}
+			user.GitHubID = githubID
+			user.GitHubLogin = gu.Login
+			if user.AvatarURL == "" {
+				user.AvatarURL = gu.AvatarURL
+			}
+			if user.Name == "" {
+				user.Name = gu.Name
+			}
+			db.Save(&user)
+			c.Redirect(http.StatusFound, "/settings?connected=github")
+			return
+		}
+
 		email := gu.Email
 		if email == "" {
 			email = gu.Login + "@github.user"

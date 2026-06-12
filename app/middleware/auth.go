@@ -11,6 +11,36 @@ import (
 
 const sessionUserIDKey = "user_id"
 
+func RequireAuth(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		raw := session.Get(sessionUserIDKey)
+		if raw == nil {
+			c.Redirect(http.StatusFound, "/signin")
+			c.Abort()
+			return
+		}
+		userID, ok := raw.(uint)
+		if !ok {
+			session.Clear()
+			_ = session.Save()
+			c.Redirect(http.StatusFound, "/signin")
+			c.Abort()
+			return
+		}
+		var user models.User
+		if err := db.First(&user, userID).Error; err != nil {
+			session.Clear()
+			_ = session.Save()
+			c.Redirect(http.StatusFound, "/signin")
+			c.Abort()
+			return
+		}
+		c.Set("user", &user)
+		c.Next()
+	}
+}
+
 func RequireSuperuser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
