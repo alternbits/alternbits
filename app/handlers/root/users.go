@@ -31,7 +31,7 @@ func UsersListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		var total int64
 		if err := db.Model(&models.User{}).Count(&total).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "users.html", gin.H{"Error": "Failed to count users"})
+			c.HTML(http.StatusInternalServerError, "users.tmpl", gin.H{"Error": "Failed to count users"})
 			return
 		}
 
@@ -46,11 +46,11 @@ func UsersListHandler(db *gorm.DB) gin.HandlerFunc {
 			Offset((page - 1) * usersPerPage).
 			Limit(usersPerPage).
 			Find(&users).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "users.html", gin.H{"Error": "Failed to load users"})
+			c.HTML(http.StatusInternalServerError, "users.tmpl", gin.H{"Error": "Failed to load users"})
 			return
 		}
 
-		c.HTML(http.StatusOK, "users.html", gin.H{
+		c.HTML(http.StatusOK, "users.tmpl", gin.H{
 			"ActiveNav": "users",
 			"Page": usersPage{
 				Users:      users,

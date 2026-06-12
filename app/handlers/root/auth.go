@@ -29,7 +29,7 @@ func githubOAuthConfig() *oauth2.Config {
 
 func LoginPage() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, "login.html", gin.H{
+		c.HTML(http.StatusOK, "login.tmpl", gin.H{
 			"Title":         "Sign in",
 			"GitHubEnabled": config.C.OAuthGitHubEnabled(),
 			"Error":         c.Query("error"),

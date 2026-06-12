@@ -21,14 +21,14 @@ func ListNewForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var owners []models.User
 		if err := db.Order("username ASC, name ASC").Find(&owners).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "list_new.html", gin.H{
+			c.HTML(http.StatusInternalServerError, "list_new.tmpl", gin.H{
 				"ActiveNav": "lists",
 				"Form":      listFormData{},
 				"Error":     "Failed to load owners.",
 			})
 			return
 		}
-		c.HTML(http.StatusOK, "list_new.html", gin.H{
+		c.HTML(http.StatusOK, "list_new.tmpl", gin.H{
 			"ActiveNav": "lists",
 			"Form":      listFormData{},
 			"Owners":    owners,
@@ -48,7 +48,7 @@ func ListCreate(db *gorm.DB) gin.HandlerFunc {
 		renderErr := func(status int, msg string) {
 			var owners []models.User
 			_ = db.Order("username ASC, name ASC").Find(&owners).Error
-			c.HTML(status, "list_new.html", gin.H{
+			c.HTML(status, "list_new.tmpl", gin.H{
 				"ActiveNav": "lists",
 				"Form":      form,
 				"Owners":    owners,

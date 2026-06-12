@@ -28,7 +28,7 @@ func main() {
 		"appName":   func() string { return config.C.App.Name },
 		"appDomain": func() string { return config.C.App.Domain },
 	})
-	r.LoadHTMLGlob("views/root/*.html")
+	r.LoadHTMLGlob("views/root/*.tmpl")
 
 	store := cookie.NewStore([]byte(config.C.Session.Secret))
 	store.Options(sessions.Options{Path: "/", HttpOnly: true, MaxAge: 60 * 60 * 24 * 7})

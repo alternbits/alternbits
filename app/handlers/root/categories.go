@@ -31,7 +31,7 @@ func CategoriesListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		var total int64
 		if err := db.Model(&models.Category{}).Count(&total).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "categories.html", gin.H{"Error": "Failed to count categories"})
+			c.HTML(http.StatusInternalServerError, "categories.tmpl", gin.H{"Error": "Failed to count categories"})
 			return
 		}
 
@@ -47,11 +47,11 @@ func CategoriesListHandler(db *gorm.DB) gin.HandlerFunc {
 			Offset((page - 1) * categoriesPerPage).
 			Limit(categoriesPerPage).
 			Find(&categories).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "categories.html", gin.H{"Error": "Failed to load categories"})
+			c.HTML(http.StatusInternalServerError, "categories.tmpl", gin.H{"Error": "Failed to load categories"})
 			return
 		}
 
-		c.HTML(http.StatusOK, "categories.html", gin.H{
+		c.HTML(http.StatusOK, "categories.tmpl", gin.H{
 			"ActiveNav": "categories",
 			"Page": categoriesPage{
 				Categories: categories,

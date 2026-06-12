@@ -9,7 +9,7 @@
   <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
-  {{ template "_navbar.html" . }}
+  {{ template "_navbar.tmpl" . }}
 
   <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
     <header class="mb-8">
@@ -75,6 +75,6 @@
     </form>
   </div>
 
-  {{ template "_footer.html" . }}
+  {{ template "_footer.tmpl" . }}
 </body>
 </html>

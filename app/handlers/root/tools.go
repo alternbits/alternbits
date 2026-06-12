@@ -31,7 +31,7 @@ func ToolsListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		var total int64
 		if err := db.Model(&models.Tool{}).Count(&total).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "tools.html", gin.H{"Error": "Failed to count tools"})
+			c.HTML(http.StatusInternalServerError, "tools.tmpl", gin.H{"Error": "Failed to count tools"})
 			return
 		}
 
@@ -48,11 +48,11 @@ func ToolsListHandler(db *gorm.DB) gin.HandlerFunc {
 			Offset((page - 1) * toolsPerPage).
 			Limit(toolsPerPage).
 			Find(&tools).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "tools.html", gin.H{"Error": "Failed to load tools"})
+			c.HTML(http.StatusInternalServerError, "tools.tmpl", gin.H{"Error": "Failed to load tools"})
 			return
 		}
 
-		c.HTML(http.StatusOK, "tools.html", gin.H{
+		c.HTML(http.StatusOK, "tools.tmpl", gin.H{
 			"ActiveNav": "tools",
 			"Page": toolsPage{
 				Tools:      tools,
