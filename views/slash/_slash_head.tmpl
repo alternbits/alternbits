@@ -1,5 +1,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script>
+    (function() {
+      if (localStorage.getItem('theme') !== 'light') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
   <script src="/static/js/tailwind.3.4.17.js"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
   <script defer src="/static/js/cdn.min.js"></script>
   <style>[x-cloak] { display: none !important; }</style>

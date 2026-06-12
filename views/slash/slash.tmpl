@@ -5,36 +5,67 @@
   <meta name="description" content="Discover AI tools, curated lists, and categories — all in one place.">
   {{ template "_slash_head.tmpl" . }}
 </head>
-<body class="min-h-screen bg-white text-zinc-900 antialiased">
+<body x-data="{
+  darkMode: document.documentElement.classList.contains('dark'),
+  toggle() {
+    this.darkMode = !this.darkMode;
+    this.darkMode
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  }
+}" class="min-h-screen bg-white dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
 
   <!-- Navbar -->
-  <header class="sticky top-0 z-20 border-b border-zinc-100 bg-white/90 backdrop-blur">
+  <header class="sticky top-0 z-20 border-b border-zinc-100 dark:border-[#4A4854] bg-white/90 dark:bg-[#37353E]/90 backdrop-blur">
     <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-      <a href="/" class="flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-900">
-        <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-zinc-900 text-[11px] font-bold text-white">
+      <a href="/" class="flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">
+        <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-zinc-900 dark:bg-orange-500 text-[11px] font-bold text-white">
           {{ slice (appName) 0 1 }}
         </span>
         {{ appName }}
       </a>
       <div class="flex items-center gap-1">
         <nav class="hidden items-center gap-1 md:flex">
-          <a href="/#tools" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Tools</a>
-          <a href="/#categories" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Categories</a>
-          <a href="/#lists" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">Lists</a>
+          <a href="/#tools" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#3F3D48] hover:text-zinc-900 dark:hover:text-white">Tools</a>
+          <a href="/#categories" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#3F3D48] hover:text-zinc-900 dark:hover:text-white">Categories</a>
+          <a href="/#lists" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#3F3D48] hover:text-zinc-900 dark:hover:text-white">Lists</a>
         </nav>
-        <div class="ml-3 flex items-center">
+
+        <!-- Dark mode toggle -->
+        <button @click="toggle()" title="Toggle dark mode"
+                class="ml-1 rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#3F3D48] hover:text-zinc-700 dark:hover:text-white">
+          <!-- Moon: shown in light mode -->
+          <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <!-- Sun: shown in dark mode -->
+          <svg x-show="darkMode" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+
+        <div class="ml-2 flex items-center">
           {{ if .CurrentUser }}
           <div x-data="{ open: false }" class="relative">
-            <button @click="open = !open" class="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-zinc-50">
+            <button @click="open = !open" class="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-zinc-50 dark:hover:bg-[#3F3D48]">
               {{ if .CurrentUser.AvatarURL }}
-              <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200">
+              <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200 dark:bg-[#4A4854]">
               {{ else }}
-              <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 text-xs font-semibold text-zinc-600">
+              <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#4A4854] text-xs font-semibold text-zinc-600 dark:text-zinc-300">
                 {{ if .CurrentUser.Name }}{{ slice .CurrentUser.Name 0 1 }}{{ else }}?{{ end }}
               </span>
               {{ end }}
-              <span class="hidden text-zinc-700 sm:inline">{{ if .CurrentUser.Name }}{{ .CurrentUser.Name }}{{ else }}{{ .CurrentUser.Username }}{{ end }}</span>
-              <svg class="h-3.5 w-3.5 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <span class="hidden text-zinc-700 dark:text-zinc-200 sm:inline">{{ if .CurrentUser.Name }}{{ .CurrentUser.Name }}{{ else }}{{ .CurrentUser.Username }}{{ end }}</span>
+              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
               </svg>
             </button>
@@ -42,9 +73,9 @@
                  x-transition:enter="transition ease-out duration-100"
                  x-transition:enter-start="opacity-0 scale-95"
                  x-transition:enter-end="opacity-100 scale-100"
-                 class="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg">
+                 class="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] py-1 shadow-lg dark:shadow-black/30">
               <form method="POST" action="/signout">
-                <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50">
+                <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-[#47454F]">
                   Sign out
                 </button>
               </form>
@@ -52,7 +83,7 @@
           </div>
           {{ else }}
           <a href="/signin"
-             class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50">
+             class="rounded-lg border border-zinc-200 dark:border-[#4A4854] px-3 py-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:bg-zinc-50 dark:hover:bg-[#3F3D48]">
             Sign in
           </a>
           {{ end }}
@@ -62,29 +93,29 @@
   </header>
 
   <!-- Hero -->
-  <section class="border-b border-zinc-100 bg-zinc-50 px-4 py-20 text-center sm:px-6 sm:py-28">
+  <section class="border-b border-zinc-100 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#32303A] px-4 py-20 text-center sm:px-6 sm:py-28">
     <div class="mx-auto max-w-2xl">
-      <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-500">
+      <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-3 py-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
         {{ .ToolCount }} tools indexed
       </div>
-      <h1 class="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+      <h1 class="text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
         Find almost anything<br>related to AI.
       </h1>
-      <p class="mt-4 text-base text-zinc-500">
+      <p class="mt-4 text-base text-zinc-500 dark:text-zinc-400">
         The most complete directory of AI tools, organized by category and curated into lists.
       </p>
-      <form class="mt-8 flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm focus-within:border-zinc-400 focus-within:ring-2 focus-within:ring-zinc-900/5">
-        <svg class="h-4 w-4 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <form class="mt-8 flex items-center gap-2 rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-4 py-3 shadow-sm focus-within:border-zinc-400 dark:focus-within:border-orange-500/50 focus-within:ring-2 focus-within:ring-zinc-900/5 dark:focus-within:ring-orange-500/10">
+        <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
         </svg>
         <input
           type="search"
           name="q"
           placeholder="Search tools, categories…"
-          class="flex-1 bg-transparent text-sm text-zinc-900 placeholder-zinc-400 outline-none"
+          class="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none"
         >
         <button type="submit"
-                class="shrink-0 rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
+                class="shrink-0 rounded-lg bg-zinc-900 dark:bg-orange-500 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 dark:hover:bg-orange-400">
           Search
         </button>
       </form>
@@ -93,15 +124,15 @@
 
   <!-- Categories -->
   {{ if .Categories }}
-  <section id="categories" class="border-b border-zinc-100 px-4 py-10 sm:px-6">
+  <section id="categories" class="border-b border-zinc-100 dark:border-[#4A4854] px-4 py-10 sm:px-6">
     <div class="mx-auto max-w-6xl">
       <div class="mb-6 flex items-center justify-between">
-        <h2 class="text-lg font-semibold tracking-tight text-zinc-900">Browse by category</h2>
+        <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Browse by category</h2>
       </div>
       <div class="flex flex-wrap gap-2">
         {{ range .Categories }}
         <a href="/categories/{{ .Slug }}"
-           class="rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-sm font-medium text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900">
+           class="rounded-full border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-4 py-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:bg-zinc-50 dark:hover:bg-[#47454F] hover:text-zinc-900 dark:hover:text-white">
           {{ .Name }}
         </a>
         {{ end }}
@@ -114,37 +145,37 @@
   <section id="tools" class="px-4 py-12 sm:px-6">
     <div class="mx-auto max-w-6xl">
       <div class="mb-6 flex items-center justify-between">
-        <h2 class="text-lg font-semibold tracking-tight text-zinc-900">Recently added</h2>
-        <a href="/tools" class="text-sm text-zinc-500 hover:text-zinc-700">All tools &rarr;</a>
+        <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Recently added</h2>
+        <a href="/tools" class="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">All tools &rarr;</a>
       </div>
 
       {{ if .Tools }}
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {{ range .Tools }}
         <a href="/tools/{{ .Slug }}"
-           class="group flex items-start gap-4 rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-300 hover:shadow-sm">
+           class="group flex items-start gap-4 rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] p-4 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:shadow-sm dark:hover:shadow-black/20">
           {{ if .LogoURL }}
           <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-               class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 object-cover">
+               class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover">
           {{ else }}
-          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-base font-semibold text-zinc-500">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#4A4854] text-base font-semibold text-zinc-500 dark:text-zinc-400">
             {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
           </div>
           {{ end }}
           <div class="min-w-0 flex-1">
             <div class="flex items-center justify-between gap-2">
-              <span class="truncate text-sm font-semibold text-zinc-900 group-hover:text-zinc-700">{{ .Name }}</span>
-              <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 group-hover:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-700 dark:group-hover:text-zinc-100">{{ .Name }}</span>
+              <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#4A4854] group-hover:text-zinc-500 dark:group-hover:text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
               </svg>
             </div>
             {{ if .Subtitle }}
-            <p class="mt-0.5 truncate text-xs text-zinc-500">{{ .Subtitle }}</p>
+            <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
             {{ end }}
             {{ if .Categories }}
             <div class="mt-2 flex flex-wrap gap-1">
               {{ range .Categories }}
-              <span class="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-500">{{ .Name }}</span>
+              <span class="rounded-full bg-zinc-100 dark:bg-[#4A4854] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ .Name }}</span>
               {{ end }}
             </div>
             {{ end }}
@@ -153,7 +184,7 @@
         {{ end }}
       </div>
       {{ else }}
-      <div class="rounded-xl border border-dashed border-zinc-200 py-16 text-center text-sm text-zinc-400">
+      <div class="rounded-xl border border-dashed border-zinc-200 dark:border-[#4A4854] py-16 text-center text-sm text-zinc-400 dark:text-zinc-500">
         No tools yet — check back soon.
       </div>
       {{ end }}
@@ -162,27 +193,27 @@
 
   <!-- Lists -->
   {{ if .Lists }}
-  <section id="lists" class="border-t border-zinc-100 bg-zinc-50 px-4 py-12 sm:px-6">
+  <section id="lists" class="border-t border-zinc-100 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#32303A] px-4 py-12 sm:px-6">
     <div class="mx-auto max-w-6xl">
       <div class="mb-6 flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-semibold tracking-tight text-zinc-900">Curated lists</h2>
-          <p class="mt-0.5 text-sm text-zinc-500">Hand-picked collections for every use case.</p>
+          <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Curated lists</h2>
+          <p class="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Hand-picked collections for every use case.</p>
         </div>
-        <a href="/lists" class="text-sm text-zinc-500 hover:text-zinc-700">All lists &rarr;</a>
+        <a href="/lists" class="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">All lists &rarr;</a>
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {{ range .Lists }}
         <a href="/lists/{{ .ID }}"
-           class="group rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 hover:shadow-sm">
+           class="group rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] p-5 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:shadow-sm dark:hover:shadow-black/20">
           <div class="flex items-start justify-between gap-2">
-            <h3 class="text-sm font-semibold text-zinc-900 group-hover:text-zinc-700">{{ .Name }}</h3>
-            <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 group-hover:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <h3 class="text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-700 dark:group-hover:text-zinc-100">{{ .Name }}</h3>
+            <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#4A4854] group-hover:text-zinc-500 dark:group-hover:text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
           {{ if .Subtitle }}
-          <p class="mt-1 text-xs text-zinc-500">{{ .Subtitle }}</p>
+          <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
           {{ end }}
         </a>
         {{ end }}
@@ -192,17 +223,17 @@
   {{ end }}
 
   <!-- Footer -->
-  <footer class="border-t border-zinc-100 bg-white">
-    <div class="mx-auto flex max-w-6xl flex-col items-start gap-2 px-4 py-5 text-xs text-zinc-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+  <footer class="border-t border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#37353E]">
+    <div class="mx-auto flex max-w-6xl flex-col items-start gap-2 px-4 py-5 text-xs text-zinc-400 dark:text-zinc-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <div class="flex items-center gap-2">
-        <span class="font-medium text-zinc-600">{{ appName }}</span>
-        <span class="text-zinc-200">·</span>
+        <span class="font-medium text-zinc-600 dark:text-zinc-300">{{ appName }}</span>
+        <span class="text-zinc-200 dark:text-[#4A4854]">·</span>
         <span>{{ appDomain }}</span>
       </div>
       <div class="flex items-center gap-4">
-        <a href="/tools" class="hover:text-zinc-600">Tools</a>
-        <a href="/categories" class="hover:text-zinc-600">Categories</a>
-        <a href="/lists" class="hover:text-zinc-600">Lists</a>
+        <a href="/tools" class="hover:text-zinc-600 dark:hover:text-zinc-300">Tools</a>
+        <a href="/categories" class="hover:text-zinc-600 dark:hover:text-zinc-300">Categories</a>
+        <a href="/lists" class="hover:text-zinc-600 dark:hover:text-zinc-300">Lists</a>
       </div>
     </div>
   </footer>
