@@ -15,17 +15,18 @@
 
         <div class="hidden md:flex md:items-center md:gap-1">
           {{ $active := .ActiveNav }}
-          <a href="/root"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "dashboard" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Dashboard
+          
+          <a href="/root/tools"
+             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "tools" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+            Tools
+          </a>
+          <a href="/root/lists"
+             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+            Lists
           </a>
           <a href="/root/users"
              class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
             Users
-          </a>
-          <a href="/root/tools"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "tools" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Tools
           </a>
           <a href="/root/categories"
              class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "categories" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
@@ -35,19 +36,15 @@
              class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "genera" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
             Genera
           </a>
-          <a href="/root/lists"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Lists
-          </a>
+          
         </div>
       </div>
 
       <!-- Right side: desktop -->
       <div class="hidden items-center gap-3 md:flex">
-        <span class="text-xs text-zinc-400">{{ appDomain }}</span>
-        <a href="/settings"
+        <a href="/"
            class="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">
-          Settings
+          Website
         </a>
         <form method="POST" action="/root/logout">
           <button type="submit"
