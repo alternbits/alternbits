@@ -94,6 +94,9 @@ func main() {
 			authed.POST("/lists", root.ListCreate(database.DB))
 			authed.GET("/categories/new", root.CategoryNewForm(database.DB))
 			authed.POST("/categories", root.CategoryCreate(database.DB))
+			authed.GET("/genera", root.GeneraListHandler(database.DB))
+			authed.GET("/genera/new", root.GenusNewForm())
+			authed.POST("/genera", root.GenusCreate(database.DB))
 			authed.GET("/tools/new", root.ToolNewForm())
 			authed.POST("/tools", root.ToolCreate(database.DB, r2svc))
 		}
