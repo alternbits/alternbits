@@ -2,7 +2,6 @@ package slash
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/dariubs/altern/app/models"
 	"github.com/gin-contrib/sessions"
@@ -41,18 +40,15 @@ func ListsHandler(db *gorm.DB) gin.HandlerFunc {
 
 func ListHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
-		if err != nil {
-			c.HTML(http.StatusNotFound, "list.tmpl", gin.H{"Error": "List not found."})
-			return
-		}
+		slug := c.Param("slug")
 
 		var list models.List
 		if err := db.
 			Preload("Items", func(db *gorm.DB) *gorm.DB { return db.Order("sort ASC") }).
 			Preload("Items.Tool").
 			Preload("Items.Tool.Categories").
-			First(&list, id).Error; err != nil {
+			Where("slug = ?", slug).
+			First(&list).Error; err != nil {
 			c.HTML(http.StatusNotFound, "list.tmpl", gin.H{"Error": "List not found."})
 			return
 		}

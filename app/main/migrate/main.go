@@ -14,6 +14,10 @@ func main() {
 	}
 	database.InitDB()
 
+	// Add slug column without unique constraint first so existing rows can be backfilled.
+	database.DB.Exec(`ALTER TABLE lists ADD COLUMN IF NOT EXISTS slug TEXT NOT NULL DEFAULT ''`)
+	database.DB.Exec(`UPDATE lists SET slug = 'list-' || id::text WHERE slug = ''`)
+
 	if err := database.DB.AutoMigrate(
 		&models.User{},
 		&models.Category{},

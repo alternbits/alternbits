@@ -268,27 +268,29 @@ func main() {
 
 	type listDef struct {
 		Name     string
+		Slug     string
 		Subtitle string
 		ToolIdxs []int
 	}
 
 	listDefs := []listDef{
-		{"Best AI Chatbots", "The top conversational AI assistants you can use today", []int{0, 1, 2, 3, 4}},
-		{"Top Image Generators", "AI tools that turn text into stunning visuals", []int{5, 6, 7, 8, 9, 10}},
-		{"AI Coding Assistants", "Write, complete, and review code faster with AI", []int{11, 12, 13, 14, 15, 16}},
-		{"AI Writing Tools", "Write better content with AI assistance", []int{17, 18, 19, 20, 21}},
-		{"AI Video Generators", "Create and edit video entirely with AI", []int{22, 23, 24, 25, 26}},
-		{"AI Audio & Music", "Voice, music, and sound tools powered by AI", []int{27, 28, 29, 30, 31, 32}},
-		{"AI Productivity Apps", "Work smarter with AI-powered productivity tools", []int{38, 39, 40, 41, 42}},
-		{"AI Data Tools", "Analyze and visualize data using AI", []int{33, 34, 35, 36, 37}},
-		{"Free AI Tools", "Powerful AI tools you can start using for free", []int{1, 4, 7, 14, 30, 39, 43}},
-		{"Getting Started with AI", "The best AI tools for beginners", []int{0, 1, 5, 11, 17, 38, 43}},
+		{"Best AI Chatbots", "best-ai-chatbots", "The top conversational AI assistants you can use today", []int{0, 1, 2, 3, 4}},
+		{"Top Image Generators", "top-image-generators", "AI tools that turn text into stunning visuals", []int{5, 6, 7, 8, 9, 10}},
+		{"AI Coding Assistants", "ai-coding-assistants", "Write, complete, and review code faster with AI", []int{11, 12, 13, 14, 15, 16}},
+		{"AI Writing Tools", "ai-writing-tools", "Write better content with AI assistance", []int{17, 18, 19, 20, 21}},
+		{"AI Video Generators", "ai-video-generators", "Create and edit video entirely with AI", []int{22, 23, 24, 25, 26}},
+		{"AI Audio & Music", "ai-audio-music", "Voice, music, and sound tools powered by AI", []int{27, 28, 29, 30, 31, 32}},
+		{"AI Productivity Apps", "ai-productivity-apps", "Work smarter with AI-powered productivity tools", []int{38, 39, 40, 41, 42}},
+		{"AI Data Tools", "ai-data-tools", "Analyze and visualize data using AI", []int{33, 34, 35, 36, 37}},
+		{"Free AI Tools", "free-ai-tools", "Powerful AI tools you can start using for free", []int{1, 4, 7, 14, 30, 39, 43}},
+		{"Getting Started with AI", "getting-started-with-ai", "The best AI tools for beginners", []int{0, 1, 5, 11, 17, 38, 43}},
 	}
 
 	for _, def := range listDefs {
 		var l models.List
-		db.Where("name = ?", def.Name).First(&l)
+		db.Where("slug = ?", def.Slug).First(&l)
 		l.Name = def.Name
+		l.Slug = def.Slug
 		l.Subtitle = def.Subtitle
 		if err := upsert(db, l.ID, &l); err != nil {
 			log.Fatalf("upsert list %q: %v", def.Name, err)

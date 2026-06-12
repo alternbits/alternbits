@@ -35,10 +35,15 @@
                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
           </div>
           <div>
-            <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
-            <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
+            <label for="slug" class="block text-sm font-medium text-zinc-700">Slug <span class="text-red-500">*</span></label>
+            <input type="text" id="slug" name="slug" required value="{{ .Slug }}"
                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
           </div>
+        </div>
+        <div>
+          <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
+          <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
+                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">

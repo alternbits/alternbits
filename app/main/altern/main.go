@@ -52,7 +52,7 @@ func main() {
 	r.GET("/", slash.Handler(database.DB))
 	r.GET("/ai/:slug", slash.ToolHandler(database.DB))
 	r.GET("/lists", slash.ListsHandler(database.DB))
-	r.GET("/lists/:id", slash.ListHandler(database.DB))
+	r.GET("/lists/:slug", slash.ListHandler(database.DB))
 
 	userRoutes := r.Group("", middleware.RequireAuth(database.DB))
 	{
