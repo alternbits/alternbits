@@ -109,6 +109,8 @@ func main() {
 			authed.GET("/lists", root.ListsListHandler(database.DB))
 			authed.GET("/lists/new", root.ListNewForm(database.DB))
 			authed.POST("/lists", root.ListCreate(database.DB))
+			authed.GET("/lists/:id/edit", root.ListEditForm(database.DB))
+			authed.POST("/lists/:id", root.ListUpdate(database.DB))
 			authed.GET("/categories/new", root.CategoryNewForm(database.DB))
 			authed.POST("/categories", root.CategoryCreate(database.DB))
 			authed.GET("/genera", root.GeneraListHandler(database.DB))

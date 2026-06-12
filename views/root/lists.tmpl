@@ -48,7 +48,11 @@
                 {{ end }}
               </div>
             </div>
-            <span class="shrink-0 text-xs text-zinc-400">{{ .CreatedAt.Format "2006-01-02" }}</span>
+            <div class="flex shrink-0 items-center gap-2">
+              <span class="text-xs text-zinc-400">{{ .CreatedAt.Format "2006-01-02" }}</span>
+              <a href="/root/lists/{{ .ID }}/edit"
+                 class="rounded-lg border border-zinc-200 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100">Edit</a>
+            </div>
           </div>
         </li>
         {{ else }}
@@ -66,6 +70,7 @@
               <th class="px-5 py-2 font-medium">Tools</th>
               <th class="px-5 py-2 font-medium">Source</th>
               <th class="px-5 py-2 font-medium">Created</th>
+              <th class="px-5 py-2 font-medium"></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100">
@@ -98,10 +103,16 @@
                 {{ end }}
               </td>
               <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
+              <td class="px-5 py-3">
+                <a href="/root/lists/{{ .ID }}/edit"
+                   class="rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100">
+                  Edit
+                </a>
+              </td>
             </tr>
             {{ else }}
             <tr>
-              <td colspan="5" class="px-5 py-8 text-center text-zinc-500">No lists yet.</td>
+              <td colspan="6" class="px-5 py-8 text-center text-zinc-500">No lists yet.</td>
             </tr>
             {{ end }}
           </tbody>
