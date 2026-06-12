@@ -1,4 +1,10 @@
-.PHONY: run migrate seed-sample
+.PHONY: run build migrate seed-sample
+
+# Build all binaries into bin/.
+build:
+	go build -o bin/altern  ./app/main/altern
+	go build -o bin/migrate ./app/main/migrate
+	go build -o bin/seed    ./app/main/seed
 
 # Run the app with hot reload (watches Go files and views/).
 # Uses `air` via `go run` so no global install is required —
