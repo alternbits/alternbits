@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Tool struct {
+type AI struct {
 	gorm.Model
 	Name        string `gorm:"not null"`
 	Slug        string `gorm:"uniqueIndex;not null"`
@@ -13,11 +13,13 @@ type Tool struct {
 	Description string
 	LogoURL     string
 
-	Categories []Category `gorm:"many2many:tool_categories;"`
-	Genera     []Genus    `gorm:"many2many:tool_genera;"`
+	Categories []Category `gorm:"many2many:ai_categories;joinForeignKey:ai_id;joinReferences:category_id"`
+	Genera     []Genus    `gorm:"many2many:ai_genera;joinForeignKey:ai_id;joinReferences:genus_id"`
 
 	Data datatypes.JSON `gorm:"type:jsonb"`
 
 	UserID *uint
 	User   *User
 }
+
+func (AI) TableName() string { return "ais" }

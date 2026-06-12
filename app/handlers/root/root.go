@@ -10,21 +10,21 @@ import (
 
 func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var users, tools, categories, admins, uncategorized, lists int64
+		var users, ais, categories, admins, uncategorized, lists int64
 		db.Model(&models.User{}).Count(&users)
-		db.Model(&models.Tool{}).Count(&tools)
+		db.Model(&models.AI{}).Count(&ais)
 		db.Model(&models.Category{}).Count(&categories)
 		db.Model(&models.List{}).Count(&lists)
 		db.Model(&models.User{}).Where(&models.User{IsAdmin: true}).Count(&admins)
-		db.Model(&models.Tool{}).
-			Where("id NOT IN (SELECT tool_id FROM tool_categories)").
+		db.Model(&models.AI{}).
+			Where("id NOT IN (SELECT ai_id FROM ai_categories)").
 			Count(&uncategorized)
 
-		var recentTools []models.Tool
+		var recentAIs []models.AI
 		db.Preload("Categories").
 			Order("created_at DESC").
 			Limit(5).
-			Find(&recentTools)
+			Find(&recentAIs)
 
 		var recentUsers []models.User
 		db.Order("created_at DESC").
@@ -34,12 +34,12 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 		c.HTML(http.StatusOK, "root_dashboard.tmpl", gin.H{
 			"ActiveNav":     "dashboard",
 			"Users":         users,
-			"Tools":         tools,
+			"AIs":           ais,
 			"Categories":    categories,
 			"Lists":         lists,
 			"Admins":        admins,
 			"Uncategorized": uncategorized,
-			"RecentTools":   recentTools,
+			"RecentAIs":     recentAIs,
 			"RecentUsers":   recentUsers,
 		})
 	}

@@ -14,8 +14,8 @@ func CategoriesHandler(db *gorm.DB) gin.HandlerFunc {
 		var topLevel []models.Category
 		db.Preload("Children").Where("parent_id IS NULL").Order("name ASC").Find(&topLevel)
 
-		var toolCount int64
-		db.Model(&models.Tool{}).Count(&toolCount)
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
 
 		var currentUser *models.User
 		session := sessions.Default(c)
@@ -29,7 +29,7 @@ func CategoriesHandler(db *gorm.DB) gin.HandlerFunc {
 		c.HTML(http.StatusOK, "categories.tmpl", gin.H{
 			"TopLevel":    topLevel,
 			"Categories":  topLevel,
-			"ToolCount":   toolCount,
+			"AICount":     aiCount,
 			"CurrentUser": currentUser,
 		})
 	}
@@ -55,18 +55,18 @@ func CategoryHandler(db *gorm.DB) gin.HandlerFunc {
 			catIDs = append(catIDs, child.ID)
 		}
 
-		var tools []models.Tool
+		var ais []models.AI
 		db.Preload("Categories").Preload("Genera").
-			Joins("JOIN tool_categories tc ON tc.tool_id = tools.id").
+			Joins("JOIN ai_categories tc ON tc.ai_id = ais.id").
 			Where("tc.category_id IN ?", catIDs).
-			Order("tools.name ASC").
-			Find(&tools)
+			Order("ais.name ASC").
+			Find(&ais)
 
 		var categories []models.Category
 		db.Where("parent_id IS NULL").Find(&categories)
 
-		var toolCount int64
-		db.Model(&models.Tool{}).Count(&toolCount)
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
 
 		var currentUser *models.User
 		session := sessions.Default(c)
@@ -79,9 +79,9 @@ func CategoryHandler(db *gorm.DB) gin.HandlerFunc {
 
 		c.HTML(http.StatusOK, "category.tmpl", gin.H{
 			"Category":    category,
-			"Tools":       tools,
+			"AIs":         ais,
 			"Categories":  categories,
-			"ToolCount":   toolCount,
+			"AICount":     aiCount,
 			"CurrentUser": currentUser,
 		})
 	}

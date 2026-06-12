@@ -9,10 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
-const toolsPerPage = 20
+const aisPerPage = 20
 
-type toolsPage struct {
-	Tools      []models.Tool
+type aisPage struct {
+	AIs        []models.AI
 	Page       int
 	TotalPages int
 	Total      int64
@@ -22,7 +22,7 @@ type toolsPage struct {
 	HasNext    bool
 }
 
-func ToolsListHandler(db *gorm.DB) gin.HandlerFunc {
+func AIsListHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		page, _ := strconv.Atoi(c.Query("page"))
 		if page < 1 {
@@ -30,32 +30,32 @@ func ToolsListHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		var total int64
-		if err := db.Model(&models.Tool{}).Count(&total).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "root_tools.tmpl", gin.H{"Error": "Failed to count tools"})
+		if err := db.Model(&models.AI{}).Count(&total).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "root_ais.tmpl", gin.H{"Error": "Failed to count AIs"})
 			return
 		}
 
-		totalPages := max(int((total+toolsPerPage-1)/toolsPerPage), 1)
+		totalPages := max(int((total+aisPerPage-1)/aisPerPage), 1)
 		if page > totalPages {
 			page = totalPages
 		}
 
-		var tools []models.Tool
+		var ais []models.AI
 		if err := db.
 			Preload("Categories").
 			Preload("User").
 			Order("created_at DESC").
-			Offset((page - 1) * toolsPerPage).
-			Limit(toolsPerPage).
-			Find(&tools).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "root_tools.tmpl", gin.H{"Error": "Failed to load tools"})
+			Offset((page - 1) * aisPerPage).
+			Limit(aisPerPage).
+			Find(&ais).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "root_ais.tmpl", gin.H{"Error": "Failed to load AIs"})
 			return
 		}
 
-		c.HTML(http.StatusOK, "root_tools.tmpl", gin.H{
-			"ActiveNav": "tools",
-			"Page": toolsPage{
-				Tools:      tools,
+		c.HTML(http.StatusOK, "root_ais.tmpl", gin.H{
+			"ActiveNav": "ais",
+			"Page": aisPage{
+				AIs:        ais,
 				Page:       page,
 				TotalPages: totalPages,
 				Total:      total,

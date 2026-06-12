@@ -21,12 +21,12 @@ func currentUser(c *gin.Context) *models.User {
 func headerData(db *gorm.DB, user *models.User) gin.H {
 	var categories []models.Category
 	db.Where("parent_id IS NULL").Find(&categories)
-	var toolCount int64
-	db.Model(&models.Tool{}).Count(&toolCount)
+	var aiCount int64
+	db.Model(&models.AI{}).Count(&aiCount)
 	return gin.H{
 		"CurrentUser": user,
 		"Categories":  categories,
-		"ToolCount":   toolCount,
+		"AICount":     aiCount,
 	}
 }
 

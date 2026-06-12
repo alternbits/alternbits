@@ -34,7 +34,7 @@
           <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
-          <input type="search" name="q" placeholder="Search tools, categories…"
+          <input type="search" name="q" placeholder="Search AIs, categories…"
                  @focus="open = true"
                  autocomplete="off"
                  class="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none">
@@ -100,8 +100,8 @@
           </div>
 
           <div class="border-t border-zinc-100 dark:border-[#4A4854] px-4 py-2.5">
-            <a href="/tools" class="flex items-center justify-between text-xs font-medium text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300">
-              <span>Browse all tools</span>
+            <a href="/#ais" class="flex items-center justify-between text-xs font-medium text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300">
+              <span>Browse all AIs</span>
               <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             </a>
           </div>
@@ -131,17 +131,17 @@
   </section>
   {{ end }}
 
-  <!-- Tools -->
-  <section id="tools" class="px-4 py-12 sm:px-6">
+  <!-- AIs -->
+  <section id="ais" class="px-4 py-12 sm:px-6">
     <div class="mx-auto max-w-6xl">
       <div class="mb-6 flex items-center justify-between">
         <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Recently added</h2>
-        <a href="/tools" class="text-sm text-zinc-500 dark:text-white hover:text-zinc-700">All tools &rarr;</a>
+        <a href="/#ais" class="text-sm text-zinc-500 dark:text-white hover:text-zinc-700">All AIs &rarr;</a>
       </div>
 
-      {{ if .Tools }}
+      {{ if .AIs }}
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {{ range .Tools }}
+        {{ range .AIs }}
         <a href="/ai/{{ .Slug }}"
            class="group flex items-start gap-4 rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] p-4 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:shadow-sm dark:hover:shadow-black/20">
           {{ if .LogoURL }}
@@ -175,7 +175,7 @@
       </div>
       {{ else }}
       <div class="rounded-xl border border-dashed border-zinc-200 dark:border-[#4A4854] py-16 text-center text-sm text-zinc-400 dark:text-zinc-500">
-        No tools yet — check back soon.
+        No AIs yet — check back soon.
       </div>
       {{ end }}
     </div>

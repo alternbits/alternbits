@@ -49,41 +49,41 @@
           {{ if .Subtitle }}
           <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
           {{ end }}
-          <p class="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{{ len .Items }} tools</p>
+          <p class="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{{ len .Items }} AIs</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tools -->
+  <!-- AIs -->
   <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
     {{ if .Items }}
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {{ range .Items }}
-      {{ if .Tool }}
-      <a href="/ai/{{ .Tool.Slug }}"
+      {{ if .AI }}
+      <a href="/ai/{{ .AI.Slug }}"
          class="group flex items-start gap-4 rounded-xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] p-4 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
-        {{ if .Tool.LogoURL }}
-        <img src="{{ .Tool.LogoURL }}" alt="{{ .Tool.Name }}"
+        {{ if .AI.LogoURL }}
+        <img src="{{ .AI.LogoURL }}" alt="{{ .AI.Name }}"
              class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover">
         {{ else }}
         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#4A4854] text-base font-semibold text-zinc-500 dark:text-zinc-400">
-          {{ if .Tool.Name }}{{ slice .Tool.Name 0 1 }}{{ end }}
+          {{ if .AI.Name }}{{ slice .AI.Name 0 1 }}{{ end }}
         </div>
         {{ end }}
         <div class="min-w-0 flex-1">
           <div class="flex items-center justify-between gap-2">
-            <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white">{{ .Tool.Name }}</span>
+            <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white">{{ .AI.Name }}</span>
             <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#4A4854] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
-          {{ if .Tool.Subtitle }}
-          <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .Tool.Subtitle }}</p>
+          {{ if .AI.Subtitle }}
+          <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .AI.Subtitle }}</p>
           {{ end }}
-          {{ if .Tool.Categories }}
+          {{ if .AI.Categories }}
           <div class="mt-2 flex flex-wrap gap-1">
-            {{ range .Tool.Categories }}
+            {{ range .AI.Categories }}
             <span class="rounded-full bg-zinc-100 dark:bg-[#4A4854] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ .Name }}</span>
             {{ end }}
           </div>
@@ -95,7 +95,7 @@
     </div>
     {{ else }}
     <div class="rounded-xl border border-dashed border-zinc-200 dark:border-[#4A4854] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
-      No tools in this list yet.
+      No AIs in this list yet.
     </div>
     {{ end }}
   </div>

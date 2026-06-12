@@ -54,7 +54,7 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		var lists []listRow
 		if err := base.
-			Select("lists.*, (SELECT COUNT(*) FROM list_tools WHERE list_tools.list_id = lists.id) AS item_count").
+			Select("lists.*, (SELECT COUNT(*) FROM list_ais WHERE list_ais.list_id = lists.id) AS item_count").
 			Preload("User").
 			Order("lists.created_at DESC").
 			Offset((page - 1) * listsPerPage).

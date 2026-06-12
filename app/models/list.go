@@ -12,14 +12,16 @@ type List struct {
 	UserID *uint
 	User   *User
 
-	Items []ListTool `gorm:"foreignKey:ListID;constraint:OnDelete:CASCADE"`
+	Items []ListAI `gorm:"foreignKey:ListID;constraint:OnDelete:CASCADE"`
 }
 
-type ListTool struct {
+type ListAI struct {
 	ListID uint `gorm:"primaryKey"`
-	ToolID uint `gorm:"primaryKey"`
+	AIID   uint `gorm:"primaryKey;column:ai_id"`
 	Sort   int  `gorm:"default:0;index"`
 
 	List *List
-	Tool *Tool
+	AI   *AI
 }
+
+func (ListAI) TableName() string { return "list_ais" }

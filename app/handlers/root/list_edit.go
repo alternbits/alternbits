@@ -23,7 +23,7 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 		var list models.List
 		if err := db.
 			Preload("Items", func(db *gorm.DB) *gorm.DB { return db.Order("sort ASC") }).
-			Preload("Items.Tool").
+			Preload("Items.AI").
 			First(&list, id).Error; err != nil {
 			c.HTML(http.StatusNotFound, "root_list_edit.tmpl", gin.H{"ActiveNav": "lists", "Error": "List not found."})
 			return
@@ -32,16 +32,16 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 		var owners []models.User
 		_ = db.Order("username ASC, name ASC").Find(&owners).Error
 
-		toolsRaw, _ := loadToolsJSON(db)
+		aisRaw, _ := loadAIsJSON(db)
 
-		selected := make([]toolPickerItem, 0, len(list.Items))
+		selected := make([]aiPickerItem, 0, len(list.Items))
 		for _, item := range list.Items {
-			if item.Tool != nil {
-				selected = append(selected, toolPickerItem{
-					ID:       item.Tool.ID,
-					Name:     item.Tool.Name,
-					Slug:     item.Tool.Slug,
-					Subtitle: item.Tool.Subtitle,
+			if item.AI != nil {
+				selected = append(selected, aiPickerItem{
+					ID:       item.AI.ID,
+					Name:     item.AI.Name,
+					Slug:     item.AI.Slug,
+					Subtitle: item.AI.Subtitle,
 				})
 			}
 		}
@@ -57,7 +57,7 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 			"List":         list,
 			"OwnerID":      ownerID,
 			"Owners":       owners,
-			"ToolsJSON":    template.JS(toolsRaw),
+			"AIsJSON":      template.JS(aisRaw),
 			"SelectedJSON": template.JS(selRaw),
 		})
 	}
@@ -89,13 +89,13 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 		renderErr := func(msg string) {
 			var owners []models.User
 			_ = db.Order("username ASC, name ASC").Find(&owners).Error
-			toolsRaw, _ := loadToolsJSON(db)
+			aisRaw, _ := loadAIsJSON(db)
 
 			// Rebuild selected from current form submission so the picker stays populated.
-			var selected []toolPickerItem
-			toolIDsRaw := strings.TrimSpace(c.PostForm("tool_ids"))
-			if toolIDsRaw != "" {
-				for _, part := range strings.Split(toolIDsRaw, ",") {
+			var selected []aiPickerItem
+			aiIDsRaw := strings.TrimSpace(c.PostForm("ai_ids"))
+			if aiIDsRaw != "" {
+				for _, part := range strings.Split(aiIDsRaw, ",") {
 					part = strings.TrimSpace(part)
 					if part == "" {
 						continue
@@ -104,9 +104,9 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 					if err != nil {
 						continue
 					}
-					var t models.Tool
-					if db.Select("id, name, slug, subtitle").First(&t, tid).Error == nil {
-						selected = append(selected, toolPickerItem{ID: t.ID, Name: t.Name, Slug: t.Slug, Subtitle: t.Subtitle})
+					var a models.AI
+					if db.Select("id, name, slug, subtitle").First(&a, tid).Error == nil {
+						selected = append(selected, aiPickerItem{ID: a.ID, Name: a.Name, Slug: a.Slug, Subtitle: a.Subtitle})
 					}
 				}
 			}
@@ -117,7 +117,7 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 				"List":         list,
 				"OwnerID":      ownerID,
 				"Owners":       owners,
-				"ToolsJSON":    template.JS(toolsRaw),
+				"AIsJSON":      template.JS(aisRaw),
 				"SelectedJSON": template.JS(selRaw),
 				"Error":        msg,
 			})
@@ -157,11 +157,11 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// Replace all tools.
-		db.Where("list_id = ?", list.ID).Delete(&models.ListTool{})
-		toolIDsRaw := strings.TrimSpace(c.PostForm("tool_ids"))
-		if toolIDsRaw != "" {
-			for sort, part := range strings.Split(toolIDsRaw, ",") {
+		// Replace all AIs.
+		db.Where("list_id = ?", list.ID).Delete(&models.ListAI{})
+		aiIDsRaw := strings.TrimSpace(c.PostForm("ai_ids"))
+		if aiIDsRaw != "" {
+			for sort, part := range strings.Split(aiIDsRaw, ",") {
 				part = strings.TrimSpace(part)
 				if part == "" {
 					continue
@@ -170,7 +170,7 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 				if err != nil {
 					continue
 				}
-				db.Create(&models.ListTool{ListID: list.ID, ToolID: uint(tid), Sort: sort})
+				db.Create(&models.ListAI{ListID: list.ID, AIID: uint(tid), Sort: sort})
 			}
 		}
 

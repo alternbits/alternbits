@@ -21,6 +21,6 @@ type User struct {
 	TOTPEnabled    bool `gorm:"default:false"`
 	RecoveryCodes  string
 
-	Tools []Tool `gorm:"foreignKey:UserID"`
+	AIs []AI `gorm:"foreignKey:UserID"`
 	Lists []List `gorm:"foreignKey:UserID"`
 }

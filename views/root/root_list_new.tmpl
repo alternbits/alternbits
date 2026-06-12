@@ -10,7 +10,7 @@
   <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
     <header class="mb-8">
       <h1 class="text-2xl font-semibold tracking-tight">New list</h1>
-      <p class="mt-1 text-sm text-zinc-500">Group tools into a curated collection.</p>
+      <p class="mt-1 text-sm text-zinc-500">Group AIs into a curated collection.</p>
     </header>
 
     {{ if .Error }}
@@ -68,10 +68,10 @@
         {{ end }}
       </div>
 
-      <!-- Tool picker -->
+      <!-- AI picker -->
       <div class="rounded-xl border border-zinc-200 bg-white shadow-sm">
         <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-          <h2 class="text-sm font-semibold text-zinc-700">Tools</h2>
+          <h2 class="text-sm font-semibold text-zinc-700">AIs</h2>
           <span class="text-xs text-zinc-400" x-text="selected.length + ' selected'"></span>
         </div>
 
@@ -84,24 +84,24 @@
                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
               </svg>
-              <input type="text" x-model="search" placeholder="Search tools…"
+              <input type="text" x-model="search" placeholder="Search AIs…"
                      class="block w-full rounded-lg border border-zinc-200 bg-zinc-50 py-2 pl-9 pr-3 text-sm placeholder-zinc-400 focus:border-zinc-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-zinc-900">
             </div>
 
             <div class="h-80 overflow-y-auto">
               <p x-show="visibleCount() === 0"
                  class="py-8 text-center text-xs text-zinc-400"
-                 x-text="search ? 'No results for \'' + search + '\'' : 'All tools selected'"></p>
-              <template x-for="tool in allTools" :key="tool.id">
+                 x-text="search ? 'No results for \'' + search + '\'' : 'All AIs selected'"></p>
+              <template x-for="ai in allAIs" :key="ai.id">
                 <button type="button"
-                        x-show="!isSelected(tool.id) && matchesSearch(tool)"
-                        @click="add(tool)"
+                        x-show="!isSelected(ai.id) && matchesSearch(ai)"
+                        @click="add(ai)"
                         class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-zinc-50 transition-colors group">
                   <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-zinc-100 text-xs font-semibold text-zinc-500 group-hover:bg-zinc-200"
-                        x-text="tool.name.charAt(0)"></span>
+                        x-text="ai.name.charAt(0)"></span>
                   <span class="min-w-0 flex-1">
-                    <span class="block truncate text-sm font-medium text-zinc-800" x-text="tool.name"></span>
-                    <span class="block truncate text-xs text-zinc-400" x-text="tool.subtitle"></span>
+                    <span class="block truncate text-sm font-medium text-zinc-800" x-text="ai.name"></span>
+                    <span class="block truncate text-xs text-zinc-400" x-text="ai.subtitle"></span>
                   </span>
                   <svg class="h-4 w-4 shrink-0 text-zinc-300 group-hover:text-zinc-500 transition-colors"
                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -119,12 +119,12 @@
             <div class="h-80 overflow-y-auto">
               <template x-if="selected.length === 0">
                 <div class="flex h-full items-center justify-center rounded-lg border-2 border-dashed border-zinc-200">
-                  <p class="text-xs text-zinc-400">No tools added yet</p>
+                  <p class="text-xs text-zinc-400">No AIs added yet</p>
                 </div>
               </template>
 
               <ul class="space-y-1">
-                <template x-for="(tool, index) in selected" :key="tool.id">
+                <template x-for="(ai, index) in selected" :key="ai.id">
                   <li draggable="true"
                       @dragstart="dragStart(index)"
                       @dragover.prevent="dragOver(index)"
@@ -140,9 +140,9 @@
                     <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-zinc-200 text-[10px] font-bold text-zinc-600"
                           x-text="index + 1"></span>
                     <!-- Name -->
-                    <span class="min-w-0 flex-1 truncate text-sm font-medium text-zinc-800" x-text="tool.name"></span>
+                    <span class="min-w-0 flex-1 truncate text-sm font-medium text-zinc-800" x-text="ai.name"></span>
                     <!-- Remove -->
-                    <button type="button" @click="remove(tool.id)"
+                    <button type="button" @click="remove(ai.id)"
                             class="shrink-0 rounded p-0.5 text-zinc-300 hover:bg-red-50 hover:text-red-500 transition-colors">
                       <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
@@ -158,7 +158,7 @@
       </div>
 
       <!-- Hidden field populated on submit -->
-      <input type="hidden" name="tool_ids" x-bind:value="selected.map(t => t.id).join(',')">
+      <input type="hidden" name="ai_ids" x-bind:value="selected.map(a => a.id).join(',')">
 
       <div class="mt-6 flex items-center justify-between">
         <a href="/root/lists" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
@@ -174,7 +174,7 @@
   <script>
   function listPicker() {
     return {
-      allTools: {{ .ToolsJSON }},
+      allAIs: {{ .AIsJSON }},
       search: '',
       selected: [],
       dragFrom: null,
@@ -183,26 +183,26 @@
         return this.selected.some(t => t.id === id);
       },
 
-      matchesSearch(tool) {
+      matchesSearch(ai) {
         if (!this.search) return true;
         const q = this.search.toLowerCase();
-        return tool.name.toLowerCase().includes(q) ||
-               (tool.subtitle || '').toLowerCase().includes(q);
+        return ai.name.toLowerCase().includes(q) ||
+               (ai.subtitle || '').toLowerCase().includes(q);
       },
 
       visibleCount() {
-        return this.allTools.filter(t => !this.isSelected(t.id) && this.matchesSearch(t)).length;
+        return this.allAIs.filter(a => !this.isSelected(a.id) && this.matchesSearch(a)).length;
       },
 
-      add(tool) {
-        if (!this.isSelected(tool.id)) {
-          this.selected.push(tool);
+      add(ai) {
+        if (!this.isSelected(ai.id)) {
+          this.selected.push(ai);
           this.search = '';
         }
       },
 
       remove(id) {
-        this.selected = this.selected.filter(t => t.id !== id);
+        this.selected = this.selected.filter(a => a.id !== id);
       },
 
       dragStart(index) {

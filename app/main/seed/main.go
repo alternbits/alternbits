@@ -28,23 +28,23 @@ func main() {
 
 	catDefs := []catDef{
 		// top-level (10)
-		{"Writing & Content", "Tools for writing, editing, and content creation", ""},
-		{"Image Generation", "AI tools that create images from text or other inputs", ""},
-		{"Code & Development", "AI coding assistants, editors, and dev tools", ""},
-		{"Video & Animation", "AI tools for creating and editing video content", ""},
+		{"Writing & Content", "AIs for writing, editing, and content creation", ""},
+		{"Image Generation", "AIs that create images from text or other inputs", ""},
+		{"Code & Development", "AI coding assistants, editors, and development AIs", ""},
+		{"Video & Animation", "AIs for creating and editing video content", ""},
 		{"Audio & Music", "Voice synthesis, music generation, and audio editing", ""},
 		{"Data & Analytics", "AI-powered data analysis and business intelligence", ""},
-		{"Productivity", "AI tools to help you work and think faster", ""},
+		{"Productivity", "AIs to help you work and think faster", ""},
 		{"Search & Research", "AI-enhanced search engines and research assistants", ""},
 		{"Chatbots & Assistants", "General-purpose conversational AI", ""},
-		{"Design & UX", "AI tools for UI, graphic, and product design", ""},
+		{"Design & UX", "AIs for UI, graphic, and product design", ""},
 		// subcategories (10)
 		{"Copywriting", "AI for marketing copy and brand content", "Writing & Content"},
 		{"Translation", "AI-powered language translation", "Writing & Content"},
 		{"Art Generation", "Fine art and creative image generation", "Image Generation"},
 		{"Photo Editing", "AI-enhanced photo retouching and manipulation", "Image Generation"},
 		{"Code Completion", "AI autocompletion and in-editor suggestions", "Code & Development"},
-		{"Code Review", "AI tools for reviewing and improving code quality", "Code & Development"},
+		{"Code Review", "AIs for reviewing and improving code quality", "Code & Development"},
 		{"Text-to-Video", "Generate video clips from text descriptions", "Video & Animation"},
 		{"Voice & Speech", "Text-to-speech, transcription, and voice cloning", "Audio & Music"},
 		{"Business Intelligence", "AI dashboards, predictions, and data insights", "Data & Analytics"},
@@ -123,16 +123,16 @@ func main() {
 	}
 	fmt.Printf("  genera: %d\n", len(genusDefs))
 
-	// ── Tools ─────────────────────────────────────────────────────────────────
+	// ── AIs ───────────────────────────────────────────────────────────────────
 
-	type toolDef struct {
+	type aiDef struct {
 		Name       string
 		Subtitle   string
 		Categories []string
 		Genera     []string
 	}
 
-	toolDefs := []toolDef{
+	aiDefs := []aiDef{
 		// Chatbots & Assistants (5)
 		{"ChatGPT", "Conversational AI by OpenAI", []string{"Chatbots & Assistants"}, []string{"Web App", "Mobile App", "API"}},
 		{"Claude", "AI assistant focused on safety and helpfulness", []string{"Chatbots & Assistants"}, []string{"Web App", "Mobile App", "API"}},
@@ -155,7 +155,7 @@ func main() {
 		{"Replit AI", "AI-powered collaborative coding environment", []string{"Code & Development"}, []string{"Web App", "Mobile App"}},
 		// Writing & Content (5)
 		{"Jasper", "AI writing platform for marketing teams", []string{"Writing & Content", "Copywriting"}, []string{"Web App", "Browser Extension"}},
-		{"Copy.ai", "AI copywriting and content tool", []string{"Writing & Content", "Copywriting"}, []string{"Web App"}},
+		{"Copy.ai", "AI copywriting and content assistant", []string{"Writing & Content", "Copywriting"}, []string{"Web App"}},
 		{"Writesonic", "AI content creation for blogs and ads", []string{"Writing & Content", "Copywriting"}, []string{"Web App", "API"}},
 		{"Grammarly", "AI writing assistant for clarity and correctness", []string{"Writing & Content"}, []string{"Web App", "Desktop App", "Browser Extension"}},
 		{"DeepL", "AI-powered translation with nuance", []string{"Writing & Content", "Translation"}, []string{"Web App", "Desktop App", "API"}},
@@ -191,20 +191,20 @@ func main() {
 		{"Framer AI", "AI-powered website and landing page builder", []string{"Design & UX"}, []string{"Web App"}},
 		{"Uizard", "Turn sketches into UI designs with AI", []string{"Design & UX"}, []string{"Web App"}},
 		{"v0", "Generate UI components with AI by Vercel", []string{"Design & UX", "Code & Development"}, []string{"Web App", "API"}},
-		{"Canva AI", "AI design tools inside Canva", []string{"Design & UX", "Image Generation"}, []string{"Web App", "Mobile App", "Desktop App"}},
+		{"Canva AI", "AI design features inside Canva", []string{"Design & UX", "Image Generation"}, []string{"Web App", "Mobile App", "Desktop App"}},
 		{"Galileo AI", "Generate editable UI designs from text", []string{"Design & UX"}, []string{"Web App"}},
 	}
 
-	toolObjs := make([]*models.Tool, 0, len(toolDefs))
-	for _, def := range toolDefs {
+	aiObjs := make([]*models.AI, 0, len(aiDefs))
+	for _, def := range aiDefs {
 		slug := toSlug(def.Name)
-		var t models.Tool
-		db.Where("slug = ?", slug).First(&t)
-		t.Name = def.Name
-		t.Slug = slug
-		t.Subtitle = def.Subtitle
-		if err := upsert(db, t.ID, &t); err != nil {
-			log.Fatalf("upsert tool %q: %v", def.Name, err)
+		var a models.AI
+		db.Where("slug = ?", slug).First(&a)
+		a.Name = def.Name
+		a.Slug = slug
+		a.Subtitle = def.Subtitle
+		if err := upsert(db, a.ID, &a); err != nil {
+			log.Fatalf("upsert ai %q: %v", def.Name, err)
 		}
 		cats := make([]models.Category, 0, len(def.Categories))
 		for _, cn := range def.Categories {
@@ -212,7 +212,7 @@ func main() {
 				cats = append(cats, *c)
 			}
 		}
-		if err := db.Model(&t).Association("Categories").Replace(cats); err != nil {
+		if err := db.Model(&a).Association("Categories").Replace(cats); err != nil {
 			log.Fatalf("assign categories for %q: %v", def.Name, err)
 		}
 		genera := make([]models.Genus, 0, len(def.Genera))
@@ -221,12 +221,12 @@ func main() {
 				genera = append(genera, *g)
 			}
 		}
-		if err := db.Model(&t).Association("Genera").Replace(genera); err != nil {
+		if err := db.Model(&a).Association("Genera").Replace(genera); err != nil {
 			log.Fatalf("assign genera for %q: %v", def.Name, err)
 		}
-		toolObjs = append(toolObjs, &t)
+		aiObjs = append(aiObjs, &a)
 	}
-	fmt.Printf("  tools: %d\n", len(toolDefs))
+	fmt.Printf("  ais: %d\n", len(aiDefs))
 
 	// ── Users ─────────────────────────────────────────────────────────────────
 
@@ -267,23 +267,23 @@ func main() {
 	// ── Lists ─────────────────────────────────────────────────────────────────
 
 	type listDef struct {
-		Name     string
-		Slug     string
+		Name    string
+		Slug    string
 		Subtitle string
-		ToolIdxs []int
+		AIIdxs  []int
 	}
 
 	listDefs := []listDef{
 		{"Best AI Chatbots", "best-ai-chatbots", "The top conversational AI assistants you can use today", []int{0, 1, 2, 3, 4}},
-		{"Top Image Generators", "top-image-generators", "AI tools that turn text into stunning visuals", []int{5, 6, 7, 8, 9, 10}},
+		{"Top Image Generators", "top-image-generators", "AIs that turn text into stunning visuals", []int{5, 6, 7, 8, 9, 10}},
 		{"AI Coding Assistants", "ai-coding-assistants", "Write, complete, and review code faster with AI", []int{11, 12, 13, 14, 15, 16}},
 		{"AI Writing Tools", "ai-writing-tools", "Write better content with AI assistance", []int{17, 18, 19, 20, 21}},
 		{"AI Video Generators", "ai-video-generators", "Create and edit video entirely with AI", []int{22, 23, 24, 25, 26}},
-		{"AI Audio & Music", "ai-audio-music", "Voice, music, and sound tools powered by AI", []int{27, 28, 29, 30, 31, 32}},
-		{"AI Productivity Apps", "ai-productivity-apps", "Work smarter with AI-powered productivity tools", []int{38, 39, 40, 41, 42}},
+		{"AI Audio & Music", "ai-audio-music", "Voice, music, and sound AIs", []int{27, 28, 29, 30, 31, 32}},
+		{"AI Productivity Apps", "ai-productivity-apps", "Work smarter with AI-powered productivity AIs", []int{38, 39, 40, 41, 42}},
 		{"AI Data Tools", "ai-data-tools", "Analyze and visualize data using AI", []int{33, 34, 35, 36, 37}},
-		{"Free AI Tools", "free-ai-tools", "Powerful AI tools you can start using for free", []int{1, 4, 7, 14, 30, 39, 43}},
-		{"Getting Started with AI", "getting-started-with-ai", "The best AI tools for beginners", []int{0, 1, 5, 11, 17, 38, 43}},
+		{"Free AI Tools", "free-ai-tools", "Powerful AIs you can start using for free", []int{1, 4, 7, 14, 30, 39, 43}},
+		{"Getting Started with AI", "getting-started-with-ai", "The best AIs for beginners", []int{0, 1, 5, 11, 17, 38, 43}},
 	}
 
 	for _, def := range listDefs {
@@ -295,11 +295,11 @@ func main() {
 		if err := upsert(db, l.ID, &l); err != nil {
 			log.Fatalf("upsert list %q: %v", def.Name, err)
 		}
-		db.Where("list_id = ?", l.ID).Delete(&models.ListTool{})
-		for sort, ti := range def.ToolIdxs {
-			lt := models.ListTool{ListID: l.ID, ToolID: toolObjs[ti].ID, Sort: sort}
+		db.Where("list_id = ?", l.ID).Delete(&models.ListAI{})
+		for sort, ti := range def.AIIdxs {
+			lt := models.ListAI{ListID: l.ID, AIID: aiObjs[ti].ID, Sort: sort}
 			if err := db.Create(&lt).Error; err != nil {
-				log.Fatalf("create list_tool: %v", err)
+				log.Fatalf("create list_ai: %v", err)
 			}
 		}
 	}

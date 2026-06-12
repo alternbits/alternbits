@@ -22,9 +22,9 @@ func main() {
 		&models.User{},
 		&models.Category{},
 		&models.Genus{},
-		&models.Tool{},
+		&models.AI{},
 		&models.List{},
-		&models.ListTool{},
+		&models.ListAI{},
 	); err != nil {
 		log.Fatal("migrate:", err)
 	}

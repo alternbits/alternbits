@@ -50,7 +50,7 @@ func main() {
 	}
 
 	r.GET("/", slash.Handler(database.DB))
-	r.GET("/ai/:slug", slash.ToolHandler(database.DB))
+	r.GET("/ai/:slug", slash.AIHandler(database.DB))
 	r.GET("/lists", slash.ListsHandler(database.DB))
 	r.GET("/lists/:slug", slash.ListHandler(database.DB))
 	r.GET("/categories", slash.CategoriesHandler(database.DB))
@@ -108,7 +108,7 @@ func main() {
 			authed.GET("", root.DashboardHandler(database.DB))
 			authed.GET("/", root.DashboardHandler(database.DB))
 			authed.GET("/users", root.UsersListHandler(database.DB))
-			authed.GET("/tools", root.ToolsListHandler(database.DB))
+			authed.GET("/ais", root.AIsListHandler(database.DB))
 			authed.GET("/categories", root.CategoriesListHandler(database.DB))
 			authed.GET("/lists", root.ListsListHandler(database.DB))
 			authed.GET("/lists/new", root.ListNewForm(database.DB))
@@ -120,8 +120,8 @@ func main() {
 			authed.GET("/genera", root.GeneraListHandler(database.DB))
 			authed.GET("/genera/new", root.GenusNewForm())
 			authed.POST("/genera", root.GenusCreate(database.DB))
-			authed.GET("/tools/new", root.ToolNewForm())
-			authed.POST("/tools", root.ToolCreate(database.DB, r2svc))
+			authed.GET("/ais/new", root.AINewForm())
+			authed.POST("/ais", root.AICreate(database.DB, r2svc))
 		}
 	}
 

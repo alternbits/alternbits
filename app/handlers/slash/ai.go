@@ -9,18 +9,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func ToolHandler(db *gorm.DB) gin.HandlerFunc {
+func AIHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		slug := c.Param("slug")
 
-		var tool models.Tool
+		var ai models.AI
 		if err := db.
 			Preload("Categories").
 			Preload("Genera").
 			Where("slug = ?", slug).
-			First(&tool).Error; err != nil {
-			c.HTML(http.StatusNotFound, "tool.tmpl", gin.H{
-				"Error":       "Tool not found.",
+			First(&ai).Error; err != nil {
+			c.HTML(http.StatusNotFound, "ai.tmpl", gin.H{
+				"Error":       "AI not found.",
 				"CurrentUser": nil,
 			})
 			return
@@ -29,8 +29,8 @@ func ToolHandler(db *gorm.DB) gin.HandlerFunc {
 		var categories []models.Category
 		db.Where("parent_id IS NULL").Find(&categories)
 
-		var toolCount int64
-		db.Model(&models.Tool{}).Count(&toolCount)
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
 
 		var currentUser *models.User
 		session := sessions.Default(c)
@@ -41,10 +41,10 @@ func ToolHandler(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 
-		c.HTML(http.StatusOK, "tool.tmpl", gin.H{
-			"Tool":        tool,
+		c.HTML(http.StatusOK, "ai.tmpl", gin.H{
+			"AI":          ai,
 			"Categories":  categories,
-			"ToolCount":   toolCount,
+			"AICount":     aiCount,
 			"CurrentUser": currentUser,
 		})
 	}

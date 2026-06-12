@@ -14,7 +14,7 @@
 
     <!-- Desktop nav -->
     <nav class="hidden flex-1 items-center gap-0.5 pl-6 md:flex">
-      <a href="/#tools" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3F3D48] hover:text-zinc-900 transition-colors">Tools</a>
+      <a href="/#ais" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3F3D48] hover:text-zinc-900 transition-colors">AIs</a>
 
       <!-- Categories mega menu -->
       <div x-data="{ megaOpen: false, catSearch: '' }"
@@ -198,8 +198,8 @@
        x-transition:enter-end="opacity-100 translate-y-0"
        class="border-t border-zinc-100 dark:border-[#4A4854] md:hidden">
     <div class="mx-auto flex max-w-6xl flex-col gap-0.5 px-4 py-3 sm:px-6">
-      <a href="/#tools" @click="mobileOpen = false"
-         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3F3D48] transition-colors">Tools</a>
+      <a href="/#ais" @click="mobileOpen = false"
+         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3F3D48] transition-colors">AIs</a>
       <a href="/categories" @click="mobileOpen = false"
          class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3F3D48] transition-colors">Categories</a>
       <a href="/lists" @click="mobileOpen = false"
@@ -239,7 +239,7 @@
         <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
         </svg>
-        <input x-ref="searchInput" type="search" placeholder="Search tools, categories, lists…"
+        <input x-ref="searchInput" type="search" placeholder="Search AIs, categories, lists…"
                class="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none">
         <kbd class="hidden sm:inline-flex items-center rounded border border-zinc-200 dark:border-[#4A4854] px-1.5 py-0.5 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">Esc</kbd>
       </div>
@@ -247,12 +247,12 @@
       <!-- Quick links -->
       <div class="p-2">
         <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Quick links</p>
-        <a href="/#tools" @click="searchOpen = false"
+        <a href="/#ais" @click="searchOpen = false"
            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3F3D48] transition-colors">
           <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#3F3D48] text-zinc-500 dark:text-zinc-400">
             <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
           </span>
-          All tools
+          All AIs
           <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
         </a>
         <a href="/categories" @click="searchOpen = false"
@@ -275,7 +275,7 @@
 
       <!-- Footer -->
       <div class="flex items-center justify-between border-t border-zinc-100 dark:border-[#4A4854] px-4 py-2.5">
-        <span class="text-xs text-zinc-400 dark:text-zinc-500">{{ .ToolCount }} tools indexed</span>
+        <span class="text-xs text-zinc-400 dark:text-zinc-500">{{ .AICount }} AIs indexed</span>
         <div class="flex items-center gap-2 text-[10px] text-zinc-400 dark:text-zinc-500">
           <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 dark:border-[#4A4854] px-1 py-0.5 font-medium">↑↓</kbd> navigate</span>
           <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 dark:border-[#4A4854] px-1 py-0.5 font-medium">↵</kbd> open</span>

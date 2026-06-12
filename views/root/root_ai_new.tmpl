@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>{{ appName }} · New tool</title>
+  <title>{{ appName }} · New AI</title>
   {{ template "_root_head.tmpl" . }}
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
@@ -9,15 +9,15 @@
 
   <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
     <header class="mb-8">
-      <h1 class="text-2xl font-semibold tracking-tight">New tool</h1>
-      <p class="mt-1 text-sm text-zinc-500">Add a tool to the directory.</p>
+      <h1 class="text-2xl font-semibold tracking-tight">New AI</h1>
+      <p class="mt-1 text-sm text-zinc-500">Add an AI to the directory.</p>
     </header>
 
     {{ if .Error }}
     <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
     {{ end }}
 
-    <form method="POST" action="/root/tools" enctype="multipart/form-data"
+    <form method="POST" action="/root/ais" enctype="multipart/form-data"
           class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
       {{ with .Form }}
       <div>
@@ -60,10 +60,10 @@
       </div>
 
       <div class="flex items-center justify-between pt-2">
-        <a href="/root/tools" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
+        <a href="/root/ais" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
         <button type="submit"
                 class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
-          Create tool
+          Create AI
         </button>
       </div>
     </form>

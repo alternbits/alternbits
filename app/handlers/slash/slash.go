@@ -10,10 +10,10 @@ import (
 )
 
 type pageData struct {
-	Tools       []models.Tool
+	AIs         []models.AI
 	Categories  []models.Category
 	Lists       []models.List
-	ToolCount   int64
+	AICount     int64
 	CurrentUser *models.User
 }
 
@@ -21,10 +21,10 @@ func Handler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data pageData
 
-		db.Preload("Categories").Order("created_at desc").Limit(12).Find(&data.Tools)
+		db.Preload("Categories").Order("created_at desc").Limit(12).Find(&data.AIs)
 		db.Where("parent_id IS NULL").Find(&data.Categories)
 		db.Order("created_at desc").Limit(6).Find(&data.Lists)
-		db.Model(&models.Tool{}).Count(&data.ToolCount)
+		db.Model(&models.AI{}).Count(&data.AICount)
 
 		session := sessions.Default(c)
 		if uid, ok := session.Get(sessionUserIDKey).(uint); ok && uid > 0 {

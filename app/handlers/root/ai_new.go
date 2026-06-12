@@ -21,26 +21,26 @@ var allowedLogoExts = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".webp": true, ".svg": true,
 }
 
-type toolFormData struct {
+type aiFormData struct {
 	Name        string
 	Slug        string
 	Subtitle    string
 	Description string
 }
 
-func ToolNewForm() gin.HandlerFunc {
+func AINewForm() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, "root_tool_new.tmpl", gin.H{
-			"ActiveNav": "tools",
+		c.HTML(http.StatusOK, "root_ai_new.tmpl", gin.H{
+			"ActiveNav": "ais",
 			"R2Enabled": config.C.R2Enabled(),
-			"Form":      toolFormData{},
+			"Form":      aiFormData{},
 		})
 	}
 }
 
-func ToolCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
+func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		form := toolFormData{
+		form := aiFormData{
 			Name:        strings.TrimSpace(c.PostForm("name")),
 			Slug:        strings.TrimSpace(c.PostForm("slug")),
 			Subtitle:    strings.TrimSpace(c.PostForm("subtitle")),
@@ -48,8 +48,8 @@ func ToolCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		}
 
 		renderErr := func(status int, msg string) {
-			c.HTML(status, "root_tool_new.tmpl", gin.H{
-				"ActiveNav": "tools",
+			c.HTML(status, "root_ai_new.tmpl", gin.H{
+				"ActiveNav": "ais",
 				"R2Enabled": config.C.R2Enabled(),
 				"Form":      form,
 				"Error":     msg,
@@ -85,7 +85,7 @@ func ToolCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 				renderErr(http.StatusBadRequest, "Logo must be 5 MB or smaller.")
 				return
 			}
-			url, err := r2.UploadFile(file, "tool-logos")
+			url, err := r2.UploadFile(file, "ai-logos")
 			if err != nil {
 				renderErr(http.StatusInternalServerError, "Failed to upload logo: "+err.Error())
 				return
@@ -93,22 +93,22 @@ func ToolCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			logoURL = url
 		}
 
-		tool := models.Tool{
+		ai := models.AI{
 			Name:        form.Name,
 			Slug:        form.Slug,
 			Subtitle:    form.Subtitle,
 			Description: form.Description,
 			LogoURL:     logoURL,
 		}
-		if err := db.Create(&tool).Error; err != nil {
+		if err := db.Create(&ai).Error; err != nil {
 			if logoURL != "" && r2 != nil {
 				_ = r2.DeleteByURL(logoURL)
 			}
-			renderErr(http.StatusInternalServerError, "Failed to save tool: "+err.Error())
+			renderErr(http.StatusInternalServerError, "Failed to save AI: "+err.Error())
 			return
 		}
 
-		c.Redirect(http.StatusFound, "/root/tools")
+		c.Redirect(http.StatusFound, "/root/ais")
 	}
 }
 
