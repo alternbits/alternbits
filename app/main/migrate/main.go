@@ -28,6 +28,7 @@ func main() {
 		&models.Artifact{},
 		&models.ArtifactField{},
 		&models.Page{},
+		&models.Alternative{},
 	); err != nil {
 		log.Fatal("migrate:", err)
 	}
