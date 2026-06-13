@@ -25,6 +25,8 @@ func main() {
 		&models.AI{},
 		&models.List{},
 		&models.ListAI{},
+		&models.Artifact{},
+		&models.ArtifactField{},
 	); err != nil {
 		log.Fatal("migrate:", err)
 	}
