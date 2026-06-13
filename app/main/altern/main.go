@@ -119,6 +119,7 @@ func main() {
 			authed.POST("/categories", root.CategoryCreate(database.DB))
 			authed.GET("/categories/:id/edit", root.CategoryEditForm(database.DB))
 			authed.POST("/categories/:id", root.CategoryUpdate(database.DB))
+			authed.GET("/artifacts", root.ArtifactsListHandler(database.DB))
 			authed.GET("/genera", root.GeneraListHandler(database.DB))
 			authed.GET("/genera/new", root.GenusNewForm())
 			authed.POST("/genera", root.GenusCreate(database.DB))
