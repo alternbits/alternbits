@@ -90,7 +90,7 @@ func AIsListHandler(db *gorm.DB) gin.HandlerFunc {
 		if err := filteredAIs(db, search, category, genus).
 			Select("ais.id").
 			Order(orderClause).
-			Offset((page - 1) * aisPerPage).
+			Offset((page-1)*aisPerPage).
 			Limit(aisPerPage).
 			Pluck("ais.id", &ids).Error; err != nil {
 			c.HTML(http.StatusInternalServerError, "root_ais.tmpl", gin.H{"Error": "Failed to load AIs"})

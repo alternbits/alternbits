@@ -267,10 +267,10 @@ func main() {
 	// ── Lists ─────────────────────────────────────────────────────────────────
 
 	type listDef struct {
-		Name    string
-		Slug    string
+		Name     string
+		Slug     string
 		Subtitle string
-		AIIdxs  []int
+		AIIdxs   []int
 	}
 
 	listDefs := []listDef{

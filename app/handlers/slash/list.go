@@ -11,15 +11,6 @@ import (
 
 func ListsHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var lists []models.List
-		db.Preload("Items").Order("created_at desc").Find(&lists)
-
-		var categories []models.Category
-		db.Where("parent_id IS NULL").Find(&categories)
-
-		var aiCount int64
-		db.Model(&models.AI{}).Count(&aiCount)
-
 		var currentUser *models.User
 		session := sessions.Default(c)
 		if uid, ok := session.Get(sessionUserIDKey).(uint); ok && uid > 0 {
@@ -28,6 +19,21 @@ func ListsHandler(db *gorm.DB) gin.HandlerFunc {
 				currentUser = &u
 			}
 		}
+
+		var lists []models.List
+		q := db.Preload("Items").Order("created_at desc")
+		if currentUser != nil {
+			q = q.Where("is_private = false OR user_id = ?", currentUser.ID)
+		} else {
+			q = q.Where("is_private = false")
+		}
+		q.Find(&lists)
+
+		var categories []models.Category
+		db.Where("parent_id IS NULL").Find(&categories)
+
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
 
 		c.HTML(http.StatusOK, "lists.tmpl", gin.H{
 			"Lists":       lists,
@@ -53,12 +59,6 @@ func ListHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		var categories []models.Category
-		db.Where("parent_id IS NULL").Find(&categories)
-
-		var aiCount int64
-		db.Model(&models.AI{}).Count(&aiCount)
-
 		var currentUser *models.User
 		session := sessions.Default(c)
 		if uid, ok := session.Get(sessionUserIDKey).(uint); ok && uid > 0 {
@@ -67,6 +67,20 @@ func ListHandler(db *gorm.DB) gin.HandlerFunc {
 				currentUser = &u
 			}
 		}
+
+		if list.IsPrivate {
+			isOwner := currentUser != nil && list.UserID != nil && *list.UserID == currentUser.ID
+			if !isOwner {
+				c.HTML(http.StatusNotFound, "list.tmpl", gin.H{"Error": "List not found."})
+				return
+			}
+		}
+
+		var categories []models.Category
+		db.Where("parent_id IS NULL").Find(&categories)
+
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
 
 		c.HTML(http.StatusOK, "list.tmpl", gin.H{
 			"List":        list,

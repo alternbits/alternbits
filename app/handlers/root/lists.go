@@ -30,10 +30,11 @@ type listsPage struct {
 }
 
 type listsFilters struct {
-	Search   string
-	Source   string // "auto" | "manual" | ""
-	Sort     string
-	QueryStr string
+	Search     string
+	Source     string // "auto" | "manual" | ""
+	Visibility string // "public" | "private" | ""
+	Sort       string
+	QueryStr   string
 }
 
 func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
@@ -45,6 +46,7 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 
 		search := strings.TrimSpace(c.Query("q"))
 		source := c.Query("source")
+		visibility := c.Query("visibility")
 		sort := c.Query("sort")
 
 		base := db.Table("lists").Where("lists.deleted_at IS NULL")
@@ -56,6 +58,12 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 			base = base.Where("lists.is_auto_generated = ?", true)
 		case "manual":
 			base = base.Where("lists.is_auto_generated = ?", false)
+		}
+		switch visibility {
+		case "public":
+			base = base.Where("lists.is_private = ?", false)
+		case "private":
+			base = base.Where("lists.is_private = ?", true)
 		}
 
 		orderClause := "lists.created_at DESC"
@@ -102,6 +110,9 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 		if source != "" {
 			params.Set("source", source)
 		}
+		if visibility != "" {
+			params.Set("visibility", visibility)
+		}
 		if sort != "" {
 			params.Set("sort", sort)
 		}
@@ -113,10 +124,11 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 		c.HTML(http.StatusOK, "root_lists.tmpl", gin.H{
 			"ActiveNav": "lists",
 			"Filters": listsFilters{
-				Search:   search,
-				Source:   source,
-				Sort:     sort,
-				QueryStr: queryStr,
+				Search:     search,
+				Source:     source,
+				Visibility: visibility,
+				Sort:       sort,
+				QueryStr:   queryStr,
 			},
 			"Page": listsPage{
 				Lists:      lists,
