@@ -8,12 +8,72 @@
   {{ template "_root_navbar.tmpl" . }}
 
   <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8">
+    <header class="mb-6">
       <h1 class="text-2xl font-semibold tracking-tight">Users</h1>
       {{ with .Page }}
       <p class="mt-1 text-sm text-zinc-500">{{ .Total }} total &middot; page {{ .Page }} of {{ .TotalPages }}.</p>
       {{ end }}
     </header>
+
+    <!-- Search & filters -->
+    <form method="GET" action="/root/users" class="mb-6">
+      <div class="flex flex-wrap gap-2">
+        <!-- Search -->
+        <div class="relative flex-1 min-w-48">
+          <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" name="q" value="{{ .Filters.Search }}"
+                 placeholder="Search name, username, email…"
+                 class="w-full rounded-lg border border-zinc-300 bg-white pl-8 pr-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
+        </div>
+
+        <!-- Role filter -->
+        <select name="role"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          <option value=""{{ if eq .Filters.Role "" }} selected{{ end }}>All roles</option>
+          <option value="superuser"{{ if eq .Filters.Role "superuser" }} selected{{ end }}>Superuser</option>
+          <option value="user"{{ if eq .Filters.Role "user" }} selected{{ end }}>User</option>
+        </select>
+
+        <!-- Provider filter -->
+        <select name="provider"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          <option value=""{{ if eq .Filters.Provider "" }} selected{{ end }}>All providers</option>
+          <option value="github"{{ if eq .Filters.Provider "github" }} selected{{ end }}>GitHub</option>
+          <option value="google"{{ if eq .Filters.Provider "google" }} selected{{ end }}>Google</option>
+        </select>
+
+        <!-- 2FA filter -->
+        <select name="2fa"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          <option value=""{{ if eq .Filters.TwoFA "" }} selected{{ end }}>All 2FA</option>
+          <option value="enabled"{{ if eq .Filters.TwoFA "enabled" }} selected{{ end }}>2FA on</option>
+          <option value="disabled"{{ if eq .Filters.TwoFA "disabled" }} selected{{ end }}>2FA off</option>
+        </select>
+
+        <!-- Sort -->
+        <select name="sort"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          <option value=""{{ if eq .Filters.Sort "" }} selected{{ end }}>Newest first</option>
+          <option value="oldest"{{ if eq .Filters.Sort "oldest" }} selected{{ end }}>Oldest first</option>
+          <option value="name_asc"{{ if eq .Filters.Sort "name_asc" }} selected{{ end }}>Name A→Z</option>
+          <option value="name_desc"{{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Name Z→A</option>
+        </select>
+
+        <button type="submit"
+                class="rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
+          Apply
+        </button>
+
+        {{ if or .Filters.Search .Filters.Role .Filters.Provider .Filters.TwoFA .Filters.Sort }}
+        <a href="/root/users"
+           class="flex items-center rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">
+          Clear
+        </a>
+        {{ end }}
+      </div>
+    </form>
 
     {{ if .Error }}
     <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
@@ -40,12 +100,13 @@
             <div class="truncate text-sm text-zinc-500">{{ .Email }}</div>
             <div class="mt-1 flex items-center gap-3 text-xs text-zinc-500">
               {{ if .GitHubLogin }}<a href="https://github.com/{{ .GitHubLogin }}" target="_blank" rel="noopener" class="hover:underline">@{{ .GitHubLogin }}</a>{{ end }}
+              {{ if .TOTPEnabled }}<span class="text-emerald-600">2FA</span>{{ end }}
               <span>{{ .CreatedAt.Format "2006-01-02" }}</span>
             </div>
           </div>
         </li>
         {{ else }}
-        <li class="px-4 py-8 text-center text-zinc-500">No users yet.</li>
+        <li class="px-4 py-8 text-center text-zinc-500">No users found.</li>
         {{ end }}
       </ul>
 
@@ -58,6 +119,7 @@
               <th class="px-5 py-2 font-medium">Email</th>
               <th class="px-5 py-2 font-medium">GitHub</th>
               <th class="px-5 py-2 font-medium">Role</th>
+              <th class="px-5 py-2 font-medium">2FA</th>
               <th class="px-5 py-2 font-medium">Joined</th>
             </tr>
           </thead>
@@ -88,11 +150,18 @@
                 <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">User</span>
                 {{ end }}
               </td>
+              <td class="px-5 py-3">
+                {{ if .TOTPEnabled }}
+                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">On</span>
+                {{ else }}
+                <span class="text-zinc-400">&mdash;</span>
+                {{ end }}
+              </td>
               <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
             </tr>
             {{ else }}
             <tr>
-              <td colspan="5" class="px-5 py-8 text-center text-zinc-500">No users yet.</td>
+              <td colspan="6" class="px-5 py-8 text-center text-zinc-500">No users found.</td>
             </tr>
             {{ end }}
           </tbody>
@@ -102,12 +171,12 @@
       {{ if or .HasPrev .HasNext }}
       <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
         {{ if .HasPrev }}
-        <a href="?page={{ .PrevPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
+        <a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
         {{ else }}
         <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
         {{ end }}
         {{ if .HasNext }}
-        <a href="?page={{ .NextPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
+        <a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
         {{ else }}
         <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
         {{ end }}
