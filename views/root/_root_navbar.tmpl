@@ -2,6 +2,7 @@
      class="sticky top-0 z-20 border-b border-zinc-200 bg-white/80 backdrop-blur">
   <div class="mx-auto max-w-5xl px-4 sm:px-6">
     <div class="flex h-14 items-center justify-between">
+
       <!-- Brand + search -->
       <div class="flex items-center gap-4">
         <a href="/root" class="flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-900">
@@ -13,7 +14,7 @@
           <span class="hidden text-zinc-500 sm:inline">root</span>
         </a>
 
-        <!-- Global search -->
+        <!-- Global search (desktop) -->
         <div class="relative hidden md:block"
              x-data="{
                q: '',
@@ -81,33 +82,79 @@
         </div>
       </div>
 
-      <!-- Right side: nav links + actions -->
+      <!-- Right side: nav links + More dropdown + actions -->
       <div class="hidden items-center gap-1 md:flex">
         {{ $active := .ActiveNav }}
+
         <a href="/root/ais"
-           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "ais" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+           class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "ais" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+          </svg>
           AIs
         </a>
         <a href="/root/lists"
-           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+           class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
           Lists
         </a>
         <a href="/root/users"
-           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+           class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          </svg>
           Users
         </a>
-        <a href="/root/categories"
-           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "categories" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-          Categories
-        </a>
-        <a href="/root/genera"
-           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "genera" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-          Genera
-        </a>
-        <a href="/root/artifacts"
-           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "artifacts" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-          Artifacts
-        </a>
+
+        <!-- More dropdown -->
+        <div class="relative"
+             x-data="{ more: false }"
+             @click.outside="more = false"
+             @keydown.escape.window="more = false">
+          <button type="button"
+                  @click="more = !more"
+                  class="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium {{ if or (eq $active "categories") (eq $active "genera") (eq $active "artifacts") }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+            More
+            <svg class="h-3.5 w-3.5 transition-transform duration-150" :class="more ? 'rotate-180' : ''"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <div x-show="more"
+               x-cloak
+               x-transition:enter="transition ease-out duration-100"
+               x-transition:enter-start="opacity-0 scale-95"
+               x-transition:enter-end="opacity-100 scale-100"
+               class="absolute right-0 top-full z-50 mt-1.5 w-44 rounded-xl border border-zinc-200 bg-white py-1.5 shadow-lg">
+            <p class="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Taxonomy</p>
+            <a href="/root/categories"
+               class="flex items-center gap-2.5 px-3 py-2 text-sm {{ if eq $active "categories" }}bg-zinc-50 font-medium text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+              <svg class="h-4 w-4 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+              </svg>
+              Categories
+            </a>
+            <a href="/root/genera"
+               class="flex items-center gap-2.5 px-3 py-2 text-sm {{ if eq $active "genera" }}bg-zinc-50 font-medium text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+              <svg class="h-4 w-4 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+              </svg>
+              Genera
+            </a>
+            <div class="my-1.5 border-t border-zinc-100"></div>
+            <p class="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Schema</p>
+            <a href="/root/artifacts"
+               class="flex items-center gap-2.5 px-3 py-2 text-sm {{ if eq $active "artifacts" }}bg-zinc-50 font-medium text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+              <svg class="h-4 w-4 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+              </svg>
+              Artifacts
+            </a>
+          </div>
+        </div>
 
         <div class="ml-2 flex items-center gap-2 border-l border-zinc-200 pl-3">
           <a href="/"
@@ -139,7 +186,7 @@
       </button>
     </div>
 
-    <!-- Mobile search bar (always visible on small screens) -->
+    <!-- Mobile search bar -->
     <div class="border-t border-zinc-100 py-2 md:hidden"
          x-data="{
            q: '',
@@ -211,36 +258,41 @@
          id="root-mobile-menu"
          class="border-t border-zinc-200 pb-3 pt-2 md:hidden">
       {{ $active := .ActiveNav }}
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-0.5">
         <a href="/root"
            class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "dashboard" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
           Dashboard
-        </a>
-        <a href="/root/users"
-           class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
-          Users
         </a>
         <a href="/root/ais"
            class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "ais" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
           AIs
         </a>
-        <a href="/root/categories"
-           class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "categories" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
-          Categories
-        </a>
-        <a href="/root/genera"
-           class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "genera" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
-          Genera
-        </a>
         <a href="/root/lists"
            class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
           Lists
         </a>
-        <a href="/root/artifacts"
-           class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "artifacts" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
-          Artifacts
+        <a href="/root/users"
+           class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
+          Users
         </a>
+
+        <div class="mt-2 border-t border-zinc-100 pt-2">
+          <p class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">More</p>
+          <a href="/root/categories"
+             class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "categories" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
+            Categories
+          </a>
+          <a href="/root/genera"
+             class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "genera" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
+            Genera
+          </a>
+          <a href="/root/artifacts"
+             class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "artifacts" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
+            Artifacts
+          </a>
+        </div>
       </div>
+
       <div class="mt-3 flex items-center justify-between border-t border-zinc-200 pt-3">
         <span class="text-xs text-zinc-400">{{ appDomain }}</span>
         <div class="flex items-center gap-2">
@@ -257,5 +309,6 @@
         </div>
       </div>
     </div>
+
   </div>
 </nav>
