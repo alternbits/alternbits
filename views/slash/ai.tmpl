@@ -8,6 +8,29 @@
   <title>Not found — {{ appName }}</title>
   {{ end }}
   {{ template "_slash_head.tmpl" . }}
+  <style>
+    .markdown-body h1 { font-size: 1.75rem; font-weight: 800; margin: 1.5rem 0 0.75rem; }
+    .markdown-body h2 { font-size: 1.375rem; font-weight: 700; margin: 1.25rem 0 0.6rem; }
+    .markdown-body h3 { font-size: 1.125rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+    .markdown-body p  { margin: 0.75rem 0; line-height: 1.7; }
+    .markdown-body ul, .markdown-body ol { margin: 0.75rem 0; padding-left: 1.5rem; }
+    .markdown-body ul { list-style-type: disc; }
+    .markdown-body ol { list-style-type: decimal; }
+    .markdown-body li { margin: 0.25rem 0; line-height: 1.6; }
+    .markdown-body a  { color: #f97316; text-decoration: underline; }
+    .markdown-body a:hover { color: #fb923c; }
+    .markdown-body code { font-family: ui-monospace, monospace; font-size: 0.875em; background: rgba(0,0,0,0.06); padding: 0.15em 0.4em; border-radius: 4px; }
+    .dark .markdown-body code { background: rgba(255,255,255,0.1); }
+    .markdown-body pre  { background: rgba(0,0,0,0.06); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+    .dark .markdown-body pre { background: rgba(255,255,255,0.07); }
+    .markdown-body pre code { background: none; padding: 0; }
+    .markdown-body blockquote { border-left: 3px solid #e5e7eb; padding-left: 1rem; color: #6b7280; margin: 1rem 0; }
+    .dark .markdown-body blockquote { border-left-color: #4A4854; color: #9ca3af; }
+    .markdown-body hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+    .dark .markdown-body hr { border-top-color: #4A4854; }
+    .markdown-body strong { font-weight: 700; }
+    .markdown-body em { font-style: italic; }
+  </style>
 </head>
 <body x-data="{
   darkMode: document.documentElement.classList.contains('dark'),
@@ -75,7 +98,7 @@
         {{ if .Description }}
         <section class="mb-6 rounded-xl border border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-6 py-5">
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">About</h2>
-          <p class="text-sm leading-relaxed text-zinc-700 dark:text-white">{{ .Description }}</p>
+          <div class="markdown-body text-sm text-zinc-700 dark:text-white">{{ markdownHTML .Description }}</div>
         </section>
         {{ else }}
         <section class="mb-6 rounded-xl border border-dashed border-zinc-200 dark:border-[#4A4854] px-6 py-10 text-center">
