@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} · Edit user</title>
+  {{ template "_root_head.tmpl" . }}
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_root_navbar.tmpl" . }}
+
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8">
+      <a href="/root/users" class="mb-3 inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Users
+      </a>
+      <h1 class="text-2xl font-semibold tracking-tight">Edit user</h1>
+      {{ with .User }}<p class="mt-1 text-sm text-zinc-500">ID {{ .ID }} &middot; joined {{ .CreatedAt.Format "Jan 2, 2006" }}</p>{{ end }}
+    </header>
+
+    {{ if .Error }}
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
+    {{ end }}
+
+    <form method="POST" action="/root/users/{{ .User.ID }}" class="space-y-5">
+
+      <!-- Profile -->
+      <div class="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="text-sm font-semibold text-zinc-700">Profile</h2>
+
+        {{ with .User }}
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="name" class="block text-sm font-medium text-zinc-700">Name</label>
+            <input type="text" id="name" name="name" value="{{ .Name }}"
+                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          </div>
+          <div>
+            <label for="username" class="block text-sm font-medium text-zinc-700">Username</label>
+            <input type="text" id="username" name="username" value="{{ .Username }}"
+                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          </div>
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-zinc-700">Email <span class="text-red-500">*</span></label>
+          <input type="email" id="email" name="email" required value="{{ .Email }}"
+                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        </div>
+
+        <div>
+          <label for="bio" class="block text-sm font-medium text-zinc-700">Bio</label>
+          <textarea id="bio" name="bio" rows="3"
+                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">{{ .Bio }}</textarea>
+        </div>
+
+        <div>
+          <label for="avatar_url" class="block text-sm font-medium text-zinc-700">Avatar URL</label>
+          <div class="mt-1 flex items-center gap-3">
+            {{ if .AvatarURL }}
+            <img src="{{ .AvatarURL }}" alt="" class="h-9 w-9 shrink-0 rounded-full bg-zinc-100 object-cover">
+            {{ else }}
+            <div class="h-9 w-9 shrink-0 rounded-full bg-zinc-200"></div>
+            {{ end }}
+            <input type="url" id="avatar_url" name="avatar_url" value="{{ .AvatarURL }}" placeholder="https://…"
+                   class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          </div>
+        </div>
+        {{ end }}
+      </div>
+
+      <!-- Role -->
+      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Role</h2>
+        {{ with .User }}
+        <label class="flex cursor-pointer items-start gap-3">
+          <input type="checkbox" name="is_admin" {{ if .IsAdmin }}checked{{ end }}
+                 class="mt-0.5 h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+          <div>
+            <span class="text-sm font-medium text-zinc-900">Superuser</span>
+            <p class="text-xs text-zinc-500">Grants access to the /root admin area and all admin operations.</p>
+          </div>
+        </label>
+        {{ end }}
+      </div>
+
+      <!-- Connected accounts (read-only) -->
+      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Connected accounts</h2>
+        {{ with .User }}
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-center justify-between">
+            <dt class="text-zinc-500">GitHub</dt>
+            <dd class="font-medium text-zinc-900">
+              {{ if .GitHubLogin }}<a href="https://github.com/{{ .GitHubLogin }}" target="_blank" rel="noopener" class="hover:underline">@{{ .GitHubLogin }}</a>{{ else }}<span class="text-zinc-400">—</span>{{ end }}
+            </dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-zinc-500">Google</dt>
+            <dd class="font-medium text-zinc-900">
+              {{ if .GoogleID }}<span>Connected</span>{{ else }}<span class="text-zinc-400">—</span>{{ end }}
+            </dd>
+          </div>
+        </dl>
+        {{ end }}
+      </div>
+
+      <!-- Security -->
+      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Security</h2>
+        {{ with .User }}
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-zinc-900">Two-factor authentication</p>
+            <p class="text-xs text-zinc-500">{{ if .TOTPEnabled }}Enabled via authenticator app.{{ else }}Not enabled.{{ end }}</p>
+          </div>
+          {{ if .TOTPEnabled }}
+          <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">On</span>
+          {{ else }}
+          <span class="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-500">Off</span>
+          {{ end }}
+        </div>
+        {{ if .TOTPEnabled }}
+        <label class="mt-4 flex cursor-pointer items-start gap-3 rounded-lg border border-red-100 bg-red-50 p-3">
+          <input type="checkbox" name="disable_totp"
+                 class="mt-0.5 h-4 w-4 rounded border-red-300 text-red-600 focus:ring-red-500">
+          <div>
+            <span class="text-sm font-medium text-red-700">Disable 2FA for this user</span>
+            <p class="text-xs text-red-600">Removes the TOTP secret and recovery codes. The user will need to re-enroll.</p>
+          </div>
+        </label>
+        {{ end }}
+        {{ end }}
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <a href="/root/users" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
+        <button type="submit"
+                class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+          Save changes
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  {{ template "_root_footer.tmpl" . }}
+</body>
+</html>

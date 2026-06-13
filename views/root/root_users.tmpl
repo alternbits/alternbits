@@ -102,6 +102,7 @@
               {{ if .GitHubLogin }}<a href="https://github.com/{{ .GitHubLogin }}" target="_blank" rel="noopener" class="hover:underline">@{{ .GitHubLogin }}</a>{{ end }}
               {{ if .TOTPEnabled }}<span class="text-emerald-600">2FA</span>{{ end }}
               <span>{{ .CreatedAt.Format "2006-01-02" }}</span>
+              <a href="/root/users/{{ .ID }}/edit" class="ml-auto text-xs font-medium text-zinc-500 hover:text-zinc-900">Edit</a>
             </div>
           </div>
         </li>
@@ -121,6 +122,7 @@
               <th class="px-5 py-2 font-medium">Role</th>
               <th class="px-5 py-2 font-medium">2FA</th>
               <th class="px-5 py-2 font-medium">Joined</th>
+              <th class="px-5 py-2 font-medium"></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100">
@@ -158,10 +160,13 @@
                 {{ end }}
               </td>
               <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
+              <td class="px-5 py-3 text-right">
+                <a href="/root/users/{{ .ID }}/edit" class="text-xs font-medium text-zinc-500 hover:text-zinc-900">Edit</a>
+              </td>
             </tr>
             {{ else }}
             <tr>
-              <td colspan="6" class="px-5 py-8 text-center text-zinc-500">No users found.</td>
+              <td colspan="7" class="px-5 py-8 text-center text-zinc-500">No users found.</td>
             </tr>
             {{ end }}
           </tbody>
