@@ -21,13 +21,14 @@
                open: false,
                active: -1,
                sections: [
-                 { label: 'AIs',        href: '/root/ais'        },
-                 { label: 'Lists',      href: '/root/lists'      },
-                 { label: 'Users',      href: '/root/users'      },
-                 { label: 'Categories', href: '/root/categories' },
-                 { label: 'Genera',     href: '/root/genera'     },
-                 { label: 'Artifacts',  href: '/root/artifacts'  },
-                 { label: 'Pages',      href: '/root/pages'      },
+                 { label: 'AIs',          href: '/root/ais'          },
+                 { label: 'Lists',        href: '/root/lists'        },
+                 { label: 'Users',        href: '/root/users'        },
+                 { label: 'Categories',   href: '/root/categories'   },
+                 { label: 'Genera',       href: '/root/genera'       },
+                 { label: 'Artifacts',    href: '/root/artifacts'    },
+                 { label: 'Pages',        href: '/root/pages'        },
+                 { label: 'Alternatives', href: '/root/alternatives' },
                ],
                go(href) {
                  if (this.q.trim()) window.location.href = href + '?q=' + encodeURIComponent(this.q.trim());
@@ -116,7 +117,7 @@
              @keydown.escape.window="more = false">
           <button type="button"
                   @click="more = !more"
-                  class="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium {{ if or (eq $active "categories") (eq $active "genera") (eq $active "artifacts") (eq $active "pages") }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+                  class="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium {{ if or (eq $active "categories") (eq $active "genera") (eq $active "artifacts") (eq $active "pages") (eq $active "alternatives") }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
             More
             <svg class="h-3.5 w-3.5 transition-transform duration-150" :class="more ? 'rotate-180' : ''"
                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -163,6 +164,15 @@
               </svg>
               Pages
             </a>
+            <div class="my-1.5 border-t border-zinc-100"></div>
+            <p class="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Relations</p>
+            <a href="/root/alternatives"
+               class="flex items-center gap-2.5 px-3 py-2 text-sm {{ if eq $active "alternatives" }}bg-zinc-50 font-medium text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+              <svg class="h-4 w-4 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
+              </svg>
+              Alternatives
+            </a>
           </div>
         </div>
 
@@ -203,13 +213,14 @@
            open: false,
            active: -1,
            sections: [
-             { label: 'AIs',        href: '/root/ais'        },
-             { label: 'Lists',      href: '/root/lists'      },
-             { label: 'Users',      href: '/root/users'      },
-             { label: 'Categories', href: '/root/categories' },
-             { label: 'Genera',     href: '/root/genera'     },
-             { label: 'Artifacts',  href: '/root/artifacts'  },
-             { label: 'Pages',      href: '/root/pages'      },
+             { label: 'AIs',          href: '/root/ais'          },
+             { label: 'Lists',        href: '/root/lists'        },
+             { label: 'Users',        href: '/root/users'        },
+             { label: 'Categories',   href: '/root/categories'   },
+             { label: 'Genera',       href: '/root/genera'       },
+             { label: 'Artifacts',    href: '/root/artifacts'    },
+             { label: 'Pages',        href: '/root/pages'        },
+             { label: 'Alternatives', href: '/root/alternatives' },
            ],
            go(href) {
              if (this.q.trim()) window.location.href = href + '?q=' + encodeURIComponent(this.q.trim());
@@ -304,6 +315,10 @@
           <a href="/root/pages"
              class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "pages" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
             Pages
+          </a>
+          <a href="/root/alternatives"
+             class="rounded-lg px-3 py-2 text-sm font-medium {{ if eq $active "alternatives" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-700 hover:bg-zinc-50{{ end }}">
+            Alternatives
           </a>
         </div>
       </div>

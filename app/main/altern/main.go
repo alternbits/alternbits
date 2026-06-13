@@ -149,6 +149,14 @@ func main() {
 			authed.POST("/ais", root.AICreate(database.DB, r2svc))
 			authed.GET("/ais/:id/edit", root.AIEditForm(database.DB))
 			authed.POST("/ais/:id", root.AIUpdate(database.DB, r2svc))
+			authed.GET("/ais/search", root.AIsSearchAPI(database.DB))
+			authed.GET("/ais/:id/alternatives", root.AIAlternativesAPI(database.DB))
+			authed.GET("/alternatives", root.AlternativesListHandler(database.DB))
+			authed.GET("/alternatives/new", root.AlternativeNewForm(database.DB))
+			authed.POST("/alternatives", root.AlternativeCreate(database.DB))
+			authed.POST("/alternatives/:id/approve", root.AlternativeApprove(database.DB))
+			authed.POST("/alternatives/:id/reject", root.AlternativeReject(database.DB))
+			authed.POST("/alternatives/:id/delete", root.AlternativeDelete(database.DB))
 		}
 	}
 

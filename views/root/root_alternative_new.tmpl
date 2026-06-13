@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} · New alternative</title>
+  {{ template "_root_head.tmpl" . }}
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_root_navbar.tmpl" . }}
+
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8">
+      <a href="/root/alternatives" class="mb-3 inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Alternatives
+      </a>
+      <h1 class="text-2xl font-semibold tracking-tight">New alternative</h1>
+      <p class="mt-1 text-sm text-zinc-500">Link two AIs as alternatives to each other.</p>
+    </header>
+
+    {{ if .Error }}
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
+    {{ end }}
+
+    <form method="POST" action="/root/alternatives">
+
+      <div class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+
+        <!-- AI picker -->
+        <div x-data="aiSearch('ai_id', '{{ .AIIDStr }}', '{{ .AILabel }}')" class="relative">
+          <label class="block text-sm font-medium text-zinc-700">AI <span class="text-red-500">*</span></label>
+          <p class="mb-1.5 mt-0.5 text-xs text-zinc-400">The AI that has an alternative.</p>
+
+          <!-- Selected pill -->
+          <div x-show="selectedId" class="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
+            <span class="flex-1 text-sm font-medium text-zinc-800" x-text="selectedLabel"></span>
+            <button type="button" @click="clear()"
+                    class="text-zinc-400 hover:text-zinc-600">
+              <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Search input -->
+          <div x-show="!selectedId" class="relative">
+            <input type="text" x-model="query" @input="fetch()" @focus="fetch()"
+                   @keydown.escape="open = false" @click.outside="open = false"
+                   placeholder="Search by name or slug…"
+                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+            <div x-show="open" x-cloak
+                 class="absolute left-0 top-full z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+              <template x-for="item in results" :key="item.id">
+                <button type="button" @click="select(item)"
+                        class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50">
+                  <span class="flex-1 truncate" x-text="item.label"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <input type="hidden" name="ai_id" :value="selectedId">
+        </div>
+
+        <!-- Arrow divider -->
+        <div class="flex items-center gap-3">
+          <div class="h-px flex-1 bg-zinc-100"></div>
+          <div class="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
+            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/>
+            </svg>
+            has alternative
+          </div>
+          <div class="h-px flex-1 bg-zinc-100"></div>
+        </div>
+
+        <!-- Alternative AI picker -->
+        <div x-data="aiSearch('alternative_ai_id', '{{ .AltAIIDStr }}', '{{ .AltAILabel }}', true)" class="relative">
+          <label class="block text-sm font-medium text-zinc-700">Alternative AI <span class="text-red-500">*</span></label>
+          <p class="mb-1.5 mt-0.5 text-xs text-zinc-400">The AI that is the alternative.</p>
+
+          <!-- Selected pill -->
+          <div x-show="selectedId" class="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
+            <span class="flex-1 text-sm font-medium text-zinc-800" x-text="selectedLabel"></span>
+            <button type="button" @click="clear()"
+                    class="text-zinc-400 hover:text-zinc-600">
+              <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Search input -->
+          <div x-show="!selectedId" class="relative">
+            <input type="text" x-model="query" @input="fetch()" @focus="fetch()"
+                   @keydown.escape="open = false" @click.outside="open = false"
+                   placeholder="Search by name or slug…"
+                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+            <div x-show="open" x-cloak
+                 class="absolute left-0 top-full z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+              <template x-for="item in results" :key="item.id">
+                <button type="button" @click="select(item)"
+                        class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50">
+                  <span class="flex-1 truncate" x-text="item.label"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <input type="hidden" name="alternative_ai_id" :value="selectedId">
+
+          <!-- Approved alternatives of the selected AI — bulk-add to main AI -->
+          <div x-show="relatedAlts.length > 0" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+            <p class="mb-1 text-xs font-semibold text-zinc-500">
+              Also add as alternatives to the main AI
+            </p>
+            <p class="mb-2 text-[11px] text-zinc-400">
+              These are approved alternatives of <span class="text-zinc-600" x-text="selectedLabel"></span>. Check any you also want linked to the main AI.
+            </p>
+            <div class="space-y-1">
+              <template x-for="alt in relatedAlts" :key="alt.id">
+                <div class="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm">
+                  <label class="flex flex-1 min-w-0 cursor-pointer items-center gap-2">
+                    <input type="checkbox" :value="alt.id"
+                           :checked="extras.includes(alt.id)"
+                           @change="toggleExtra(alt.id)"
+                           class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                    <span class="min-w-0 flex-1 truncate font-medium text-zinc-800" x-text="alt.name"></span>
+                    <span class="shrink-0 text-[11px] text-zinc-400" x-text="alt.slug"></span>
+                  </label>
+                  <label class="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-zinc-500"
+                         :class="extras.includes(alt.id) ? '' : 'pointer-events-none opacity-40'">
+                    <input type="checkbox" :value="alt.id"
+                           :checked="twoWayExtras.includes(alt.id)"
+                           :disabled="!extras.includes(alt.id)"
+                           @change="toggleTwoWay(alt.id)"
+                           class="h-3.5 w-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                    Two-way
+                  </label>
+                </div>
+              </template>
+            </div>
+            <input type="hidden" name="extra_ai_ids" :value="extras.join(',')">
+            <input type="hidden" name="extra_twoway_ids" :value="twoWayExtras.join(',')">
+          </div>
+        </div>
+
+        <div class="border-t border-zinc-100 pt-4 space-y-4">
+
+          <!-- Two-way option -->
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-zinc-200 p-3 hover:bg-zinc-50"
+                 x-data="{ on: {{ .TwoWay }} }">
+            <input type="checkbox" name="two_way" x-model="on"
+                   class="mt-0.5 h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+            <div>
+              <span class="text-sm font-medium text-zinc-800">Two-way relationship</span>
+              <p class="mt-0.5 text-xs text-zinc-500">Also create the reverse — the second AI will also list the first as an alternative.</p>
+            </div>
+          </label>
+
+          <!-- Status -->
+          <div>
+            <label for="status" class="block text-sm font-medium text-zinc-700">Status</label>
+            <select id="status" name="status"
+                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+              <option value="approved" {{ if eq .Status "approved" }}selected{{ end }}>Approved</option>
+              <option value="pending"  {{ if eq .Status "pending"  }}selected{{ end }}>Pending</option>
+              <option value="rejected" {{ if eq .Status "rejected" }}selected{{ end }}>Rejected</option>
+            </select>
+          </div>
+
+          <!-- Note -->
+          <div>
+            <label for="note" class="block text-sm font-medium text-zinc-700">Note <span class="text-zinc-400 font-normal">(optional)</span></label>
+            <textarea id="note" name="note" rows="2"
+                      class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">{{ .Note }}</textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-between">
+        <a href="/root/alternatives" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
+        <button type="submit"
+                class="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+          Create alternative
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+  function aiSearch(fieldName, initId, initLabel, withRelated) {
+    return {
+      query: initLabel || '',
+      results: [],
+      selectedId: initId || '',
+      selectedLabel: initLabel || '',
+      open: false,
+      _timer: null,
+      relatedAlts: [],
+      extras: [],
+      twoWayExtras: [],
+      async init() {
+        if (withRelated && this.selectedId) {
+          await this.loadRelated(this.selectedId);
+        }
+      },
+      fetch() {
+        const q = this.query.trim();
+        if (!q) { this.results = []; this.open = false; return; }
+        clearTimeout(this._timer);
+        this._timer = setTimeout(async () => {
+          const res = await fetch('/root/ais/search?q=' + encodeURIComponent(q));
+          this.results = await res.json();
+          this.open = this.results.length > 0;
+        }, 200);
+      },
+      select(item) {
+        this.selectedId = item.id;
+        this.selectedLabel = item.label;
+        this.query = item.label;
+        this.open = false;
+        if (withRelated) {
+          this.extras = [];
+          this.twoWayExtras = [];
+          this.loadRelated(item.id);
+        }
+      },
+      async loadRelated(id) {
+        const res = await fetch('/root/ais/' + id + '/alternatives');
+        this.relatedAlts = await res.json();
+      },
+      toggleExtra(id) {
+        const i = this.extras.indexOf(id);
+        if (i >= 0) {
+          this.extras.splice(i, 1);
+          const j = this.twoWayExtras.indexOf(id);
+          if (j >= 0) this.twoWayExtras.splice(j, 1);
+        } else {
+          this.extras.push(id);
+        }
+      },
+      toggleTwoWay(id) {
+        if (!this.extras.includes(id)) return;
+        const i = this.twoWayExtras.indexOf(id);
+        if (i >= 0) this.twoWayExtras.splice(i, 1);
+        else this.twoWayExtras.push(id);
+      },
+      clear() {
+        this.selectedId = '';
+        this.selectedLabel = '';
+        this.query = '';
+        this.results = [];
+        this.open = false;
+        this.relatedAlts = [];
+        this.extras = [];
+        this.twoWayExtras = [];
+      },
+    };
+  }
+  </script>
+
+  {{ template "_root_footer.tmpl" . }}
+</body>
+</html>
