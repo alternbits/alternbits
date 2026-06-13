@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,6 +18,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/yuin/goldmark"
 )
 
 func main() {
@@ -29,6 +31,13 @@ func main() {
 	r.SetFuncMap(template.FuncMap{
 		"appName":   func() string { return config.C.App.Name },
 		"appDomain": func() string { return config.C.App.Domain },
+		"markdownHTML": func(s string) template.HTML {
+			var buf bytes.Buffer
+			if err := goldmark.Convert([]byte(s), &buf); err != nil {
+				return template.HTML(template.HTMLEscapeString(s))
+			}
+			return template.HTML(buf.String())
+		},
 	})
 	r.LoadHTMLGlob("views/*/*.tmpl")
 	r.Static("/static", "./static")

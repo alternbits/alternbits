@@ -3,6 +3,13 @@
 <head>
   <title>{{ appName }} · Edit page</title>
   {{ template "_root_head.tmpl" . }}
+  <link rel="stylesheet" href="/static/js/easymde.min.css">
+  <style>
+    .EasyMDEContainer .CodeMirror { border-radius: 0 0 0.5rem 0.5rem; border-color: #d4d4d8; font-size: 0.875rem; min-height: 200px; }
+    .EasyMDEContainer .CodeMirror-focused { border-color: #18181b; box-shadow: 0 0 0 1px #18181b; }
+    .EasyMDEContainer .editor-toolbar { border-color: #d4d4d8; border-radius: 0.5rem 0.5rem 0 0; }
+    .EasyMDEContainer .editor-toolbar button:hover, .EasyMDEContainer .editor-toolbar button.active { background: #f4f4f5; }
+  </style>
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
@@ -41,8 +48,7 @@
 
       <div>
         <label for="description" class="block text-sm font-medium text-zinc-700">Description</label>
-        <textarea id="description" name="description" rows="6"
-                  class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">{{ .Description }}</textarea>
+        <textarea id="description" name="description">{{ .Description }}</textarea>
       </div>
 
       <div class="flex items-center justify-between pt-2">
@@ -57,5 +63,14 @@
   </div>
 
   {{ template "_root_footer.tmpl" . }}
+  <script src="/static/js/easymde.min.js"></script>
+  <script>
+    new EasyMDE({
+      element: document.getElementById('description'),
+      spellChecker: false,
+      toolbar: ['bold','italic','heading','|','quote','unordered-list','ordered-list','|','link','|','preview','side-by-side','fullscreen'],
+      minHeight: '200px',
+    });
+  </script>
 </body>
 </html>
