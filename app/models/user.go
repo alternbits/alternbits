@@ -17,10 +17,10 @@ type User struct {
 	GitHubLogin string  `gorm:"index"`
 	GoogleID    *string `gorm:"uniqueIndex"`
 
-	TOTPSecret     string
-	TOTPEnabled    bool `gorm:"default:false"`
-	RecoveryCodes  string
+	TOTPSecret    string
+	TOTPEnabled   bool `gorm:"default:false"`
+	RecoveryCodes string
 
-	AIs []AI `gorm:"foreignKey:UserID"`
+	AIs   []AI   `gorm:"foreignKey:UserID"`
 	Lists []List `gorm:"foreignKey:UserID"`
 }

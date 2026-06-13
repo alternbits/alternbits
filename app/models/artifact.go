@@ -17,8 +17,8 @@ const (
 
 type Artifact struct {
 	gorm.Model
-	Name   string `gorm:"not null"`
-	Slug   string `gorm:"uniqueIndex;not null"`
+	Name string `gorm:"not null"`
+	Slug string `gorm:"uniqueIndex;not null"`
 
 	Fields []ArtifactField `gorm:"foreignKey:ArtifactID"`
 }

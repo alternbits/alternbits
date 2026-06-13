@@ -112,7 +112,6 @@ func (c *Config) OAuthGoogleEnabled() bool {
 	return c.GoogleOAuth.ClientID != "" && c.GoogleOAuth.ClientSecret != ""
 }
 
-
 func (c *Config) R2Enabled() bool {
 	return c.CloudflareR2.AccountID != "" &&
 		c.CloudflareR2.AccessKeyID != "" &&
