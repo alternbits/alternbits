@@ -118,6 +118,7 @@ func main() {
 			authed.GET("", root.DashboardHandler(database.DB))
 			authed.GET("/", root.DashboardHandler(database.DB))
 			authed.GET("/users", root.UsersListHandler(database.DB))
+			authed.GET("/users/search", root.UsersSearchAPI(database.DB))
 			authed.GET("/users/:id/edit", root.UserEditForm(database.DB))
 			authed.POST("/users/:id", root.UserUpdate(database.DB))
 			authed.GET("/ais", root.AIsListHandler(database.DB))

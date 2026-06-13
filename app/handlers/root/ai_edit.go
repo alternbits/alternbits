@@ -28,7 +28,7 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		cats, genera, users := loadAIFormDeps(db)
+		cats, genera := loadAIFormDeps(db)
 
 		selCatIDs := make([]uint, 0, len(ai.Categories))
 		for _, cat := range ai.Categories {
@@ -40,8 +40,10 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		ownerID := ""
+		ownerLabel := ""
 		if ai.UserID != nil {
 			ownerID = strconv.FormatUint(uint64(*ai.UserID), 10)
+			ownerLabel = ownerLabelByID(db, ownerID)
 		}
 
 		selectedArtifactID := ""
@@ -58,9 +60,9 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 			"R2Enabled":           config.C.R2Enabled(),
 			"AI":                  ai,
 			"OwnerID":             ownerID,
+			"OwnerLabel":          ownerLabel,
 			"Categories":          cats,
 			"Genera":              genera,
-			"Users":               users,
 			"SelectedCategoryIDs": selCatIDs,
 			"SelectedGenusIDs":    selGenIDs,
 			"ArtifactsJSON":       loadArtifactsForForm(db),
@@ -120,7 +122,7 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		}
 
 		renderErr := func(status int, msg string) {
-			cats, genera, users := loadAIFormDeps(db)
+			cats, genera := loadAIFormDeps(db)
 			ownerIDStr := ownerID
 			if ownerIDStr == "" && ai.UserID != nil {
 				ownerIDStr = strconv.FormatUint(uint64(*ai.UserID), 10)
@@ -130,9 +132,9 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 				"R2Enabled":           config.C.R2Enabled(),
 				"AI":                  ai,
 				"OwnerID":             ownerIDStr,
+				"OwnerLabel":          ownerLabelByID(db, ownerIDStr),
 				"Categories":          cats,
 				"Genera":              genera,
-				"Users":               users,
 				"SelectedCategoryIDs": catIDs,
 				"SelectedGenusIDs":    genIDs,
 				"ArtifactsJSON":       loadArtifactsForForm(db),

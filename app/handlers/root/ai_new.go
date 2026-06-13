@@ -31,15 +31,39 @@ type aiFormData struct {
 	Subtitle    string
 	Description string
 	OwnerID     string
+	OwnerLabel  string
 	CategoryIDs []uint
 	GenusIDs    []uint
 }
 
-func loadAIFormDeps(db *gorm.DB) (cats []models.Category, genera []models.Genus, users []models.User) {
+func loadAIFormDeps(db *gorm.DB) (cats []models.Category, genera []models.Genus) {
 	db.Order("name ASC").Find(&cats)
 	db.Order("name ASC").Find(&genera)
-	db.Order("username ASC, name ASC").Find(&users)
 	return
+}
+
+func formatOwnerLabel(u models.User) string {
+	if u.Username != "" && u.Name != "" {
+		return "@" + u.Username + " (" + u.Name + ")"
+	}
+	if u.Username != "" {
+		return "@" + u.Username
+	}
+	if u.Name != "" {
+		return u.Name
+	}
+	return u.Email
+}
+
+func ownerLabelByID(db *gorm.DB, idStr string) string {
+	if idStr == "" {
+		return ""
+	}
+	var u models.User
+	if db.Select("id, name, username, email").First(&u, idStr).Error != nil {
+		return ""
+	}
+	return formatOwnerLabel(u)
 }
 
 type artifactOptionField struct {
@@ -100,14 +124,13 @@ func parseArtifactFormFields(c *gin.Context) (artifactID *uint, data datatypes.J
 
 func AINewForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		cats, genera, users := loadAIFormDeps(db)
+		cats, genera := loadAIFormDeps(db)
 		c.HTML(http.StatusOK, "root_ai_new.tmpl", gin.H{
 			"ActiveNav":          "ais",
 			"R2Enabled":          config.C.R2Enabled(),
 			"Form":               aiFormData{},
 			"Categories":         cats,
 			"Genera":             genera,
-			"Users":              users,
 			"ArtifactsJSON":      loadArtifactsForForm(db),
 			"SelectedArtifactID": "",
 			"ExistingData":       template.JS("{}"),
@@ -132,12 +155,14 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			}
 		}
 
+		ownerID := strings.TrimSpace(c.PostForm("owner_id"))
 		form := aiFormData{
 			Name:        strings.TrimSpace(c.PostForm("name")),
 			Slug:        strings.TrimSpace(c.PostForm("slug")),
 			Subtitle:    strings.TrimSpace(c.PostForm("subtitle")),
 			Description: strings.TrimSpace(c.PostForm("description")),
-			OwnerID:     strings.TrimSpace(c.PostForm("owner_id")),
+			OwnerID:     ownerID,
+			OwnerLabel:  ownerLabelByID(db, ownerID),
 			CategoryIDs: catIDs,
 			GenusIDs:    genIDs,
 		}
@@ -153,14 +178,13 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		}
 
 		renderErr := func(status int, msg string) {
-			cats, genera, users := loadAIFormDeps(db)
+			cats, genera := loadAIFormDeps(db)
 			c.HTML(status, "root_ai_new.tmpl", gin.H{
 				"ActiveNav":          "ais",
 				"R2Enabled":          config.C.R2Enabled(),
 				"Form":               form,
 				"Categories":         cats,
 				"Genera":             genera,
-				"Users":              users,
 				"ArtifactsJSON":      loadArtifactsForForm(db),
 				"SelectedArtifactID": selectedArtifactID,
 				"ExistingData":       existingData,

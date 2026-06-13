@@ -56,17 +56,33 @@
         </div>
 
         <div>
-          <label for="owner_id" class="block text-sm font-medium text-zinc-700">Owner</label>
-          <select id="owner_id" name="owner_id"
-                  class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-            <option value="">— None —</option>
-            {{ $sel := .OwnerID }}
-            {{ range $.Users }}
-            <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $sel }}selected{{ end }}>
-              {{ if .Username }}@{{ .Username }}{{ else if .Name }}{{ .Name }}{{ else }}{{ .Email }}{{ end }}
-            </option>
-            {{ end }}
-          </select>
+          <label class="block text-sm font-medium text-zinc-700">Owner</label>
+          <div x-data="ownerSearch('{{ .OwnerID }}', '{{ .OwnerLabel }}')" class="relative mt-1"
+               @click.outside="open = false">
+            <input type="hidden" name="owner_id" :value="selectedId">
+            <!-- selected pill -->
+            <div x-show="selectedId" class="flex items-center justify-between gap-2 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm">
+              <span class="text-zinc-900" x-text="selectedLabel"></span>
+              <button type="button" @click="clear()" class="text-zinc-400 hover:text-zinc-700">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+              </button>
+            </div>
+            <!-- search input -->
+            <div x-show="!selectedId">
+              <input type="text" x-model="query" @input.debounce.200ms="doSearch()"
+                     placeholder="Search by name, username or email…"
+                     class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+              <div x-show="open" x-cloak
+                   class="absolute z-10 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+                <template x-for="r in results" :key="r.id">
+                  <button type="button" @click="pick(r)"
+                          class="flex w-full px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                          x-text="r.label"></button>
+                </template>
+                <p x-show="results.length === 0 && query.trim()" class="px-3 py-2 text-sm text-zinc-400">No users found.</p>
+              </div>
+            </div>
+          </div>
         </div>
         {{ end }}
       </div>
@@ -210,6 +226,34 @@
       toolbar: ['bold','italic','heading','|','quote','unordered-list','ordered-list','|','link','|','preview','side-by-side','fullscreen'],
       minHeight: '180px',
     });
+
+    function ownerSearch(initId, initLabel) {
+      return {
+        selectedId: String(initId || ''),
+        selectedLabel: initLabel || '',
+        query: '',
+        results: [],
+        open: false,
+        async doSearch() {
+          const q = this.query.trim();
+          if (!q) { this.results = []; this.open = false; return; }
+          const res = await fetch('/root/users/search?q=' + encodeURIComponent(q));
+          this.results = await res.json();
+          this.open = true;
+        },
+        pick(r) {
+          this.selectedId = String(r.id);
+          this.selectedLabel = r.label;
+          this.query = '';
+          this.results = [];
+          this.open = false;
+        },
+        clear() {
+          this.selectedId = '';
+          this.selectedLabel = '';
+        },
+      };
+    }
 
     function aiArtifact(artifacts, initialId, initialData) {
       return {
