@@ -2,6 +2,7 @@ package root
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -28,17 +29,47 @@ type listsPage struct {
 	HasNext    bool
 }
 
+type listsFilters struct {
+	Search   string
+	Source   string // "auto" | "manual" | ""
+	Sort     string
+	QueryStr string
+}
+
 func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		page, _ := strconv.Atoi(c.Query("page"))
 		if page < 1 {
 			page = 1
 		}
-		q := strings.TrimSpace(c.Query("q"))
+
+		search := strings.TrimSpace(c.Query("q"))
+		source := c.Query("source")
+		sort := c.Query("sort")
 
 		base := db.Table("lists").Where("lists.deleted_at IS NULL")
-		if q != "" {
-			base = base.Where("lists.name ILIKE ?", "%"+q+"%")
+		if search != "" {
+			base = base.Where("lists.name ILIKE ? OR lists.slug ILIKE ?", "%"+search+"%", "%"+search+"%")
+		}
+		switch source {
+		case "auto":
+			base = base.Where("lists.is_auto_generated = ?", true)
+		case "manual":
+			base = base.Where("lists.is_auto_generated = ?", false)
+		}
+
+		orderClause := "lists.created_at DESC"
+		switch sort {
+		case "oldest":
+			orderClause = "lists.created_at ASC"
+		case "name_asc":
+			orderClause = "lists.name ASC"
+		case "name_desc":
+			orderClause = "lists.name DESC"
+		case "most_ais":
+			orderClause = "item_count DESC"
+		case "fewest_ais":
+			orderClause = "item_count ASC"
 		}
 
 		var total int64
@@ -56,7 +87,7 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 		if err := base.
 			Select("lists.*, (SELECT COUNT(*) FROM list_ais WHERE list_ais.list_id = lists.id) AS item_count").
 			Preload("User").
-			Order("lists.created_at DESC").
+			Order(orderClause).
 			Offset((page - 1) * listsPerPage).
 			Limit(listsPerPage).
 			Find(&lists).Error; err != nil {
@@ -64,9 +95,29 @@ func ListsListHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		params := url.Values{}
+		if search != "" {
+			params.Set("q", search)
+		}
+		if source != "" {
+			params.Set("source", source)
+		}
+		if sort != "" {
+			params.Set("sort", sort)
+		}
+		queryStr := ""
+		if len(params) > 0 {
+			queryStr = "&" + params.Encode()
+		}
+
 		c.HTML(http.StatusOK, "root_lists.tmpl", gin.H{
 			"ActiveNav": "lists",
-			"Query":     q,
+			"Filters": listsFilters{
+				Search:   search,
+				Source:   source,
+				Sort:     sort,
+				QueryStr: queryStr,
+			},
 			"Page": listsPage{
 				Lists:      lists,
 				Page:       page,
