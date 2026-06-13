@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} · Edit category</title>
+  {{ template "_root_head.tmpl" . }}
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_root_navbar.tmpl" . }}
+
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8">
+      <a href="/root/categories" class="mb-3 inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Categories
+      </a>
+      <h1 class="text-2xl font-semibold tracking-tight">Edit category</h1>
+      {{ with .Category }}<p class="mt-1 text-sm text-zinc-500">ID {{ .ID }} &middot; created {{ .CreatedAt.Format "Jan 2, 2006" }}</p>{{ end }}
+    </header>
+
+    {{ if .Error }}
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
+    {{ end }}
+
+    <form method="POST" action="/root/categories/{{ .Category.ID }}"
+          class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+      {{ with .Category }}
+      <div>
+        <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
+        <input type="text" id="name" name="name" required value="{{ .Name }}"
+               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+      </div>
+
+      <div>
+        <label for="slug" class="block text-sm font-medium text-zinc-700">Slug <span class="text-red-500">*</span></label>
+        <input type="text" id="slug" name="slug" required value="{{ .Slug }}"
+               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+      </div>
+
+      <div>
+        <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
+        <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
+               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+      </div>
+      {{ end }}
+
+      <div>
+        <label for="parent_id" class="block text-sm font-medium text-zinc-700">Parent</label>
+        <select id="parent_id" name="parent_id"
+                class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          <option value="">— None (top-level) —</option>
+          {{ $selected := .ParentID }}
+          {{ range .Parents }}
+          <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $selected }}selected{{ end }}>{{ .Name }}</option>
+          {{ end }}
+        </select>
+        <p class="mt-1 text-xs text-zinc-500">Optional — nest under an existing category.</p>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <a href="/root/categories" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
+        <button type="submit"
+                class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+          Save changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {{ template "_root_footer.tmpl" . }}
+</body>
+</html>
