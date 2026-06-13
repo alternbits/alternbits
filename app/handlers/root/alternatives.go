@@ -2,6 +2,7 @@ package root
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -9,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+type alternativesFilters struct {
+	Search   string
+	Status   string // "pending" | "approved" | "rejected" | ""
+	Source   string // "admin" | "user" | ""
+	Sort     string
+	QueryStr string
+}
 
 func AIAlternativesAPI(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -123,13 +132,72 @@ func aiLabelByID(db *gorm.DB, idStr string) string {
 
 func AlternativesListHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		search := strings.TrimSpace(c.Query("q"))
+		status := c.Query("status")
+		source := c.Query("source")
+		sort := c.Query("sort")
+
+		base := db.Model(&models.Alternative{})
+
+		if search != "" {
+			likeQ := "%" + search + "%"
+			sub := "SELECT id FROM ais WHERE deleted_at IS NULL AND (name ILIKE ? OR slug ILIKE ?)"
+			base = base.Where(
+				"ai_id IN ("+sub+") OR alternative_ai_id IN ("+sub+")",
+				likeQ, likeQ, likeQ, likeQ,
+			)
+		}
+		switch status {
+		case "pending", "approved", "rejected":
+			base = base.Where("status = ?", status)
+		}
+		switch source {
+		case "admin":
+			base = base.Where("suggested_by_user_id IS NULL")
+		case "user":
+			base = base.Where("suggested_by_user_id IS NOT NULL")
+		}
+
+		orderClause := "created_at DESC"
+		switch sort {
+		case "oldest":
+			orderClause = "created_at ASC"
+		case "status":
+			orderClause = "status ASC, created_at DESC"
+		}
+
 		var alts []models.Alternative
-		db.Preload("AI").Preload("AlternativeAI").Preload("SuggestedBy").
-			Order("created_at DESC").Find(&alts)
+		base.Preload("AI").Preload("AlternativeAI").Preload("SuggestedBy").
+			Order(orderClause).Find(&alts)
+
+		params := url.Values{}
+		if search != "" {
+			params.Set("q", search)
+		}
+		if status != "" {
+			params.Set("status", status)
+		}
+		if source != "" {
+			params.Set("source", source)
+		}
+		if sort != "" {
+			params.Set("sort", sort)
+		}
+		queryStr := ""
+		if len(params) > 0 {
+			queryStr = "&" + params.Encode()
+		}
 
 		c.HTML(http.StatusOK, "root_alternatives.tmpl", gin.H{
 			"ActiveNav":    "alternatives",
 			"Alternatives": alts,
+			"Filters": alternativesFilters{
+				Search:   search,
+				Status:   status,
+				Source:   source,
+				Sort:     sort,
+				QueryStr: queryStr,
+			},
 		})
 	}
 }
