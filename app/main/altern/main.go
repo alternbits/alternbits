@@ -55,6 +55,7 @@ func main() {
 	r.GET("/lists/:slug", slash.ListHandler(database.DB))
 	r.GET("/categories", slash.CategoriesHandler(database.DB))
 	r.GET("/categories/:slug", slash.CategoryHandler(database.DB))
+	r.GET("/page/:slug", slash.PageHandler(database.DB))
 
 	userRoutes := r.Group("", middleware.RequireAuth(database.DB))
 	{
@@ -129,6 +130,11 @@ func main() {
 			authed.GET("/genera", root.GeneraListHandler(database.DB))
 			authed.GET("/genera/new", root.GenusNewForm())
 			authed.POST("/genera", root.GenusCreate(database.DB))
+			authed.GET("/pages", root.PagesListHandler(database.DB))
+			authed.GET("/pages/new", root.PageNewForm())
+			authed.POST("/pages", root.PageCreate(database.DB))
+			authed.GET("/pages/:id/edit", root.PageEditForm(database.DB))
+			authed.POST("/pages/:id", root.PageUpdate(database.DB))
 			authed.GET("/ais/new", root.AINewForm(database.DB))
 			authed.POST("/ais", root.AICreate(database.DB, r2svc))
 			authed.GET("/ais/:id/edit", root.AIEditForm(database.DB))

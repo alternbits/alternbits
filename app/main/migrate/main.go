@@ -27,6 +27,7 @@ func main() {
 		&models.ListAI{},
 		&models.Artifact{},
 		&models.ArtifactField{},
+		&models.Page{},
 	); err != nil {
 		log.Fatal("migrate:", err)
 	}

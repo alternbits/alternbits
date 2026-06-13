@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} · Pages</title>
+  {{ template "_root_head.tmpl" . }}
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_root_navbar.tmpl" . }}
+
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8 flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Pages</h1>
+        {{ with .Page }}
+        <p class="mt-1 text-sm text-zinc-500">{{ .Total }} total &middot; page {{ .Page }} of {{ .TotalPages }}.</p>
+        {{ end }}
+      </div>
+      <a href="/root/pages/new"
+         class="shrink-0 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
+        + New page
+      </a>
+    </header>
+
+    {{ if .Error }}
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
+    {{ end }}
+
+    <!-- Filters -->
+    <form method="GET" class="mb-6 flex flex-wrap items-end gap-3">
+      <div class="flex-1 min-w-[180px]">
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Search</label>
+        <input type="text" name="q" value="{{ .Filters.Search }}" placeholder="Title or slug…"
+               class="w-full rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">Sort</label>
+        <select name="sort"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+          <option value=""       {{ if eq .Filters.Sort ""        }} selected{{ end }}>Newest</option>
+          <option value="oldest" {{ if eq .Filters.Sort "oldest"  }} selected{{ end }}>Oldest</option>
+          <option value="name_asc"  {{ if eq .Filters.Sort "name_asc"  }} selected{{ end }}>Title A→Z</option>
+          <option value="name_desc" {{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Title Z→A</option>
+        </select>
+      </div>
+      <button type="submit"
+              class="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
+        Apply
+      </button>
+      {{ if or .Filters.Search .Filters.Sort }}
+      <a href="/root/pages" class="text-sm font-medium text-zinc-500 hover:text-zinc-900">Clear</a>
+      {{ end }}
+    </form>
+
+    {{ with .Page }}
+    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+      <!-- Mobile: card list -->
+      <ul class="divide-y divide-zinc-100 md:hidden">
+        {{ range .Pages }}
+        <li class="px-4 py-3">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <div class="truncate font-medium text-zinc-900">{{ .Title }}</div>
+              <div class="truncate text-xs text-zinc-500">{{ .Slug }}</div>
+              {{ if .Subtitle }}<div class="mt-1 line-clamp-2 text-sm text-zinc-600">{{ .Subtitle }}</div>{{ end }}
+            </div>
+            <a href="/root/pages/{{ .ID }}/edit"
+               class="shrink-0 rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-50">
+              Edit
+            </a>
+          </div>
+        </li>
+        {{ else }}
+        <li class="px-4 py-8 text-center text-zinc-500">No pages yet.</li>
+        {{ end }}
+      </ul>
+
+      <!-- Desktop: table -->
+      <div class="hidden md:block">
+        <table class="w-full text-sm">
+          <thead class="bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
+            <tr>
+              <th class="px-5 py-2 font-medium">Title</th>
+              <th class="px-5 py-2 font-medium">Slug</th>
+              <th class="px-5 py-2 font-medium">Created</th>
+              <th class="px-5 py-2 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100">
+            {{ range .Pages }}
+            <tr class="hover:bg-zinc-50">
+              <td class="px-5 py-3">
+                <div class="font-medium text-zinc-900">{{ .Title }}</div>
+                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 text-xs text-zinc-500">{{ .Subtitle }}</div>{{ end }}
+              </td>
+              <td class="px-5 py-3 text-zinc-700"><code class="rounded bg-zinc-100 px-1.5 py-0.5 text-xs">{{ .Slug }}</code></td>
+              <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
+              <td class="px-5 py-3 text-right">
+                <a href="/root/pages/{{ .ID }}/edit"
+                   class="rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-50">
+                  Edit
+                </a>
+              </td>
+            </tr>
+            {{ else }}
+            <tr>
+              <td colspan="4" class="px-5 py-8 text-center text-zinc-500">No pages yet.</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+
+      {{ if or .HasPrev .HasNext }}
+      <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
+        {{ if .HasPrev }}
+        <a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
+        {{ else }}
+        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
+        {{ end }}
+        {{ if .HasNext }}
+        <a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
+        {{ else }}
+        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
+        {{ end }}
+      </div>
+      {{ end }}
+    </section>
+    {{ end }}
+  </div>
+
+  {{ template "_root_footer.tmpl" . }}
+</body>
+</html>
