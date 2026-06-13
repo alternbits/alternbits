@@ -8,7 +8,7 @@
   {{ template "_root_navbar.tmpl" . }}
 
   <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8 flex items-start justify-between gap-4">
+    <header class="mb-6 flex items-start justify-between gap-4">
       <div>
         <h1 class="text-2xl font-semibold tracking-tight">Categories</h1>
         {{ with .Page }}
@@ -20,6 +20,50 @@
         + New category
       </a>
     </header>
+
+    <!-- Search & filters -->
+    <form method="GET" action="/root/categories" class="mb-6">
+      <div class="flex flex-wrap gap-2">
+        <!-- Search -->
+        <div class="relative flex-1 min-w-48">
+          <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" name="q" value="{{ .Filters.Search }}"
+                 placeholder="Search name, slug, subtitle…"
+                 class="w-full rounded-lg border border-zinc-300 bg-white pl-8 pr-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
+        </div>
+
+        <!-- Level filter -->
+        <select name="level"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          <option value=""{{ if eq .Filters.Level "" }} selected{{ end }}>All levels</option>
+          <option value="top"{{ if eq .Filters.Level "top" }} selected{{ end }}>Top-level</option>
+          <option value="sub"{{ if eq .Filters.Level "sub" }} selected{{ end }}>Subcategory</option>
+        </select>
+
+        <!-- Sort -->
+        <select name="sort"
+                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          <option value=""{{ if eq .Filters.Sort "" }} selected{{ end }}>Newest first</option>
+          <option value="oldest"{{ if eq .Filters.Sort "oldest" }} selected{{ end }}>Oldest first</option>
+          <option value="name_asc"{{ if eq .Filters.Sort "name_asc" }} selected{{ end }}>Name A→Z</option>
+          <option value="name_desc"{{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Name Z→A</option>
+        </select>
+
+        <button type="submit"
+                class="rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
+          Apply
+        </button>
+
+        {{ if or .Filters.Search .Filters.Level .Filters.Sort }}
+        <a href="/root/categories"
+           class="flex items-center rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">
+          Clear
+        </a>
+        {{ end }}
+      </div>
+    </form>
 
     {{ if .Error }}
     <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
@@ -42,7 +86,7 @@
           </div>
         </li>
         {{ else }}
-        <li class="px-4 py-8 text-center text-zinc-500">No categories yet.</li>
+        <li class="px-4 py-8 text-center text-zinc-500">No categories found.</li>
         {{ end }}
       </ul>
 
@@ -72,7 +116,7 @@
             </tr>
             {{ else }}
             <tr>
-              <td colspan="4" class="px-5 py-8 text-center text-zinc-500">No categories yet.</td>
+              <td colspan="4" class="px-5 py-8 text-center text-zinc-500">No categories found.</td>
             </tr>
             {{ end }}
           </tbody>
@@ -82,12 +126,12 @@
       {{ if or .HasPrev .HasNext }}
       <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
         {{ if .HasPrev }}
-        <a href="?page={{ .PrevPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
+        <a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
         {{ else }}
         <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
         {{ end }}
         {{ if .HasNext }}
-        <a href="?page={{ .NextPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
+        <a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
         {{ else }}
         <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
         {{ end }}
