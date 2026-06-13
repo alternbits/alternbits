@@ -1,6 +1,7 @@
 package root
 
 import (
+	"html/template"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -43,6 +44,15 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 			ownerID = strconv.FormatUint(uint64(*ai.UserID), 10)
 		}
 
+		selectedArtifactID := ""
+		if ai.ArtifactID != nil {
+			selectedArtifactID = strconv.FormatUint(uint64(*ai.ArtifactID), 10)
+		}
+		existingData := template.JS("{}")
+		if len(ai.Data) > 0 {
+			existingData = template.JS(ai.Data)
+		}
+
 		c.HTML(http.StatusOK, "root_ai_edit.tmpl", gin.H{
 			"ActiveNav":           "ais",
 			"R2Enabled":           config.C.R2Enabled(),
@@ -53,6 +63,9 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 			"Users":               users,
 			"SelectedCategoryIDs": selCatIDs,
 			"SelectedGenusIDs":    selGenIDs,
+			"ArtifactsJSON":       loadArtifactsForForm(db),
+			"SelectedArtifactID":  selectedArtifactID,
+			"ExistingData":        existingData,
 		})
 	}
 }
@@ -96,6 +109,16 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		description := strings.TrimSpace(c.PostForm("description"))
 		ownerID := strings.TrimSpace(c.PostForm("owner_id"))
 
+		artifactID, artifactData := parseArtifactFormFields(c)
+		selectedArtifactID := ""
+		if artifactID != nil {
+			selectedArtifactID = strconv.FormatUint(uint64(*artifactID), 10)
+		}
+		existingData := template.JS("{}")
+		if len(artifactData) > 0 {
+			existingData = template.JS(artifactData)
+		}
+
 		renderErr := func(status int, msg string) {
 			cats, genera, users := loadAIFormDeps(db)
 			ownerIDStr := ownerID
@@ -112,6 +135,9 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 				"Users":               users,
 				"SelectedCategoryIDs": catIDs,
 				"SelectedGenusIDs":    genIDs,
+				"ArtifactsJSON":       loadArtifactsForForm(db),
+				"SelectedArtifactID":  selectedArtifactID,
+				"ExistingData":        existingData,
 				"Error":               msg,
 			})
 		}
@@ -165,6 +191,8 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		ai.Subtitle = subtitle
 		ai.Description = description
 		ai.LogoURL = logoURL
+		ai.ArtifactID = artifactID
+		ai.Data = artifactData
 		ai.UserID = nil
 		if ownerID != "" {
 			if uid, err := strconv.ParseUint(ownerID, 10, 64); err == nil {

@@ -1,6 +1,8 @@
 package root
 
 import (
+	"encoding/json"
+	"html/template"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -11,6 +13,7 @@ import (
 	"github.com/dariubs/altern/app/models"
 	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -39,16 +42,75 @@ func loadAIFormDeps(db *gorm.DB) (cats []models.Category, genera []models.Genus,
 	return
 }
 
+type artifactOptionField struct {
+	Name         string `json:"name"`
+	Slug         string `json:"slug"`
+	FieldType    string `json:"field_type"`
+	Required     bool   `json:"required"`
+	DefaultValue string `json:"default_value"`
+}
+
+type artifactOption struct {
+	ID     uint                  `json:"id"`
+	Name   string                `json:"name"`
+	Fields []artifactOptionField `json:"fields"`
+}
+
+func loadArtifactsForForm(db *gorm.DB) template.JS {
+	var artifacts []models.Artifact
+	db.Preload("Fields").Order("name ASC").Find(&artifacts)
+	opts := make([]artifactOption, len(artifacts))
+	for i, a := range artifacts {
+		fields := make([]artifactOptionField, len(a.Fields))
+		for j, f := range a.Fields {
+			dv := ""
+			if f.DefaultValue != nil {
+				dv = *f.DefaultValue
+			}
+			fields[j] = artifactOptionField{
+				Name:         f.Name,
+				Slug:         f.Slug,
+				FieldType:    string(f.FieldType),
+				Required:     f.Required,
+				DefaultValue: dv,
+			}
+		}
+		opts[i] = artifactOption{ID: a.ID, Name: a.Name, Fields: fields}
+	}
+	b, _ := json.Marshal(opts)
+	return template.JS(b)
+}
+
+func parseArtifactFormFields(c *gin.Context) (artifactID *uint, data datatypes.JSON) {
+	idStr := strings.TrimSpace(c.PostForm("artifact_id"))
+	dataRaw := strings.TrimSpace(c.PostForm("artifact_data_json"))
+	if idStr == "" {
+		return nil, nil
+	}
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		return nil, nil
+	}
+	uid := uint(id)
+	if dataRaw != "" && json.Valid([]byte(dataRaw)) {
+		return &uid, datatypes.JSON(dataRaw)
+	}
+	return &uid, datatypes.JSON("{}")
+}
+
 func AINewForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cats, genera, users := loadAIFormDeps(db)
 		c.HTML(http.StatusOK, "root_ai_new.tmpl", gin.H{
-			"ActiveNav":  "ais",
-			"R2Enabled":  config.C.R2Enabled(),
-			"Form":       aiFormData{},
-			"Categories": cats,
-			"Genera":     genera,
-			"Users":      users,
+			"ActiveNav":          "ais",
+			"R2Enabled":          config.C.R2Enabled(),
+			"Form":               aiFormData{},
+			"Categories":         cats,
+			"Genera":             genera,
+			"Users":              users,
+			"ArtifactsJSON":      loadArtifactsForForm(db),
+			"SelectedArtifactID": "",
+			"ExistingData":       template.JS("{}"),
 		})
 	}
 }
@@ -80,16 +142,29 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			GenusIDs:    genIDs,
 		}
 
+		artifactID, artifactData := parseArtifactFormFields(c)
+		selectedArtifactID := ""
+		if artifactID != nil {
+			selectedArtifactID = strconv.FormatUint(uint64(*artifactID), 10)
+		}
+		existingData := template.JS("{}")
+		if len(artifactData) > 0 {
+			existingData = template.JS(artifactData)
+		}
+
 		renderErr := func(status int, msg string) {
 			cats, genera, users := loadAIFormDeps(db)
 			c.HTML(status, "root_ai_new.tmpl", gin.H{
-				"ActiveNav":  "ais",
-				"R2Enabled":  config.C.R2Enabled(),
-				"Form":       form,
-				"Categories": cats,
-				"Genera":     genera,
-				"Users":      users,
-				"Error":      msg,
+				"ActiveNav":          "ais",
+				"R2Enabled":          config.C.R2Enabled(),
+				"Form":               form,
+				"Categories":         cats,
+				"Genera":             genera,
+				"Users":              users,
+				"ArtifactsJSON":      loadArtifactsForForm(db),
+				"SelectedArtifactID": selectedArtifactID,
+				"ExistingData":       existingData,
+				"Error":              msg,
 			})
 		}
 
@@ -136,6 +211,8 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			Subtitle:    form.Subtitle,
 			Description: form.Description,
 			LogoURL:     logoURL,
+			ArtifactID:  artifactID,
+			Data:        artifactData,
 		}
 		if form.OwnerID != "" {
 			uid, err := strconv.ParseUint(form.OwnerID, 10, 64)

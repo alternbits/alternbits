@@ -18,6 +18,9 @@ type AI struct {
 
 	Data datatypes.JSON `gorm:"type:jsonb"`
 
+	ArtifactID *uint
+	Artifact   *Artifact
+
 	UserID *uint
 	User   *User
 }

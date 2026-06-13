@@ -69,6 +69,71 @@
         {{ end }}
       </div>
 
+      <!-- Artifact -->
+      <div x-data="aiArtifact({{ .ArtifactsJSON }}, '{{ .SelectedArtifactID }}', {{ .ExistingData }})"
+           class="space-y-4">
+        <input type="hidden" name="artifact_id" :value="selectedId">
+        <input type="hidden" name="artifact_data_json" :value="dataJSON">
+
+        <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <h2 class="mb-3 text-sm font-semibold text-zinc-700">Artifact</h2>
+          <select @change="selectArtifact($event.target.value)"
+                  class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+            <option value="">— None —</option>
+            <template x-for="a in artifacts" :key="a.id">
+              <option :value="a.id" :selected="String(a.id) === selectedId" x-text="a.name"></option>
+            </template>
+          </select>
+          <p class="mt-1 text-xs text-zinc-500">Select an artifact to define structured data fields for this AI.</p>
+        </div>
+
+        <div x-show="fields.length > 0"
+             x-cloak
+             class="rounded-xl border border-zinc-200 bg-white shadow-sm">
+          <div class="border-b border-zinc-100 px-5 py-3">
+            <span class="text-sm font-semibold text-zinc-700">Artifact fields</span>
+          </div>
+          <div class="grid gap-px bg-zinc-100 sm:grid-cols-2">
+            <template x-for="f in fields" :key="f.slug">
+              <div class="bg-white px-5 py-4">
+                <label class="mb-1 flex items-center gap-1.5 text-xs font-medium text-zinc-500">
+                  <span x-text="f.name"></span>
+                  <span x-show="f.required" class="text-red-400">*</span>
+                  <code class="rounded bg-zinc-100 px-1 py-0.5 text-zinc-400" x-text="f.field_type"></code>
+                </label>
+
+                <!-- boolean: toggle -->
+                <div x-show="f.field_type === 'boolean'">
+                  <button type="button"
+                          @click="values[f.slug] = !values[f.slug]"
+                          :class="values[f.slug]
+                            ? 'bg-zinc-900 text-white border-zinc-900'
+                            : 'bg-white text-zinc-600 border-zinc-300 hover:border-zinc-500'"
+                          class="rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors"
+                          x-text="values[f.slug] ? 'True' : 'False'">
+                  </button>
+                </div>
+
+                <!-- text: textarea -->
+                <div x-show="f.field_type === 'text'">
+                  <textarea x-model="values[f.slug]" rows="3"
+                            :placeholder="f.default_value || ''"
+                            class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"></textarea>
+                </div>
+
+                <!-- all other types: input -->
+                <div x-show="f.field_type !== 'boolean' && f.field_type !== 'text'">
+                  <input :type="inputType(f.field_type)"
+                         x-model="values[f.slug]"
+                         :placeholder="f.default_value || ''"
+                         class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
       <!-- Logo -->
       <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm" x-data="{ removing: false }">
         <h2 class="mb-3 text-sm font-semibold text-zinc-700">Logo</h2>
@@ -149,5 +214,57 @@
   </div>
 
   {{ template "_root_footer.tmpl" . }}
+
+  <script>
+    function aiArtifact(artifacts, initialId, initialData) {
+      return {
+        artifacts: artifacts,
+        selectedId: String(initialId || ''),
+        fields: [],
+        values: {},
+
+        get dataJSON() {
+          const out = {};
+          for (const f of this.fields) {
+            const v = this.values[f.slug];
+            out[f.slug] = f.field_type === 'boolean'
+              ? (v === true || v === 'true')
+              : (v !== undefined && v !== null ? v : '');
+          }
+          return JSON.stringify(out);
+        },
+
+        inputType(t) {
+          return { number: 'number', integer: 'number', url: 'url', email: 'email', date: 'date' }[t] || 'text';
+        },
+
+        init() {
+          if (this.selectedId) {
+            this._load(this.selectedId, initialData);
+          }
+        },
+
+        selectArtifact(id) {
+          this.selectedId = String(id);
+          this._load(id, {});
+        },
+
+        _load(id, preload) {
+          const artifact = this.artifacts.find(a => String(a.id) === String(id));
+          if (!artifact) { this.fields = []; this.values = {}; return; }
+          this.fields = artifact.fields;
+          this.values = {};
+          for (const f of artifact.fields) {
+            const v = preload[f.slug];
+            if (f.field_type === 'boolean') {
+              this.values[f.slug] = v === true || v === 'true';
+            } else {
+              this.values[f.slug] = v !== undefined && v !== null ? String(v) : (f.default_value || '');
+            }
+          }
+        },
+      };
+    }
+  </script>
 </body>
 </html>
