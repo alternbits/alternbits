@@ -2,8 +2,8 @@
      class="sticky top-0 z-20 border-b border-zinc-200 bg-white/80 backdrop-blur">
   <div class="mx-auto max-w-5xl px-4 sm:px-6">
     <div class="flex h-14 items-center justify-between">
-      <!-- Brand + desktop links -->
-      <div class="flex items-center gap-8">
+      <!-- Brand + search -->
+      <div class="flex items-center gap-4">
         <a href="/root" class="flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-900">
           <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-zinc-900 text-[11px] font-bold text-white">
             {{ slice (appName) 0 1 }}
@@ -13,45 +13,109 @@
           <span class="hidden text-zinc-500 sm:inline">root</span>
         </a>
 
-        <div class="hidden md:flex md:items-center md:gap-1">
-          {{ $active := .ActiveNav }}
-          
-          <a href="/root/ais"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "ais" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            AIs
-          </a>
-          <a href="/root/lists"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Lists
-          </a>
-          <a href="/root/users"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Users
-          </a>
-          <a href="/root/categories"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "categories" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Categories
-          </a>
-          <a href="/root/genera"
-             class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "genera" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
-            Genera
-          </a>
-          
+        <!-- Global search -->
+        <div class="relative hidden md:block"
+             x-data="{
+               q: '',
+               open: false,
+               active: -1,
+               sections: [
+                 { label: 'AIs',        href: '/root/ais'        },
+                 { label: 'Lists',      href: '/root/lists'      },
+                 { label: 'Users',      href: '/root/users'      },
+                 { label: 'Categories', href: '/root/categories' },
+                 { label: 'Genera',     href: '/root/genera'     },
+               ],
+               go(href) {
+                 if (this.q.trim()) window.location.href = href + '?q=' + encodeURIComponent(this.q.trim());
+               },
+               submit() {
+                 if (this.active >= 0) this.go(this.sections[this.active].href);
+                 else this.go('/root/ais');
+               },
+               onKeydown(e) {
+                 if (!this.open) return;
+                 if (e.key === 'ArrowDown') { e.preventDefault(); this.active = Math.min(this.active + 1, this.sections.length - 1); }
+                 else if (e.key === 'ArrowUp') { e.preventDefault(); this.active = Math.max(this.active - 1, -1); }
+               }
+             }"
+             @click.outside="open = false; active = -1">
+          <div class="relative">
+            <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+            </svg>
+            <input type="text"
+                   placeholder="Search…"
+                   x-model="q"
+                   @focus="open = q.trim().length > 0"
+                   @input="open = q.trim().length > 0; active = -1"
+                   @keydown.enter.prevent="submit()"
+                   @keydown.escape="open = false; active = -1; $el.blur()"
+                   @keydown="onKeydown($event)"
+                   class="w-44 rounded-lg border border-zinc-200 bg-white py-1.5 pl-8 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-300" />
+          </div>
+          <div x-show="open"
+               x-cloak
+               x-transition:enter="transition ease-out duration-100"
+               x-transition:enter-start="opacity-0 translate-y-0.5"
+               x-transition:enter-end="opacity-100 translate-y-0"
+               class="absolute left-0 top-full z-50 mt-1 w-56 rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+            <template x-for="(section, i) in sections" :key="section.href">
+              <button type="button"
+                      @click="go(section.href)"
+                      @mouseenter="active = i"
+                      :class="active === i ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700'"
+                      class="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm">
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                </svg>
+                <span>Search in <span class="font-medium" x-text="section.label"></span></span>
+              </button>
+            </template>
+            <div class="border-t border-zinc-100 px-3 py-1.5 text-xs text-zinc-400">
+              ↵ defaults to AIs &nbsp;·&nbsp; ↑↓ to navigate
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Right side: desktop -->
-      <div class="hidden items-center gap-3 md:flex">
-        <a href="/"
-           class="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">
-          Website
+      <!-- Right side: nav links + actions -->
+      <div class="hidden items-center gap-1 md:flex">
+        {{ $active := .ActiveNav }}
+        <a href="/root/ais"
+           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "ais" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          AIs
         </a>
-        <form method="POST" action="/root/logout">
-          <button type="submit"
-                  class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100">
-            Sign out
-          </button>
-        </form>
+        <a href="/root/lists"
+           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "lists" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          Lists
+        </a>
+        <a href="/root/users"
+           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "users" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          Users
+        </a>
+        <a href="/root/categories"
+           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "categories" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          Categories
+        </a>
+        <a href="/root/genera"
+           class="rounded-lg px-3 py-1.5 text-sm font-medium {{ if eq $active "genera" }}bg-zinc-100 text-zinc-900{{ else }}text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900{{ end }}">
+          Genera
+        </a>
+
+        <div class="ml-2 flex items-center gap-2 border-l border-zinc-200 pl-3">
+          <a href="/"
+             class="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">
+            Website
+          </a>
+          <form method="POST" action="/root/logout">
+            <button type="submit"
+                    class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100">
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       <!-- Mobile: hamburger -->
@@ -68,6 +132,72 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18" />
         </svg>
       </button>
+    </div>
+
+    <!-- Mobile search bar (always visible on small screens) -->
+    <div class="border-t border-zinc-100 py-2 md:hidden"
+         x-data="{
+           q: '',
+           open: false,
+           active: -1,
+           sections: [
+             { label: 'AIs',        href: '/root/ais'        },
+             { label: 'Lists',      href: '/root/lists'      },
+             { label: 'Users',      href: '/root/users'      },
+             { label: 'Categories', href: '/root/categories' },
+             { label: 'Genera',     href: '/root/genera'     },
+           ],
+           go(href) {
+             if (this.q.trim()) window.location.href = href + '?q=' + encodeURIComponent(this.q.trim());
+           },
+           submit() {
+             if (this.active >= 0) this.go(this.sections[this.active].href);
+             else this.go('/root/ais');
+           },
+           onKeydown(e) {
+             if (!this.open) return;
+             if (e.key === 'ArrowDown') { e.preventDefault(); this.active = Math.min(this.active + 1, this.sections.length - 1); }
+             else if (e.key === 'ArrowUp') { e.preventDefault(); this.active = Math.max(this.active - 1, -1); }
+           }
+         }"
+         @click.outside="open = false; active = -1">
+      <div class="relative">
+        <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400"
+             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+        </svg>
+        <input type="text"
+               placeholder="Search…"
+               x-model="q"
+               @focus="open = q.trim().length > 0"
+               @input="open = q.trim().length > 0; active = -1"
+               @keydown.enter.prevent="submit()"
+               @keydown.escape="open = false; active = -1; $el.blur()"
+               @keydown="onKeydown($event)"
+               class="w-full rounded-lg border border-zinc-200 bg-white py-2 pl-9 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-300" />
+      </div>
+      <div x-show="open"
+           x-cloak
+           x-transition:enter="transition ease-out duration-100"
+           x-transition:enter-start="opacity-0 translate-y-0.5"
+           x-transition:enter-end="opacity-100 translate-y-0"
+           class="absolute left-4 right-4 top-full z-50 mt-1 rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+        <template x-for="(section, i) in sections" :key="section.href">
+          <button type="button"
+                  @click="go(section.href)"
+                  @mouseenter="active = i"
+                  :class="active === i ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-700'"
+                  class="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm">
+            <svg class="h-3.5 w-3.5 shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+            </svg>
+            <span>Search in <span class="font-medium" x-text="section.label"></span></span>
+          </button>
+        </template>
+        <div class="border-t border-zinc-100 px-3 py-1.5 text-xs text-zinc-400">
+          ↵ defaults to AIs &nbsp;·&nbsp; ↑↓ to navigate
+        </div>
+      </div>
     </div>
 
     <!-- Mobile panel -->
