@@ -122,6 +122,8 @@ func main() {
 			authed.GET("/artifacts", root.ArtifactsListHandler(database.DB))
 			authed.GET("/artifacts/new", root.ArtifactNewForm())
 			authed.POST("/artifacts", root.ArtifactCreate(database.DB))
+			authed.GET("/artifacts/:id/edit", root.ArtifactEditForm(database.DB))
+			authed.POST("/artifacts/:id", root.ArtifactUpdate(database.DB))
 			authed.GET("/genera", root.GeneraListHandler(database.DB))
 			authed.GET("/genera/new", root.GenusNewForm())
 			authed.POST("/genera", root.GenusCreate(database.DB))
