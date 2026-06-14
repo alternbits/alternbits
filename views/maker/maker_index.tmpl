@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} for Makers</title>
+  <meta name="description" content="The AI directory for those who build AI products and resources.">
+  {{ template "_slash_head.tmpl" . }}
+</head>
+<body x-data="{
+  darkMode: document.documentElement.classList.contains('dark'),
+  toggle() {
+    this.darkMode = !this.darkMode;
+    this.darkMode
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  }
+}" class="min-h-screen bg-white dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
+
+  {{ template "_header.tmpl" . }}
+  {{ template "_sidebar.tmpl" . }}
+
+  <div class="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 text-center">
+    <div class="max-w-lg">
+      <span class="inline-block rounded-full bg-orange-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-orange-500">Coming soon</span>
+      <h1 class="mt-6 text-4xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+        {{ appName }} for Makers
+      </h1>
+      <p class="mt-4 text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        A dedicated space for those who build AI products and resources — tools, directories, docs, APIs, and more.
+      </p>
+    </div>
+  </div>
+
+  {{ template "_footer.tmpl" . }}
+</body>
+</html>

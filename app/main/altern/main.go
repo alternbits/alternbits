@@ -9,6 +9,7 @@ import (
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/database"
 	"github.com/dariubs/altern/app/handlers/auth"
+	"github.com/dariubs/altern/app/handlers/maker"
 	"github.com/dariubs/altern/app/handlers/root"
 	"github.com/dariubs/altern/app/handlers/slash"
 	"github.com/dariubs/altern/app/handlers/totp"
@@ -59,6 +60,7 @@ func main() {
 	}
 
 	r.GET("/", slash.Handler(database.DB))
+	r.GET("/maker", maker.Handler(database.DB))
 	r.GET("/ai/:slug", slash.AIHandler(database.DB))
 	r.GET("/lists", slash.ListsHandler(database.DB))
 	r.GET("/lists/:slug", slash.ListHandler(database.DB))
