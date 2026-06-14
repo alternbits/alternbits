@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} · {{ .AI.Name }} · Alternatives</title>
+  {{ template "_root_head.tmpl" . }}
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_root_navbar.tmpl" . }}
+
+  <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
+    <header class="mb-8">
+      <a href="/root/alternatives" class="mb-3 inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Alternatives
+      </a>
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-semibold tracking-tight">{{ .AI.Name }}</h1>
+          <p class="mt-0.5 text-sm text-zinc-400">{{ .AI.Slug }}</p>
+        </div>
+        <div class="flex shrink-0 items-center gap-2">
+          <a href="/root/ais/{{ .AI.ID }}/edit"
+             class="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-50">Edit AI</a>
+          <a href="/root/alternatives/new?ai_id={{ .AI.ID }}"
+             class="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">+ Add alternative</a>
+        </div>
+      </div>
+    </header>
+
+    {{ if not .Alternatives }}
+    <div class="rounded-xl border border-zinc-200 bg-white px-5 py-12 text-center text-zinc-400">
+      No alternatives yet. <a href="/root/alternatives/new?ai_id={{ .AI.ID }}" class="text-zinc-600 hover:underline">Add one.</a>
+    </div>
+    {{ else }}
+    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+      <table class="w-full text-sm">
+        <thead class="bg-zinc-50 border-b border-zinc-200 text-left text-xs uppercase tracking-wide text-zinc-500">
+          <tr>
+            <th class="px-5 py-3 font-medium">Direction</th>
+            <th class="px-5 py-3 font-medium">AI</th>
+            <th class="px-5 py-3 font-medium">Status</th>
+            <th class="px-5 py-3 font-medium">Note</th>
+            <th class="px-5 py-3 font-medium">Added</th>
+            <th class="px-5 py-3 font-medium"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-100">
+          {{ range .Alternatives }}
+          {{ $isPrimary := eq .AIID $.AI.ID }}
+          {{ $other := .AlternativeAI }}
+          {{ if not $isPrimary }}{{ $other = .AI }}{{ end }}
+          <tr class="{{ if eq (printf "%s" .Status) "pending" }}bg-amber-50/40{{ else }}hover:bg-zinc-50{{ end }}">
+            <!-- Direction -->
+            <td class="px-5 py-3.5">
+              {{ if $isPrimary }}
+              <span class="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+                has alt
+              </span>
+              {{ else }}
+              <span class="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600">
+                <svg class="h-3 w-3 rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+                alt of
+              </span>
+              {{ end }}
+            </td>
+            <!-- Other AI -->
+            <td class="px-5 py-3.5">
+              {{ if $other }}
+              <a href="/root/alternatives/ai/{{ $other.ID }}" class="font-medium text-zinc-900 hover:underline">{{ $other.Name }}</a>
+              <div class="text-xs text-zinc-400">{{ $other.Slug }}</div>
+              {{ else }}
+              <span class="text-zinc-400">—</span>
+              {{ end }}
+            </td>
+            <!-- Status -->
+            <td class="px-5 py-3.5">
+              {{ if eq (printf "%s" .Status) "approved" }}
+              <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Approved</span>
+              {{ else if eq (printf "%s" .Status) "rejected" }}
+              <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">Rejected</span>
+              {{ else }}
+              <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Pending</span>
+              {{ end }}
+            </td>
+            <!-- Note -->
+            <td class="px-5 py-3.5 text-zinc-500 max-w-xs">
+              {{ if .Note }}<span class="line-clamp-1">{{ .Note }}</span>{{ else }}<span class="text-zinc-300">—</span>{{ end }}
+            </td>
+            <!-- Date -->
+            <td class="px-5 py-3.5 text-zinc-400 whitespace-nowrap">{{ .CreatedAt.Format "2006-01-02" }}</td>
+            <!-- Actions -->
+            <td class="px-5 py-3.5">
+              <div class="flex items-center gap-1.5">
+                {{ if eq (printf "%s" .Status) "pending" }}
+                <form method="POST" action="/root/alternatives/{{ .ID }}/approve">
+                  <input type="hidden" name="back" value="{{ $.BackURL }}">
+                  <button type="submit" class="rounded-lg border border-green-200 px-2.5 py-1 text-xs font-medium text-green-700 hover:bg-green-50">Approve</button>
+                </form>
+                <form method="POST" action="/root/alternatives/{{ .ID }}/reject">
+                  <input type="hidden" name="back" value="{{ $.BackURL }}">
+                  <button type="submit" class="rounded-lg border border-red-200 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-50">Reject</button>
+                </form>
+                {{ end }}
+                <form method="POST" action="/root/alternatives/{{ .ID }}/delete"
+                      onsubmit="return confirm('Delete this alternative?')">
+                  <input type="hidden" name="back" value="{{ $.BackURL }}">
+                  <button type="submit" class="rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-500 hover:bg-zinc-100">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </section>
+    {{ end }}
+  </div>
+
+  {{ template "_root_footer.tmpl" . }}
+</body>
+</html>

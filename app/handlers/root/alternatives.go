@@ -1,6 +1,7 @@
 package root
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -14,9 +15,18 @@ import (
 type alternativesFilters struct {
 	Search   string
 	Status   string // "pending" | "approved" | "rejected" | ""
-	Source   string // "admin" | "user" | ""
 	Sort     string
 	QueryStr string
+}
+
+type aiAlternativeSummary struct {
+	ID            uint
+	Name          string
+	Slug          string
+	TotalCount    int64
+	ApprovedCount int64
+	PendingCount  int64
+	RejectedCount int64
 }
 
 func AIAlternativesAPI(db *gorm.DB) gin.HandlerFunc {
@@ -134,41 +144,46 @@ func AlternativesListHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		search := strings.TrimSpace(c.Query("q"))
 		status := c.Query("status")
-		source := c.Query("source")
-		sort := c.Query("sort")
+		sortBy := c.Query("sort")
 
-		base := db.Model(&models.Alternative{})
+		whereClause := "a.deleted_at IS NULL AND alt.deleted_at IS NULL"
+		args := []interface{}{}
 
 		if search != "" {
-			likeQ := "%" + search + "%"
-			sub := "SELECT id FROM ais WHERE deleted_at IS NULL AND (name ILIKE ? OR slug ILIKE ?)"
-			base = base.Where(
-				"ai_id IN ("+sub+") OR alternative_ai_id IN ("+sub+")",
-				likeQ, likeQ, likeQ, likeQ,
-			)
+			whereClause += " AND (a.name ILIKE ? OR a.slug ILIKE ?)"
+			like := "%" + search + "%"
+			args = append(args, like, like)
 		}
-		switch status {
-		case "pending", "approved", "rejected":
-			base = base.Where("status = ?", status)
-		}
-		switch source {
-		case "admin":
-			base = base.Where("suggested_by_user_id IS NULL")
-		case "user":
-			base = base.Where("suggested_by_user_id IS NOT NULL")
+		if status == "pending" || status == "approved" || status == "rejected" {
+			whereClause += " AND EXISTS (SELECT 1 FROM alternatives a2 WHERE (a2.ai_id = a.id OR a2.alternative_ai_id = a.id) AND a2.status = ? AND a2.deleted_at IS NULL)"
+			args = append(args, status)
 		}
 
-		orderClause := "created_at DESC"
-		switch sort {
-		case "oldest":
-			orderClause = "created_at ASC"
-		case "status":
-			orderClause = "status ASC, created_at DESC"
+		orderClause := "pending_count DESC, total_count DESC, a.name ASC"
+		switch sortBy {
+		case "name_asc":
+			orderClause = "a.name ASC"
+		case "name_desc":
+			orderClause = "a.name DESC"
+		case "most":
+			orderClause = "total_count DESC, a.name ASC"
 		}
 
-		var alts []models.Alternative
-		base.Preload("AI").Preload("AlternativeAI").Preload("SuggestedBy").
-			Order(orderClause).Find(&alts)
+		query := fmt.Sprintf(`
+			SELECT a.id, a.name, a.slug,
+				COUNT(alt.id) AS total_count,
+				SUM(CASE WHEN alt.status = 'approved' THEN 1 ELSE 0 END) AS approved_count,
+				SUM(CASE WHEN alt.status = 'pending'  THEN 1 ELSE 0 END) AS pending_count,
+				SUM(CASE WHEN alt.status = 'rejected' THEN 1 ELSE 0 END) AS rejected_count
+			FROM ais a
+			INNER JOIN alternatives alt ON (alt.ai_id = a.id OR alt.alternative_ai_id = a.id) AND alt.deleted_at IS NULL
+			WHERE %s
+			GROUP BY a.id, a.name, a.slug
+			ORDER BY %s
+		`, whereClause, orderClause)
+
+		var summaries []aiAlternativeSummary
+		db.Raw(query, args...).Scan(&summaries)
 
 		params := url.Values{}
 		if search != "" {
@@ -177,11 +192,8 @@ func AlternativesListHandler(db *gorm.DB) gin.HandlerFunc {
 		if status != "" {
 			params.Set("status", status)
 		}
-		if source != "" {
-			params.Set("source", source)
-		}
-		if sort != "" {
-			params.Set("sort", sort)
+		if sortBy != "" {
+			params.Set("sort", sortBy)
 		}
 		queryStr := ""
 		if len(params) > 0 {
@@ -189,15 +201,41 @@ func AlternativesListHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.HTML(http.StatusOK, "root_alternatives.tmpl", gin.H{
-			"ActiveNav":    "alternatives",
-			"Alternatives": alts,
+			"ActiveNav": "alternatives",
+			"Summaries": summaries,
 			"Filters": alternativesFilters{
 				Search:   search,
 				Status:   status,
-				Source:   source,
-				Sort:     sort,
+				Sort:     sortBy,
 				QueryStr: queryStr,
 			},
+		})
+	}
+}
+
+func AIAlternativesEditHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.ParseUint(idStr, 10, 64)
+		if err != nil {
+			c.Redirect(http.StatusFound, "/root/alternatives")
+			return
+		}
+		var ai models.AI
+		if db.First(&ai, id).Error != nil {
+			c.Redirect(http.StatusFound, "/root/alternatives")
+			return
+		}
+		var alts []models.Alternative
+		db.Preload("AI").Preload("AlternativeAI").Preload("SuggestedBy").
+			Where("ai_id = ? OR alternative_ai_id = ?", id, id).
+			Order("CASE status WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END, created_at DESC").
+			Find(&alts)
+		c.HTML(http.StatusOK, "root_ai_alternatives.tmpl", gin.H{
+			"ActiveNav":    "alternatives",
+			"AI":           ai,
+			"Alternatives": alts,
+			"BackURL":      "/root/alternatives/ai/" + idStr,
 		})
 	}
 }
@@ -340,6 +378,13 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func altRedirect(c *gin.Context) string {
+	if back := c.PostForm("back"); back != "" {
+		return back
+	}
+	return "/root/alternatives"
+}
+
 func AlternativeApprove(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -349,7 +394,7 @@ func AlternativeApprove(db *gorm.DB) gin.HandlerFunc {
 		}
 		db.Model(&models.Alternative{}).Where("id = ?", id).
 			Update("status", models.AlternativeStatusApproved)
-		c.Redirect(http.StatusFound, "/root/alternatives")
+		c.Redirect(http.StatusFound, altRedirect(c))
 	}
 }
 
@@ -362,7 +407,7 @@ func AlternativeReject(db *gorm.DB) gin.HandlerFunc {
 		}
 		db.Model(&models.Alternative{}).Where("id = ?", id).
 			Update("status", models.AlternativeStatusRejected)
-		c.Redirect(http.StatusFound, "/root/alternatives")
+		c.Redirect(http.StatusFound, altRedirect(c))
 	}
 }
 
@@ -374,6 +419,6 @@ func AlternativeDelete(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 		db.Delete(&models.Alternative{}, id)
-		c.Redirect(http.StatusFound, "/root/alternatives")
+		c.Redirect(http.StatusFound, altRedirect(c))
 	}
 }

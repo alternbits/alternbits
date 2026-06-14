@@ -153,6 +153,7 @@ func main() {
 			authed.GET("/ais/search", root.AIsSearchAPI(database.DB))
 			authed.GET("/ais/:id/alternatives", root.AIAlternativesAPI(database.DB))
 			authed.GET("/alternatives", root.AlternativesListHandler(database.DB))
+			authed.GET("/alternatives/ai/:id", root.AIAlternativesEditHandler(database.DB))
 			authed.GET("/alternatives/new", root.AlternativeNewForm(database.DB))
 			authed.POST("/alternatives", root.AlternativeCreate(database.DB))
 			authed.POST("/alternatives/:id/approve", root.AlternativeApprove(database.DB))
