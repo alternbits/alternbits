@@ -1,6 +1,7 @@
 package slash
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/dariubs/altern/app/models"
@@ -8,6 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+type screenshotItem struct {
+	URL string `json:"url"`
+	Alt string `json:"alt"`
+}
 
 func AIHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -41,8 +47,14 @@ func AIHandler(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 
+		var screenshots []screenshotItem
+		if len(ai.Screenshots) > 0 {
+			_ = json.Unmarshal(ai.Screenshots, &screenshots)
+		}
+
 		c.HTML(http.StatusOK, "ai.tmpl", gin.H{
 			"AI":          ai,
+			"Screenshots": screenshots,
 			"Categories":  categories,
 			"AICount":     aiCount,
 			"CurrentUser": currentUser,
