@@ -74,13 +74,18 @@
         </div>
 
         <!-- Alternative AI picker -->
-        <div x-data="aiSearch('alternative_ai_id', '{{ .AltAIIDStr }}', '{{ .AltAILabel }}', true)" class="relative">
+        <div x-data="aiSearch('alternative_ai_id', '{{ .AltAIIDStr }}', '{{ .AltAILabel }}', true, {{ .TwoWay }})" class="relative">
           <label class="block text-sm font-medium text-zinc-700">Alternative AI <span class="text-red-500">*</span></label>
           <p class="mb-1.5 mt-0.5 text-xs text-zinc-400">The AI that is the alternative.</p>
 
           <!-- Selected pill -->
           <div x-show="selectedId" class="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
             <span class="flex-1 text-sm font-medium text-zinc-800" x-text="selectedLabel"></span>
+            <label class="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-zinc-500">
+              <input type="checkbox" name="two_way" x-model="twoWay"
+                     class="h-3.5 w-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+              Two-way
+            </label>
             <button type="button" @click="clear()"
                     class="text-zinc-400 hover:text-zinc-600">
               <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -146,17 +151,6 @@
 
         <div class="border-t border-zinc-100 pt-4 space-y-4">
 
-          <!-- Two-way option -->
-          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-zinc-200 p-3 hover:bg-zinc-50"
-                 x-data="{ on: {{ .TwoWay }} }">
-            <input type="checkbox" name="two_way" x-model="on"
-                   class="mt-0.5 h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
-            <div>
-              <span class="text-sm font-medium text-zinc-800">Two-way relationship</span>
-              <p class="mt-0.5 text-xs text-zinc-500">Also create the reverse — the second AI will also list the first as an alternative.</p>
-            </div>
-          </label>
-
           <!-- Status -->
           <div>
             <label for="status" class="block text-sm font-medium text-zinc-700">Status</label>
@@ -190,7 +184,7 @@
   </div>
 
   <script>
-  function aiSearch(fieldName, initId, initLabel, withRelated) {
+  function aiSearch(fieldName, initId, initLabel, withRelated, initTwoWay) {
     return {
       query: initLabel || '',
       results: [],
@@ -201,6 +195,7 @@
       relatedAlts: [],
       extras: [],
       twoWayExtras: [],
+      twoWay: initTwoWay || false,
       async init() {
         if (withRelated && this.selectedId) {
           await this.loadRelated(this.selectedId);
@@ -239,6 +234,7 @@
           if (j >= 0) this.twoWayExtras.splice(j, 1);
         } else {
           this.extras.push(id);
+          this.twoWayExtras.push(id);
         }
       },
       toggleTwoWay(id) {
@@ -256,6 +252,7 @@
         this.relatedAlts = [];
         this.extras = [];
         this.twoWayExtras = [];
+        this.twoWay = false;
       },
     };
   }
