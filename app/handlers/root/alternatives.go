@@ -250,8 +250,8 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 			})
 		}
 
-		if aiIDStr == "" || altAIIDStr == "" {
-			renderErr("Both AI and alternative AI are required.")
+		if aiIDStr == "" {
+			renderErr("AI is required.")
 			return
 		}
 		aiID, err := strconv.ParseUint(aiIDStr, 10, 64)
@@ -259,48 +259,58 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 			renderErr("Invalid AI.")
 			return
 		}
-		altAIID, err := strconv.ParseUint(altAIIDStr, 10, 64)
-		if err != nil {
-			renderErr("Invalid alternative AI.")
-			return
-		}
-		if aiID == altAIID {
-			renderErr("An AI cannot be its own alternative.")
+
+		extraIDs := parseIDList(c.PostForm("extra_ai_ids"))
+
+		if altAIIDStr == "" && len(extraIDs) == 0 {
+			renderErr("Select an alternative AI or at least one item from the also-add list.")
 			return
 		}
 
-		var existing models.Alternative
-		if db.Where("ai_id = ? AND alternative_ai_id = ?", aiID, altAIID).First(&existing).Error == nil {
-			renderErr("This alternative relationship already exists.")
-			return
-		}
+		if altAIIDStr != "" {
+			altAIID, err := strconv.ParseUint(altAIIDStr, 10, 64)
+			if err != nil {
+				renderErr("Invalid alternative AI.")
+				return
+			}
+			if aiID == altAIID {
+				renderErr("An AI cannot be its own alternative.")
+				return
+			}
 
-		alt := models.Alternative{
-			AIID:            uint(aiID),
-			AlternativeAIID: uint(altAIID),
-			Status:          status,
-			Note:            note,
-		}
-		if err := db.Create(&alt).Error; err != nil {
-			renderErr("Failed to save: " + err.Error())
-			return
-		}
+			var existing models.Alternative
+			if db.Where("ai_id = ? AND alternative_ai_id = ?", aiID, altAIID).First(&existing).Error == nil {
+				renderErr("This alternative relationship already exists.")
+				return
+			}
 
-		if twoWay {
-			var rev models.Alternative
-			if db.Where("ai_id = ? AND alternative_ai_id = ?", altAIID, aiID).First(&rev).Error != nil {
-				db.Create(&models.Alternative{
-					AIID:            uint(altAIID),
-					AlternativeAIID: uint(aiID),
-					Status:          status,
-					Note:            note,
-				})
+			alt := models.Alternative{
+				AIID:            uint(aiID),
+				AlternativeAIID: uint(altAIID),
+				Status:          status,
+				Note:            note,
+			}
+			if err := db.Create(&alt).Error; err != nil {
+				renderErr("Failed to save: " + err.Error())
+				return
+			}
+
+			if twoWay {
+				var rev models.Alternative
+				if db.Where("ai_id = ? AND alternative_ai_id = ?", altAIID, aiID).First(&rev).Error != nil {
+					db.Create(&models.Alternative{
+						AIID:            uint(altAIID),
+						AlternativeAIID: uint(aiID),
+						Status:          status,
+						Note:            note,
+					})
+				}
 			}
 		}
 
 		// Extras — also link these AIs (alternatives of the picked alternative) to the main AI.
 		extraTwoWay := parseIDSet(c.PostForm("extra_twoway_ids"))
-		for _, eid := range parseIDList(c.PostForm("extra_ai_ids")) {
+		for _, eid := range extraIDs {
 			if eid == aiID {
 				continue
 			}

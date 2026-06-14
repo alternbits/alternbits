@@ -79,9 +79,11 @@
           <p class="mb-1.5 mt-0.5 text-xs text-zinc-400">The AI that is the alternative.</p>
 
           <!-- Selected pill -->
-          <div x-show="selectedId" class="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
+          <div x-show="selectedId" class="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2"
+               :class="isAlreadyLinked ? 'opacity-60' : ''">
             <span class="flex-1 text-sm font-medium text-zinc-800" x-text="selectedLabel"></span>
-            <label class="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-zinc-500">
+            <span x-show="isAlreadyLinked" class="shrink-0 rounded bg-zinc-200 px-1.5 py-0.5 text-[10px] text-zinc-500">already linked</span>
+            <label x-show="!isAlreadyLinked" class="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-zinc-500">
               <input type="checkbox" name="two_way" x-model="twoWay"
                      class="h-3.5 w-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
               Two-way
@@ -103,15 +105,18 @@
             <div x-show="open" x-cloak
                  class="absolute left-0 top-full z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
               <template x-for="item in results" :key="item.id">
-                <button type="button" @click="select(item)"
-                        class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50">
+                <button type="button"
+                        @click="select(item)"
+                        :class="$store.altForm.mainAIAltIds.includes(item.id) ? 'opacity-50' : 'hover:bg-zinc-50'"
+                        class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-zinc-700">
                   <span class="flex-1 truncate" x-text="item.label"></span>
+                  <span x-show="$store.altForm.mainAIAltIds.includes(item.id)" class="shrink-0 text-[10px] text-zinc-400">already linked</span>
                 </button>
               </template>
             </div>
           </div>
 
-          <input type="hidden" name="alternative_ai_id" :value="selectedId">
+          <input type="hidden" name="alternative_ai_id" :value="isAlreadyLinked ? '' : selectedId">
 
           <!-- Approved alternatives of the selected AI — bulk-add to main AI -->
           <div x-show="relatedAlts.length > 0" class="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
@@ -123,20 +128,23 @@
             </p>
             <div class="space-y-1">
               <template x-for="alt in relatedAlts" :key="alt.id">
-                <div class="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm">
-                  <label class="flex flex-1 min-w-0 cursor-pointer items-center gap-2">
+                <div class="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm"
+                     :class="$store.altForm.mainAIAltIds.includes(alt.id) ? 'opacity-50' : ''">
+                  <label class="flex flex-1 min-w-0 items-center gap-2"
+                         :class="$store.altForm.mainAIAltIds.includes(alt.id) ? 'pointer-events-none' : 'cursor-pointer'">
                     <input type="checkbox" :value="alt.id"
                            :checked="extras.includes(alt.id)"
+                           :disabled="$store.altForm.mainAIAltIds.includes(alt.id)"
                            @change="toggleExtra(alt.id)"
                            class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
                     <span class="min-w-0 flex-1 truncate font-medium text-zinc-800" x-text="alt.name"></span>
-                    <span class="shrink-0 text-[11px] text-zinc-400" x-text="alt.slug"></span>
+                    <span class="shrink-0 text-[11px] text-zinc-400" x-text="$store.altForm.mainAIAltIds.includes(alt.id) ? 'already linked' : alt.slug"></span>
                   </label>
                   <label class="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-zinc-500"
-                         :class="extras.includes(alt.id) ? '' : 'pointer-events-none opacity-40'">
+                         :class="extras.includes(alt.id) && !$store.altForm.mainAIAltIds.includes(alt.id) ? '' : 'pointer-events-none opacity-40'">
                     <input type="checkbox" :value="alt.id"
                            :checked="twoWayExtras.includes(alt.id)"
-                           :disabled="!extras.includes(alt.id)"
+                           :disabled="!extras.includes(alt.id) || $store.altForm.mainAIAltIds.includes(alt.id)"
                            @change="toggleTwoWay(alt.id)"
                            class="h-3.5 w-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
                     Two-way
@@ -184,6 +192,10 @@
   </div>
 
   <script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.store('altForm', { mainAIAltIds: [] });
+  });
+
   function aiSearch(fieldName, initId, initLabel, withRelated, initTwoWay) {
     return {
       query: initLabel || '',
@@ -196,7 +208,11 @@
       extras: [],
       twoWayExtras: [],
       twoWay: initTwoWay || false,
+      isAlreadyLinked: false,
       async init() {
+        if (!withRelated && this.selectedId) {
+          await this.loadMainAIAlts(this.selectedId);
+        }
         if (withRelated && this.selectedId) {
           await this.loadRelated(this.selectedId);
         }
@@ -211,16 +227,25 @@
           this.open = this.results.length > 0;
         }, 200);
       },
-      select(item) {
+      async select(item) {
         this.selectedId = item.id;
         this.selectedLabel = item.label;
+        this.isAlreadyLinked = withRelated && this.$store.altForm.mainAIAltIds.includes(item.id);
         this.query = item.label;
         this.open = false;
+        if (!withRelated) {
+          await this.loadMainAIAlts(item.id);
+        }
         if (withRelated) {
           this.extras = [];
           this.twoWayExtras = [];
           this.loadRelated(item.id);
         }
+      },
+      async loadMainAIAlts(id) {
+        const res = await fetch('/root/ais/' + id + '/alternatives');
+        const alts = await res.json();
+        this.$store.altForm.mainAIAltIds = [id, ...alts.map(a => a.id)];
       },
       async loadRelated(id) {
         const res = await fetch('/root/ais/' + id + '/alternatives');
@@ -253,6 +278,10 @@
         this.extras = [];
         this.twoWayExtras = [];
         this.twoWay = false;
+        this.isAlreadyLinked = false;
+        if (!withRelated) {
+          this.$store.altForm.mainAIAltIds = [];
+        }
       },
     };
   }
