@@ -146,6 +146,7 @@ func main() {
 			authed.POST("/pages", root.PageCreate(database.DB))
 			authed.GET("/pages/:id/edit", root.PageEditForm(database.DB))
 			authed.POST("/pages/:id", root.PageUpdate(database.DB))
+			authed.POST("/upload/screenshot", root.UploadScreenshot(r2svc))
 			authed.GET("/ais/new", root.AINewForm(database.DB))
 			authed.POST("/ais", root.AICreate(database.DB, r2svc))
 			authed.GET("/ais/:id/edit", root.AIEditForm(database.DB))

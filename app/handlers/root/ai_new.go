@@ -30,6 +30,8 @@ type aiFormData struct {
 	Slug        string
 	Subtitle    string
 	Description string
+	Website     string
+	HaveFree    bool
 	OwnerID     string
 	OwnerLabel  string
 	CategoryIDs []uint
@@ -126,14 +128,15 @@ func AINewForm(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cats, genera := loadAIFormDeps(db)
 		c.HTML(http.StatusOK, "root_ai_new.tmpl", gin.H{
-			"ActiveNav":          "ais",
-			"R2Enabled":          config.C.R2Enabled(),
-			"Form":               aiFormData{},
-			"Categories":         cats,
-			"Genera":             genera,
-			"ArtifactsJSON":      loadArtifactsForForm(db),
-			"SelectedArtifactID": "",
-			"ExistingData":       template.JS("{}"),
+			"ActiveNav":           "ais",
+			"R2Enabled":           config.C.R2Enabled(),
+			"Form":                aiFormData{},
+			"Categories":          cats,
+			"Genera":              genera,
+			"ArtifactsJSON":       loadArtifactsForForm(db),
+			"SelectedArtifactID":  "",
+			"ExistingData":        template.JS("{}"),
+			"ExistingScreenshots": template.JS("[]"),
 		})
 	}
 }
@@ -156,11 +159,18 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		}
 
 		ownerID := strings.TrimSpace(c.PostForm("owner_id"))
+		screenshotsRaw := strings.TrimSpace(c.PostForm("screenshots_json"))
+		screenshotsJS := template.JS("[]")
+		if screenshotsRaw != "" && json.Valid([]byte(screenshotsRaw)) {
+			screenshotsJS = template.JS(screenshotsRaw)
+		}
 		form := aiFormData{
 			Name:        strings.TrimSpace(c.PostForm("name")),
 			Slug:        strings.TrimSpace(c.PostForm("slug")),
 			Subtitle:    strings.TrimSpace(c.PostForm("subtitle")),
 			Description: strings.TrimSpace(c.PostForm("description")),
+			Website:     strings.TrimSpace(c.PostForm("website")),
+			HaveFree:    c.PostForm("have_free") == "on",
 			OwnerID:     ownerID,
 			OwnerLabel:  ownerLabelByID(db, ownerID),
 			CategoryIDs: catIDs,
@@ -180,15 +190,16 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		renderErr := func(status int, msg string) {
 			cats, genera := loadAIFormDeps(db)
 			c.HTML(status, "root_ai_new.tmpl", gin.H{
-				"ActiveNav":          "ais",
-				"R2Enabled":          config.C.R2Enabled(),
-				"Form":               form,
-				"Categories":         cats,
-				"Genera":             genera,
-				"ArtifactsJSON":      loadArtifactsForForm(db),
-				"SelectedArtifactID": selectedArtifactID,
-				"ExistingData":       existingData,
-				"Error":              msg,
+				"ActiveNav":           "ais",
+				"R2Enabled":           config.C.R2Enabled(),
+				"Form":                form,
+				"Categories":          cats,
+				"Genera":              genera,
+				"ArtifactsJSON":       loadArtifactsForForm(db),
+				"SelectedArtifactID":  selectedArtifactID,
+				"ExistingData":        existingData,
+				"ExistingScreenshots": screenshotsJS,
+				"Error":               msg,
 			})
 		}
 
@@ -229,12 +240,20 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			logoURL = url
 		}
 
+		var screenshotsData datatypes.JSON = datatypes.JSON("[]")
+		if screenshotsRaw != "" && json.Valid([]byte(screenshotsRaw)) {
+			screenshotsData = datatypes.JSON(screenshotsRaw)
+		}
+
 		ai := models.AI{
 			Name:        form.Name,
 			Slug:        form.Slug,
 			Subtitle:    form.Subtitle,
 			Description: form.Description,
+			Website:     form.Website,
+			HaveFree:    form.HaveFree,
 			LogoURL:     logoURL,
+			Screenshots: screenshotsData,
 			ArtifactID:  artifactID,
 			Data:        artifactData,
 		}

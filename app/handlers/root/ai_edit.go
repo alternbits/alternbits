@@ -1,6 +1,7 @@
 package root
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -11,6 +12,7 @@ import (
 	"github.com/dariubs/altern/app/models"
 	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -54,6 +56,10 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 		if len(ai.Data) > 0 {
 			existingData = template.JS(ai.Data)
 		}
+		existingScreenshots := template.JS("[]")
+		if len(ai.Screenshots) > 0 {
+			existingScreenshots = template.JS(ai.Screenshots)
+		}
 
 		c.HTML(http.StatusOK, "root_ai_edit.tmpl", gin.H{
 			"ActiveNav":           "ais",
@@ -68,6 +74,7 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 			"ArtifactsJSON":       loadArtifactsForForm(db),
 			"SelectedArtifactID":  selectedArtifactID,
 			"ExistingData":        existingData,
+			"ExistingScreenshots": existingScreenshots,
 		})
 	}
 }
@@ -109,7 +116,14 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		}
 		subtitle := strings.TrimSpace(c.PostForm("subtitle"))
 		description := strings.TrimSpace(c.PostForm("description"))
+		website := strings.TrimSpace(c.PostForm("website"))
+		haveFree := c.PostForm("have_free") == "on"
 		ownerID := strings.TrimSpace(c.PostForm("owner_id"))
+		screenshotsRaw := strings.TrimSpace(c.PostForm("screenshots_json"))
+		screenshotsJS := template.JS("[]")
+		if screenshotsRaw != "" && json.Valid([]byte(screenshotsRaw)) {
+			screenshotsJS = template.JS(screenshotsRaw)
+		}
 
 		artifactID, artifactData := parseArtifactFormFields(c)
 		selectedArtifactID := ""
@@ -140,6 +154,7 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 				"ArtifactsJSON":       loadArtifactsForForm(db),
 				"SelectedArtifactID":  selectedArtifactID,
 				"ExistingData":        existingData,
+				"ExistingScreenshots": screenshotsJS,
 				"Error":               msg,
 			})
 		}
@@ -188,11 +203,40 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			logoURL = url
 		}
 
+		// Delete screenshots removed by the user from R2.
+		type shotItem struct {
+			URL string `json:"url"`
+		}
+		var oldShots, newShots []shotItem
+		_ = json.Unmarshal(ai.Screenshots, &oldShots)
+		if screenshotsRaw != "" && json.Valid([]byte(screenshotsRaw)) {
+			_ = json.Unmarshal([]byte(screenshotsRaw), &newShots)
+		}
+		newURLSet := make(map[string]bool, len(newShots))
+		for _, s := range newShots {
+			if s.URL != "" {
+				newURLSet[s.URL] = true
+			}
+		}
+		for _, s := range oldShots {
+			if s.URL != "" && !newURLSet[s.URL] && r2 != nil {
+				_ = r2.DeleteByURL(s.URL)
+			}
+		}
+
+		var screenshotsData datatypes.JSON = datatypes.JSON("[]")
+		if screenshotsRaw != "" && json.Valid([]byte(screenshotsRaw)) {
+			screenshotsData = datatypes.JSON(screenshotsRaw)
+		}
+
 		ai.Name = name
 		ai.Slug = slug
 		ai.Subtitle = subtitle
 		ai.Description = description
+		ai.Website = website
+		ai.HaveFree = haveFree
 		ai.LogoURL = logoURL
+		ai.Screenshots = screenshotsData
 		ai.ArtifactID = artifactID
 		ai.Data = artifactData
 		ai.UserID = nil

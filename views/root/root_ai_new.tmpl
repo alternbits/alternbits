@@ -51,6 +51,12 @@
         </div>
 
         <div>
+          <label for="website" class="block text-sm font-medium text-zinc-700">Website</label>
+          <input type="url" id="website" name="website" value="{{ .Website }}" placeholder="https://..."
+                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        </div>
+
+        <div>
           <label for="description" class="block text-sm font-medium text-zinc-700">Description</label>
           <textarea id="description" name="description">{{ .Description }}</textarea>
         </div>
@@ -84,6 +90,12 @@
             </div>
           </div>
         </div>
+        <label class="flex cursor-pointer items-center gap-2">
+          <input type="checkbox" name="have_free" id="have_free" {{ if .HaveFree }}checked{{ end }}
+                 class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+          <span class="text-sm font-medium text-zinc-700">Has a free plan</span>
+        </label>
+
         {{ end }}
       </div>
 
@@ -163,6 +175,70 @@
         <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
           Logo upload disabled — set the <code class="font-mono">CLOUDFLARE_*</code> env vars to enable.
         </div>
+        {{ end }}
+      </div>
+
+      <!-- Screenshots -->
+      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
+           x-data="screenshotsManager({{ .ExistingScreenshots }})">
+        <input type="hidden" name="screenshots_json" :value="json">
+
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-zinc-700">Screenshots</h2>
+          {{ if .R2Enabled }}
+          <label class="cursor-pointer rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+            Add images
+            <input type="file" multiple accept=".jpg,.jpeg,.png,.gif,.webp,image/*" class="sr-only"
+                   @change="pick($event)">
+          </label>
+          {{ end }}
+        </div>
+
+        {{ if not .R2Enabled }}
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          Screenshot upload disabled — set the <code class="font-mono">CLOUDFLARE_*</code> env vars to enable.
+        </div>
+        {{ else }}
+        <div x-show="items.length === 0" class="rounded-lg border-2 border-dashed border-zinc-200 py-8 text-center text-xs text-zinc-400">
+          No screenshots yet — click "Add images" to upload.
+        </div>
+        <div x-show="items.length > 0" class="space-y-2">
+          <template x-for="item in items" :key="item.id">
+            <div class="flex items-start gap-3 rounded-lg border bg-zinc-50 p-2 transition-colors"
+                 :class="dragOverId === item.id ? 'border-zinc-500 bg-zinc-100' : 'border-zinc-200'"
+                 draggable="true"
+                 @dragstart="onDragStart($event, item.id)"
+                 @dragover="onDragOver($event, item.id)"
+                 @dragleave="onDragLeave()"
+                 @drop="onDrop($event, item.id)"
+                 @dragend="onDragEnd()">
+              <!-- drag handle -->
+              <div class="mt-1 flex-shrink-0 cursor-grab text-zinc-300 hover:text-zinc-500" title="Drag to reorder">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5h16.5M3.75 12h16.5M3.75 19h16.5"/></svg>
+              </div>
+              <!-- preview -->
+              <div class="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-white">
+                <img :src="item.url" x-show="item.url && !item.uploading" alt="" class="h-full w-full object-cover">
+                <div x-show="item.uploading" class="absolute inset-0 flex items-center justify-center bg-white/80">
+                  <svg class="h-5 w-5 animate-spin text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                </div>
+                <div x-show="item.err && !item.uploading" class="absolute inset-0 flex items-center justify-center bg-red-50 p-1 text-center text-xs leading-tight text-red-600" x-text="item.err"></div>
+              </div>
+              <!-- alt text -->
+              <div class="min-w-0 flex-1">
+                <label class="mb-1 block text-xs font-medium text-zinc-500">Alt text</label>
+                <input type="text" x-model="item.alt" placeholder="Describe the screenshot…"
+                       class="block w-full rounded-lg border border-zinc-300 bg-white px-2.5 py-1.5 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+              </div>
+              <!-- remove -->
+              <button type="button" @click="remove(item.id)"
+                      class="mt-0.5 flex-shrink-0 rounded-md p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+              </button>
+            </div>
+          </template>
+        </div>
+        <p class="mt-2 text-xs text-zinc-500">JPG, PNG, GIF, or WebP. Max 10 MB each. Drag rows to reorder.</p>
         {{ end }}
       </div>
 
@@ -251,6 +327,62 @@
         clear() {
           this.selectedId = '';
           this.selectedLabel = '';
+        },
+      };
+    }
+
+    function screenshotsManager(initial) {
+      return {
+        items: [],
+        nextId: 0,
+        dragging: null,
+        dragOverId: null,
+
+        init() {
+          for (const s of (initial || [])) {
+            this.items.push({ id: this.nextId++, url: s.url || '', alt: s.alt || '', uploading: false, err: '' });
+          }
+        },
+
+        async pick(event) {
+          const files = Array.from(event.target.files || []);
+          event.target.value = '';
+          for (const f of files) {
+            const id = this.nextId++;
+            this.items.push({ id, url: '', alt: '', uploading: true, err: '' });
+            try {
+              const fd = new FormData();
+              fd.append('file', f);
+              const res = await fetch('/root/upload/screenshot', { method: 'POST', body: fd });
+              const data = await res.json();
+              const idx = this.items.findIndex(i => i.id === id);
+              if (idx !== -1) {
+                this.items.splice(idx, 1, { ...this.items[idx], url: res.ok && data.url ? data.url : '', uploading: false, err: res.ok && data.url ? '' : (data.error || 'Upload failed') });
+              }
+            } catch (e) {
+              const idx = this.items.findIndex(i => i.id === id);
+              if (idx !== -1) this.items.splice(idx, 1, { ...this.items[idx], uploading: false, err: 'Network error' });
+            }
+          }
+        },
+
+        remove(id) { this.items = this.items.filter(i => i.id !== id); },
+
+        onDragStart(e, id) { this.dragging = id; e.dataTransfer.effectAllowed = 'move'; },
+        onDragOver(e, id) { e.preventDefault(); this.dragOverId = id; },
+        onDragLeave() { this.dragOverId = null; },
+        onDrop(e, id) {
+          e.preventDefault();
+          if (this.dragging === null || this.dragging === id) { this.dragging = null; this.dragOverId = null; return; }
+          const src = this.items.findIndex(i => i.id === this.dragging);
+          const dst = this.items.findIndex(i => i.id === id);
+          if (src !== -1 && dst !== -1) { const [m] = this.items.splice(src, 1); this.items.splice(dst, 0, m); }
+          this.dragging = null; this.dragOverId = null;
+        },
+        onDragEnd() { this.dragging = null; this.dragOverId = null; },
+
+        get json() {
+          return JSON.stringify(this.items.filter(i => i.url && !i.uploading).map(i => ({ url: i.url, alt: i.alt })));
         },
       };
     }
