@@ -12,6 +12,9 @@ type AI struct {
 	Subtitle    string
 	Description string
 	LogoURL     string
+	Website     string
+	Screenshots datatypes.JSON `gorm:"type:jsonb"`
+	HaveFree    bool           `gorm:"default:false"`
 
 	Categories []Category `gorm:"many2many:ai_categories;joinForeignKey:ai_id;joinReferences:category_id"`
 	Genera     []Genus    `gorm:"many2many:ai_genera;joinForeignKey:ai_id;joinReferences:genus_id"`
