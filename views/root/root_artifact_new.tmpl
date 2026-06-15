@@ -7,47 +7,43 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12"
+  <div class="r-page"
        x-data="artifactForm({{ if .FieldsJSON }}'{{ .FieldsJSON }}'{{ else }}'[]'{{ end }})"
        x-init="init()">
 
-    <header class="mb-8">
-      <h1 class="text-2xl font-semibold tracking-tight">New artifact</h1>
-      <p class="mt-1 text-sm text-zinc-500">Define a schema of JSON fields that can be attached to AIs.</p>
+    <header class="mb-6">
+      <h1 class="r-page-title">New artifact</h1>
+      <p class="r-page-sub">Define a schema of JSON fields that can be attached to AIs.</p>
     </header>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     <form method="POST" action="/root/artifacts" @submit.prevent="submitForm($event)">
-      <!-- Artifact identity -->
-      <div class="mb-4 space-y-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+      <div class="mb-4 r-card-pad space-y-4 shadow-sm">
         <div>
-          <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
+          <label for="name" class="r-label">Name <span class="r-req">*</span></label>
           <input type="text" id="name" name="name" required
                  value="{{ .FormName }}"
                  x-ref="artifactName"
                  @input="onArtifactNameInput($event.target.value)"
                  placeholder="e.g. Pricing Info"
-                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                 class="r-input">
         </div>
         <div>
-          <label for="slug" class="block text-sm font-medium text-zinc-700">Slug</label>
+          <label for="slug" class="r-label">Slug</label>
           <input type="text" id="slug" name="slug"
                  value="{{ .FormSlug }}"
                  x-ref="artifactSlug"
                  @input="slugEdited = true"
                  placeholder="auto from name"
-                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-          <p class="mt-1 text-xs text-zinc-500">Leave blank to derive from the name.</p>
+                 class="r-input">
+          <p class="r-help">Leave blank to derive from the name.</p>
         </div>
       </div>
 
-      <!-- Fields -->
-      <div class="mb-4 rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-          <span class="text-sm font-medium text-zinc-700">Fields</span>
+      <div class="mb-4 r-card shadow-sm">
+        <div class="r-card-head">
+          <span class="r-card-title">Fields</span>
           <span class="text-xs text-zinc-400" x-text="fields.length + ' field' + (fields.length === 1 ? '' : 's')"></span>
         </div>
 
@@ -138,13 +134,9 @@
       <!-- Hidden payload -->
       <input type="hidden" name="fields_json" x-ref="fieldsJSON">
 
-      <!-- Actions -->
       <div class="flex items-center justify-between pt-2">
-        <a href="/root/artifacts" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
-          Create artifact
-        </button>
+        <a href="/root/artifacts" class="r-btn-ghost">Cancel</a>
+        <button type="submit" class="r-btn-primary">Create artifact</button>
       </div>
     </form>
   </div>

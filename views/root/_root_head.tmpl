@@ -2,4 +2,84 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="/static/js/tailwind.3.4.17.js"></script>
   <script defer src="/static/js/cdn.min.js"></script>
+  <style type="text/tailwindcss">
+    @layer components {
+      /* Layout */
+      .r-page         { @apply mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10; }
+      .r-page-narrow  { @apply mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10; }
+      .r-page-header  { @apply mb-6 flex flex-wrap items-end justify-between gap-3; }
+      .r-page-title   { @apply text-2xl font-semibold tracking-tight text-zinc-900; }
+      .r-page-sub     { @apply mt-1 text-sm text-zinc-500; }
+
+      /* Cards */
+      .r-card         { @apply rounded-xl border border-zinc-200 bg-white; }
+      .r-card-pad     { @apply rounded-xl border border-zinc-200 bg-white p-5; }
+      .r-card-head    { @apply flex items-center justify-between border-b border-zinc-100 px-5 py-3; }
+      .r-card-title   { @apply text-sm font-semibold tracking-tight text-zinc-900; }
+      .r-card-link    { @apply text-xs text-zinc-500 hover:text-zinc-700; }
+
+      /* Buttons — base + variants */
+      .r-btn            { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors; }
+      .r-btn-primary    { @apply r-btn bg-zinc-900 text-white hover:bg-zinc-800; }
+      .r-btn-secondary  { @apply r-btn border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100; }
+      .r-btn-ghost      { @apply r-btn text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900; }
+      .r-btn-success    { @apply r-btn bg-emerald-600 text-white hover:bg-emerald-500; }
+      .r-btn-danger     { @apply r-btn border border-red-300 bg-white text-red-700 hover:bg-red-50; }
+
+      /* Buttons — small */
+      .r-btn-sm           { @apply inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors; }
+      .r-btn-sm-primary   { @apply r-btn-sm bg-zinc-900 text-white hover:bg-zinc-800; }
+      .r-btn-sm-secondary { @apply r-btn-sm border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-100; }
+      .r-btn-sm-success   { @apply r-btn-sm bg-emerald-600 text-white hover:bg-emerald-500; }
+      .r-row-action       { @apply inline-flex items-center rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900; }
+
+      /* Forms */
+      .r-form-card  { @apply space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm; }
+      .r-label      { @apply block text-sm font-medium text-zinc-700; }
+      .r-input      { @apply mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900; }
+      .r-select     { @apply mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700 shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900; }
+      .r-textarea   { @apply mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900; }
+      .r-help       { @apply mt-1 text-xs text-zinc-500; }
+      .r-req        { @apply text-red-500; }
+
+      /* Filter bars (lists) */
+      .r-filter-bar    { @apply mb-6 flex flex-wrap gap-2; }
+      .r-filter-input  { @apply w-full rounded-lg border border-zinc-300 bg-white pl-8 pr-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500; }
+      .r-filter-select { @apply rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500; }
+      .r-filter-apply  { @apply rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-800; }
+      .r-filter-clear  { @apply inline-flex items-center rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900; }
+
+      /* Tables */
+      .r-table   { @apply w-full text-sm; }
+      .r-thead   { @apply bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500; }
+      .r-th      { @apply px-5 py-2 font-medium; }
+      .r-tbody   { @apply divide-y divide-zinc-100; }
+      .r-tr      { @apply hover:bg-zinc-50; }
+      .r-td      { @apply px-5 py-3; }
+
+      /* Pills (badges) */
+      .r-pill          { @apply inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium; }
+      .r-pill-zinc     { @apply r-pill bg-zinc-100 text-zinc-700; }
+      .r-pill-amber    { @apply r-pill bg-amber-50 text-amber-700; }
+      .r-pill-emerald  { @apply r-pill bg-emerald-50 text-emerald-700; }
+      .r-pill-red      { @apply r-pill bg-red-50 text-red-700; }
+      .r-pill-indigo   { @apply r-pill bg-indigo-50 text-indigo-700; }
+      .r-pill-green    { @apply r-pill bg-green-50 text-green-700; }
+      .r-pill-su       { @apply inline-flex shrink-0 items-center rounded-full bg-zinc-900 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white; }
+      .r-pill-2fa      { @apply inline-flex shrink-0 items-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-800; }
+
+      /* Pager */
+      .r-pager           { @apply flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5; }
+      .r-pager-link      { @apply rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100; }
+      .r-pager-disabled  { @apply rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400; }
+
+      /* Misc */
+      .r-error  { @apply mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700; }
+      .r-empty  { @apply px-5 py-8 text-center text-sm text-zinc-500; }
+      .r-code   { @apply rounded bg-zinc-100 px-1.5 py-0.5 text-xs font-mono text-zinc-700; }
+      .r-muted  { @apply text-zinc-500; }
+      .r-meta   { @apply text-xs text-zinc-500; }
+      .r-dash   { @apply text-zinc-400; }
+    }
+  </style>
   <style>[x-cloak] { display: none !important; }</style>

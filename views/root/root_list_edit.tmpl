@@ -7,50 +7,46 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8">
+  <div class="r-page">
+    <header class="mb-6">
       <a href="/root/lists" class="mb-3 inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         Lists
       </a>
-      <h1 class="text-2xl font-semibold tracking-tight">Edit list</h1>
-      {{ with .List }}<p class="mt-1 text-sm text-zinc-500">ID {{ .ID }} &middot; created {{ .CreatedAt.Format "Jan 2, 2006" }}</p>{{ end }}
+      <h1 class="r-page-title">Edit list</h1>
+      {{ with .List }}<p class="r-page-sub">ID {{ .ID }} · created {{ .CreatedAt.Format "Jan 2, 2006" }}</p>{{ end }}
     </header>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     <form method="POST" action="/root/lists/{{ .List.ID }}" x-data="listPicker()" @submit="onSubmit">
 
-      <!-- Details -->
-      <div class="mb-6 space-y-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <h2 class="text-sm font-semibold text-zinc-700">Details</h2>
+      <div class="mb-6 r-card-pad space-y-4 shadow-sm">
+        <h2 class="r-card-title">Details</h2>
 
         {{ with .List }}
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
-            <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
+            <label for="name" class="r-label">Name <span class="r-req">*</span></label>
             <input type="text" id="name" name="name" required value="{{ .Name }}"
-                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                   class="r-input">
           </div>
           <div>
-            <label for="slug" class="block text-sm font-medium text-zinc-700">Slug <span class="text-red-500">*</span></label>
+            <label for="slug" class="r-label">Slug <span class="r-req">*</span></label>
             <input type="text" id="slug" name="slug" required value="{{ .Slug }}"
-                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                   class="r-input">
           </div>
         </div>
         <div>
-          <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
+          <label for="subtitle" class="r-label">Subtitle</label>
           <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
-                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                 class="r-input">
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
-            <label for="owner_id" class="block text-sm font-medium text-zinc-700">Owner</label>
-            <select id="owner_id" name="owner_id"
-                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+            <label for="owner_id" class="r-label">Owner</label>
+            <select id="owner_id" name="owner_id" class="r-select">
               <option value="">— None —</option>
               {{ $selected := $.OwnerID }}
               {{ range $.Owners }}
@@ -78,10 +74,9 @@
         {{ end }}
       </div>
 
-      <!-- AI picker -->
-      <div class="rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-          <h2 class="text-sm font-semibold text-zinc-700">AIs</h2>
+      <div class="r-card shadow-sm">
+        <div class="r-card-head">
+          <h2 class="r-card-title">AIs</h2>
           <span class="text-xs text-zinc-400" x-text="selected.length + ' selected'"></span>
         </div>
 
@@ -166,11 +161,8 @@
       <input type="hidden" name="ai_ids" x-bind:value="selected.map(a => a.id).join(',')">
 
       <div class="mt-6 flex items-center justify-between">
-        <a href="/root/lists" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:bg-zinc-800">
-          Save changes
-        </button>
+        <a href="/root/lists" class="r-btn-ghost">Cancel</a>
+        <button type="submit" class="r-btn-primary">Save changes</button>
       </div>
 
     </form>

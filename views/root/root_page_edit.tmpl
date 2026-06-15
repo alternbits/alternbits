@@ -14,49 +14,40 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8">
-      <h1 class="text-2xl font-semibold tracking-tight">Edit page</h1>
-      {{ with .Page }}<p class="mt-1 text-sm text-zinc-500">{{ .Title }}</p>{{ end }}
+  <div class="r-page-narrow">
+    <header class="mb-6">
+      <h1 class="r-page-title">Edit page</h1>
+      {{ with .Page }}<p class="r-page-sub">{{ .Title }}</p>{{ end }}
     </header>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     {{ with .Page }}
-    <form method="POST" action="/root/pages/{{ .ID }}"
-          class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+    <form method="POST" action="/root/pages/{{ .ID }}" class="r-form-card">
       <div>
-        <label for="title" class="block text-sm font-medium text-zinc-700">Title <span class="text-red-500">*</span></label>
-        <input type="text" id="title" name="title" required value="{{ .Title }}"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        <label for="title" class="r-label">Title <span class="r-req">*</span></label>
+        <input type="text" id="title" name="title" required value="{{ .Title }}" class="r-input">
       </div>
 
       <div>
-        <label for="slug" class="block text-sm font-medium text-zinc-700">Slug</label>
-        <input type="text" id="slug" name="slug" value="{{ .Slug }}"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-        <p class="mt-1 text-xs text-zinc-500">Leave blank to derive from the title.</p>
+        <label for="slug" class="r-label">Slug</label>
+        <input type="text" id="slug" name="slug" value="{{ .Slug }}" class="r-input">
+        <p class="r-help">Leave blank to derive from the title.</p>
       </div>
 
       <div>
-        <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
-        <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        <label for="subtitle" class="r-label">Subtitle</label>
+        <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}" class="r-input">
       </div>
 
       <div>
-        <label for="description" class="block text-sm font-medium text-zinc-700">Description</label>
+        <label for="description" class="r-label">Description</label>
         <textarea id="description" name="description">{{ .Description }}</textarea>
       </div>
 
       <div class="flex items-center justify-between pt-2">
-        <a href="/root/pages" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
-          Save changes
-        </button>
+        <a href="/root/pages" class="r-btn-ghost">Cancel</a>
+        <button type="submit" class="r-btn-primary">Save changes</button>
       </div>
     </form>
     {{ end }}

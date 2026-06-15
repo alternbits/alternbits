@@ -7,85 +7,66 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8 flex items-start justify-between gap-4">
+  <div class="r-page">
+    <header class="r-page-header">
       <div>
-        <h1 class="text-2xl font-semibold tracking-tight">Genera</h1>
-        {{ with .Page }}
-        <p class="mt-1 text-sm text-zinc-500">{{ .Total }} total &middot; page {{ .Page }} of {{ .TotalPages }}.</p>
-        {{ end }}
+        <h1 class="r-page-title">Genera</h1>
+        {{ with .Page }}<p class="r-page-sub">{{ .Total }} total · page {{ .Page }} of {{ .TotalPages }}.</p>{{ end }}
       </div>
-      <a href="/root/genera/new"
-         class="shrink-0 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
-        + New genus
-      </a>
+      <a href="/root/genera/new" class="r-btn-primary">+ New genus</a>
     </header>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     {{ with .Page }}
-    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-      <!-- Mobile: card list -->
+    <section class="overflow-hidden r-card">
       <ul class="divide-y divide-zinc-100 md:hidden">
         {{ range .Genera }}
         <li class="px-4 py-3">
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="truncate font-medium text-zinc-900">{{ .Name }}</div>
-              <div class="truncate text-xs text-zinc-500">{{ .Slug }}</div>
+              <div class="truncate r-meta">{{ .Slug }}</div>
               {{ if .Subtitle }}<div class="mt-1 line-clamp-2 text-sm text-zinc-600">{{ .Subtitle }}</div>{{ end }}
             </div>
             <span class="shrink-0 text-xs text-zinc-400">{{ .CreatedAt.Format "2006-01-02" }}</span>
           </div>
         </li>
         {{ else }}
-        <li class="px-4 py-8 text-center text-zinc-500">No genera yet.</li>
+        <li class="r-empty">No genera yet.</li>
         {{ end }}
       </ul>
 
-      <!-- Desktop: table -->
       <div class="hidden md:block">
-        <table class="w-full text-sm">
-          <thead class="bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
+        <table class="r-table">
+          <thead class="r-thead">
             <tr>
-              <th class="px-5 py-2 font-medium">Genus</th>
-              <th class="px-5 py-2 font-medium">Slug</th>
-              <th class="px-5 py-2 font-medium">Created</th>
+              <th class="r-th">Genus</th>
+              <th class="r-th">Slug</th>
+              <th class="r-th">Created</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-100">
+          <tbody class="r-tbody">
             {{ range .Genera }}
-            <tr class="hover:bg-zinc-50">
-              <td class="px-5 py-3">
+            <tr class="r-tr">
+              <td class="r-td">
                 <div class="font-medium text-zinc-900">{{ .Name }}</div>
-                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 text-xs text-zinc-500">{{ .Subtitle }}</div>{{ end }}
+                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 r-meta">{{ .Subtitle }}</div>{{ end }}
               </td>
-              <td class="px-5 py-3 text-zinc-700"><code class="rounded bg-zinc-100 px-1.5 py-0.5 text-xs">{{ .Slug }}</code></td>
-              <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
+              <td class="r-td text-zinc-700"><code class="r-code">{{ .Slug }}</code></td>
+              <td class="r-td r-muted">{{ .CreatedAt.Format "2006-01-02" }}</td>
             </tr>
             {{ else }}
-            <tr>
-              <td colspan="3" class="px-5 py-8 text-center text-zinc-500">No genera yet.</td>
-            </tr>
+            <tr><td colspan="3" class="r-empty">No genera yet.</td></tr>
             {{ end }}
           </tbody>
         </table>
       </div>
 
       {{ if or .HasPrev .HasNext }}
-      <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
-        {{ if .HasPrev }}
-        <a href="?page={{ .PrevPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
-        {{ else }}
-        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
-        {{ end }}
-        {{ if .HasNext }}
-        <a href="?page={{ .NextPage }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
-        {{ else }}
-        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
-        {{ end }}
+      <div class="r-pager">
+        {{ if .HasPrev }}<a href="?page={{ .PrevPage }}" class="r-pager-link">&larr; Previous</a>{{ else }}<span class="r-pager-disabled">&larr; Previous</span>{{ end }}
+        {{ if .HasNext }}<a href="?page={{ .NextPage }}" class="r-pager-link">Next &rarr;</a>{{ else }}<span class="r-pager-disabled">Next &rarr;</span>{{ end }}
       </div>
       {{ end }}
     </section>

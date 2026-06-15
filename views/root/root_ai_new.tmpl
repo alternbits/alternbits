@@ -14,55 +14,53 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8">
-      <h1 class="text-2xl font-semibold tracking-tight">New AI</h1>
-      <p class="mt-1 text-sm text-zinc-500">Add an AI to the directory.</p>
+  <div class="r-page">
+    <header class="mb-6">
+      <h1 class="r-page-title">New AI</h1>
+      <p class="r-page-sub">Add an AI to the directory.</p>
     </header>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     <form method="POST" action="/root/ais" enctype="multipart/form-data" class="space-y-6">
 
       <!-- Core details -->
-      <div class="space-y-4 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <h2 class="text-sm font-semibold text-zinc-700">Details</h2>
+      <div class="space-y-4 r-card-pad shadow-sm">
+        <h2 class="r-card-title">Details</h2>
 
         {{ with .Form }}
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
-            <label for="name" class="block text-sm font-medium text-zinc-700">Name <span class="text-red-500">*</span></label>
+            <label for="name" class="r-label">Name <span class="r-req">*</span></label>
             <input type="text" id="name" name="name" required value="{{ .Name }}"
-                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                   class="r-input">
           </div>
           <div>
-            <label for="slug" class="block text-sm font-medium text-zinc-700">Slug</label>
+            <label for="slug" class="r-label">Slug</label>
             <input type="text" id="slug" name="slug" value="{{ .Slug }}" placeholder="auto from name"
-                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                   class="r-input">
           </div>
         </div>
 
         <div>
-          <label for="subtitle" class="block text-sm font-medium text-zinc-700">Subtitle</label>
+          <label for="subtitle" class="r-label">Subtitle</label>
           <input type="text" id="subtitle" name="subtitle" value="{{ .Subtitle }}"
-                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                 class="r-input">
         </div>
 
         <div>
-          <label for="website" class="block text-sm font-medium text-zinc-700">Website</label>
+          <label for="website" class="r-label">Website</label>
           <input type="url" id="website" name="website" value="{{ .Website }}" placeholder="https://..."
-                 class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                 class="r-input">
         </div>
 
         <div>
-          <label for="description" class="block text-sm font-medium text-zinc-700">Description</label>
+          <label for="description" class="r-label">Description</label>
           <textarea id="description" name="description">{{ .Description }}</textarea>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-zinc-700">Owner</label>
+          <label class="r-label">Owner</label>
           <div x-data="ownerSearch('{{ .OwnerID }}', '{{ .OwnerLabel }}')" class="relative mt-1"
                @click.outside="open = false">
             <input type="hidden" name="owner_id" :value="selectedId">
@@ -77,7 +75,7 @@
             <div x-show="!selectedId">
               <input type="text" x-model="query" @input.debounce.200ms="doSearch()"
                      placeholder="Search by name, username or email…"
-                     class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                     class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
               <div x-show="open" x-cloak
                    class="absolute z-10 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
                 <template x-for="r in results" :key="r.id">
@@ -105,23 +103,22 @@
         <input type="hidden" name="artifact_id" :value="selectedId">
         <input type="hidden" name="artifact_data_json" :value="dataJSON">
 
-        <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 class="mb-3 text-sm font-semibold text-zinc-700">Artifact</h2>
-          <select @change="selectArtifact($event.target.value)"
-                  class="block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+        <div class="r-card-pad shadow-sm">
+          <h2 class="mb-3 r-card-title">Artifact</h2>
+          <select @change="selectArtifact($event.target.value)" class="r-select">
             <option value="">— None —</option>
             <template x-for="a in artifacts" :key="a.id">
               <option :value="a.id" :selected="String(a.id) === selectedId" x-text="a.name"></option>
             </template>
           </select>
-          <p class="mt-1 text-xs text-zinc-500">Select an artifact to define structured data fields for this AI.</p>
+          <p class="r-help">Select an artifact to define structured data fields for this AI.</p>
         </div>
 
         <div x-show="fields.length > 0"
              x-cloak
-             class="rounded-xl border border-zinc-200 bg-white shadow-sm">
+             class="r-card shadow-sm">
           <div class="border-b border-zinc-100 px-5 py-3">
-            <span class="text-sm font-semibold text-zinc-700">Artifact fields</span>
+            <span class="r-card-title">Artifact fields</span>
           </div>
           <div class="grid gap-px bg-zinc-100 sm:grid-cols-2">
             <template x-for="f in fields" :key="f.slug">
@@ -165,8 +162,8 @@
       </div>
 
       <!-- Logo -->
-      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Logo</h2>
+      <div class="r-card-pad shadow-sm">
+        <h2 class="mb-3 r-card-title">Logo</h2>
         {{ if .R2Enabled }}
         <input type="file" name="logo" accept=".jpg,.jpeg,.png,.gif,.webp,.svg,image/*"
                class="block w-full text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-zinc-800">
@@ -179,12 +176,12 @@
       </div>
 
       <!-- Screenshots -->
-      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
+      <div class="r-card-pad shadow-sm"
            x-data="screenshotsManager({{ .ExistingScreenshots }})">
         <input type="hidden" name="screenshots_json" :value="json">
 
         <div class="mb-3 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-zinc-700">Screenshots</h2>
+          <h2 class="r-card-title">Screenshots</h2>
           {{ if .R2Enabled }}
           <label class="cursor-pointer rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
             Add images
@@ -243,10 +240,10 @@
       </div>
 
       <!-- Categories -->
-      <div class="rounded-xl border border-zinc-200 bg-white shadow-sm"
+      <div class="r-card shadow-sm"
            x-data="{ search: '' }">
         <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-          <h2 class="text-sm font-semibold text-zinc-700">Categories</h2>
+          <h2 class="r-card-title">Categories</h2>
           <input type="text" x-model="search" placeholder="Filter…"
                  class="w-40 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs placeholder-zinc-400 focus:border-zinc-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-zinc-900">
         </div>
@@ -266,8 +263,8 @@
       </div>
 
       <!-- Genera -->
-      <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <h2 class="mb-3 text-sm font-semibold text-zinc-700">Genera</h2>
+      <div class="r-card-pad shadow-sm">
+        <h2 class="mb-3 r-card-title">Genera</h2>
         <div class="flex flex-wrap gap-2">
           {{ $selGens := .Form.GenusIDs }}
           {{ range .Genera }}
@@ -283,9 +280,8 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <a href="/root/ais" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+        <a href="/root/ais" class="r-btn-ghost">Cancel</a>
+        <button type="submit" class="r-btn-primary">
           Create AI
         </button>
       </div>

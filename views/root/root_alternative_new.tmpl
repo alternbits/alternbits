@@ -7,27 +7,25 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8">
+  <div class="r-page-narrow">
+    <header class="mb-6">
       <a href="/root/alternatives" class="mb-3 inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         Alternatives
       </a>
-      <h1 class="text-2xl font-semibold tracking-tight">New alternative</h1>
-      <p class="mt-1 text-sm text-zinc-500">Link two AIs as alternatives to each other.</p>
+      <h1 class="r-page-title">New alternative</h1>
+      <p class="r-page-sub">Link two AIs as alternatives to each other.</p>
     </header>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     <form method="POST" action="/root/alternatives">
 
-      <div class="space-y-5 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+      <div class="space-y-5 r-card-pad shadow-sm">
 
         <!-- AI picker -->
         <div x-data="aiSearch('ai_id', '{{ .AIIDStr }}', '{{ .AILabel }}')" class="relative">
-          <label class="block text-sm font-medium text-zinc-700">AI <span class="text-red-500">*</span></label>
+          <label class="r-label">AI <span class="r-req">*</span></label>
           <p class="mb-1.5 mt-0.5 text-xs text-zinc-400">The AI that has an alternative.</p>
 
           <!-- Selected pill -->
@@ -46,7 +44,7 @@
             <input type="text" x-model="query" @input="fetch()" @focus="fetch()"
                    @keydown.escape="open = false" @click.outside="open = false"
                    placeholder="Search by name or slug…"
-                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                   class="r-input">
             <div x-show="open" x-cloak
                  class="absolute left-0 top-full z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
               <template x-for="item in results" :key="item.id">
@@ -75,7 +73,7 @@
 
         <!-- Alternative AI picker -->
         <div x-data="aiSearch('alternative_ai_id', '{{ .AltAIIDStr }}', '{{ .AltAILabel }}', true, {{ .TwoWay }})" class="relative">
-          <label class="block text-sm font-medium text-zinc-700">Alternative AI <span class="text-red-500">*</span></label>
+          <label class="r-label">Alternative AI <span class="r-req">*</span></label>
           <p class="mb-1.5 mt-0.5 text-xs text-zinc-400">The AI that is the alternative.</p>
 
           <!-- Selected pill -->
@@ -101,7 +99,7 @@
             <input type="text" x-model="query" @input="fetch()" @focus="fetch()"
                    @keydown.escape="open = false" @click.outside="open = false"
                    placeholder="Search by name or slug…"
-                   class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                   class="r-input">
             <div x-show="open" x-cloak
                  class="absolute left-0 top-full z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
               <template x-for="item in results" :key="item.id">
@@ -161,9 +159,9 @@
 
           <!-- Status -->
           <div>
-            <label for="status" class="block text-sm font-medium text-zinc-700">Status</label>
+            <label for="status" class="r-label">Status</label>
             <select id="status" name="status"
-                    class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                    class="r-input">
               <option value="approved" {{ if eq .Status "approved" }}selected{{ end }}>Approved</option>
               <option value="pending"  {{ if eq .Status "pending"  }}selected{{ end }}>Pending</option>
               <option value="rejected" {{ if eq .Status "rejected" }}selected{{ end }}>Rejected</option>
@@ -172,20 +170,17 @@
 
           <!-- Note -->
           <div>
-            <label for="note" class="block text-sm font-medium text-zinc-700">Note <span class="text-zinc-400 font-normal">(optional)</span></label>
+            <label for="note" class="r-label">Note <span class="text-zinc-400 font-normal">(optional)</span></label>
             <textarea id="note" name="note" rows="2"
-                      class="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">{{ .Note }}</textarea>
+                      class="r-input">{{ .Note }}</textarea>
           </div>
 
         </div>
       </div>
 
       <div class="mt-6 flex items-center justify-between">
-        <a href="/root/alternatives" class="text-sm font-medium text-zinc-600 hover:text-zinc-900">Cancel</a>
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white hover:bg-zinc-800">
-          Create alternative
-        </button>
+        <a href="/root/alternatives" class="r-btn-ghost">Cancel</a>
+        <button type="submit" class="r-btn-primary">Create alternative</button>
       </div>
 
     </form>

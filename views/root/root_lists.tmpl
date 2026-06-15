@@ -7,81 +7,55 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-6 flex items-start justify-between gap-4">
+  <div class="r-page">
+    <header class="r-page-header">
       <div>
-        <h1 class="text-2xl font-semibold tracking-tight">Lists</h1>
+        <h1 class="r-page-title">Lists</h1>
         {{ with .Page }}
-        <p class="mt-1 text-sm text-zinc-500">{{ .Total }} total &middot; page {{ .Page }} of {{ .TotalPages }}.</p>
+        <p class="r-page-sub">{{ .Total }} total · page {{ .Page }} of {{ .TotalPages }}.</p>
         {{ end }}
       </div>
-      <a href="/root/lists/new"
-         class="shrink-0 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
-        + New list
-      </a>
+      <a href="/root/lists/new" class="r-btn-primary">+ New list</a>
     </header>
 
-    <!-- Search & filters -->
-    <form method="GET" action="/root/lists" class="mb-6">
-      <div class="flex flex-wrap gap-2">
-        <!-- Search -->
-        <div class="relative flex-1 min-w-48">
-          <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input type="text" name="q" value="{{ .Filters.Search }}"
-                 placeholder="Search name or slug…"
-                 class="w-full rounded-lg border border-zinc-300 bg-white pl-8 pr-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-        </div>
-
-        <!-- Source filter -->
-        <select name="source"
-                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
-          <option value=""{{ if eq .Filters.Source "" }} selected{{ end }}>All sources</option>
-          <option value="manual"{{ if eq .Filters.Source "manual" }} selected{{ end }}>Manual</option>
-          <option value="auto"{{ if eq .Filters.Source "auto" }} selected{{ end }}>Auto-generated</option>
-        </select>
-
-        <!-- Visibility filter -->
-        <select name="visibility"
-                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
-          <option value=""{{ if eq .Filters.Visibility "" }} selected{{ end }}>All visibility</option>
-          <option value="public"{{ if eq .Filters.Visibility "public" }} selected{{ end }}>Public</option>
-          <option value="private"{{ if eq .Filters.Visibility "private" }} selected{{ end }}>Private</option>
-        </select>
-
-        <!-- Sort -->
-        <select name="sort"
-                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
-          <option value=""{{ if eq .Filters.Sort "" }} selected{{ end }}>Newest first</option>
-          <option value="oldest"{{ if eq .Filters.Sort "oldest" }} selected{{ end }}>Oldest first</option>
-          <option value="name_asc"{{ if eq .Filters.Sort "name_asc" }} selected{{ end }}>Name A→Z</option>
-          <option value="name_desc"{{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Name Z→A</option>
-          <option value="most_ais"{{ if eq .Filters.Sort "most_ais" }} selected{{ end }}>Most AIs</option>
-          <option value="fewest_ais"{{ if eq .Filters.Sort "fewest_ais" }} selected{{ end }}>Fewest AIs</option>
-        </select>
-
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
-          Apply
-        </button>
-
-        {{ if or .Filters.Search .Filters.Source .Filters.Visibility .Filters.Sort }}
-        <a href="/root/lists"
-           class="flex items-center rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">
-          Clear
-        </a>
-        {{ end }}
+    <form method="GET" action="/root/lists" class="r-filter-bar">
+      <div class="relative flex-1 min-w-48">
+        <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" name="q" value="{{ .Filters.Search }}" placeholder="Search name or slug…" class="r-filter-input" />
       </div>
+
+      <select name="source" class="r-filter-select">
+        <option value=""{{ if eq .Filters.Source "" }} selected{{ end }}>All sources</option>
+        <option value="manual"{{ if eq .Filters.Source "manual" }} selected{{ end }}>Manual</option>
+        <option value="auto"{{ if eq .Filters.Source "auto" }} selected{{ end }}>Auto-generated</option>
+      </select>
+
+      <select name="visibility" class="r-filter-select">
+        <option value=""{{ if eq .Filters.Visibility "" }} selected{{ end }}>All visibility</option>
+        <option value="public"{{ if eq .Filters.Visibility "public" }} selected{{ end }}>Public</option>
+        <option value="private"{{ if eq .Filters.Visibility "private" }} selected{{ end }}>Private</option>
+      </select>
+
+      <select name="sort" class="r-filter-select">
+        <option value=""{{ if eq .Filters.Sort "" }} selected{{ end }}>Newest first</option>
+        <option value="oldest"{{ if eq .Filters.Sort "oldest" }} selected{{ end }}>Oldest first</option>
+        <option value="name_asc"{{ if eq .Filters.Sort "name_asc" }} selected{{ end }}>Name A→Z</option>
+        <option value="name_desc"{{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Name Z→A</option>
+        <option value="most_ais"{{ if eq .Filters.Sort "most_ais" }} selected{{ end }}>Most AIs</option>
+        <option value="fewest_ais"{{ if eq .Filters.Sort "fewest_ais" }} selected{{ end }}>Fewest AIs</option>
+      </select>
+
+      <button type="submit" class="r-filter-apply">Apply</button>
+
+      {{ if or .Filters.Search .Filters.Source .Filters.Visibility .Filters.Sort }}
+      <a href="/root/lists" class="r-filter-clear">Clear</a>
+      {{ end }}
     </form>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     {{ with .Page }}
-    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-      <!-- Mobile: card list -->
+    <section class="overflow-hidden r-card">
       <ul class="divide-y divide-zinc-100 md:hidden">
         {{ range .Lists }}
         <li class="px-4 py-3">
@@ -89,113 +63,75 @@
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2">
                 <span class="truncate font-medium text-zinc-900">{{ .Name }}</span>
-                {{ if .IsAutoGenerated }}
-                <span class="inline-flex shrink-0 items-center rounded-full bg-indigo-50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-indigo-700">Auto</span>
-                {{ end }}
-                {{ if .IsPrivate }}
-                <span class="inline-flex shrink-0 items-center rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-700">Private</span>
-                {{ end }}
+                {{ if .IsAutoGenerated }}<span class="r-pill-indigo">Auto</span>{{ end }}
+                {{ if .IsPrivate }}<span class="r-pill-amber">Private</span>{{ end }}
               </div>
               {{ if .Subtitle }}<div class="mt-1 line-clamp-2 text-sm text-zinc-600">{{ .Subtitle }}</div>{{ end }}
-              <div class="mt-1 flex items-center gap-2 text-xs text-zinc-500">
+              <div class="mt-1 flex items-center gap-2 r-meta">
                 <span>{{ .ItemCount }} AI{{ if ne .ItemCount 1 }}s{{ end }}</span>
-                {{ if .User }}
-                <span class="text-zinc-300">·</span>
-                <span>by {{ if .User.Username }}@{{ .User.Username }}{{ else }}{{ .User.Name }}{{ end }}</span>
-                {{ end }}
+                {{ if .User }}<span class="text-zinc-300">·</span><span>by {{ if .User.Username }}@{{ .User.Username }}{{ else }}{{ .User.Name }}{{ end }}</span>{{ end }}
               </div>
             </div>
             <div class="flex shrink-0 items-center gap-2">
               <span class="text-xs text-zinc-400">{{ .CreatedAt.Format "2006-01-02" }}</span>
-              <a href="/root/lists/{{ .ID }}/edit"
-                 class="rounded-lg border border-zinc-200 px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100">Edit</a>
+              <a href="/root/lists/{{ .ID }}/edit" class="r-row-action">Edit</a>
             </div>
           </div>
         </li>
         {{ else }}
-        <li class="px-4 py-8 text-center text-zinc-500">No lists found.</li>
+        <li class="r-empty">No lists found.</li>
         {{ end }}
       </ul>
 
-      <!-- Desktop: table -->
       <div class="hidden md:block">
-        <table class="w-full text-sm">
-          <thead class="bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
+        <table class="r-table">
+          <thead class="r-thead">
             <tr>
-              <th class="px-5 py-2 font-medium">List</th>
-              <th class="px-5 py-2 font-medium">Owner</th>
-              <th class="px-5 py-2 font-medium">AIs</th>
-              <th class="px-5 py-2 font-medium">Source</th>
-              <th class="px-5 py-2 font-medium">Visibility</th>
-              <th class="px-5 py-2 font-medium">Created</th>
-              <th class="px-5 py-2 font-medium"></th>
+              <th class="r-th">List</th>
+              <th class="r-th">Owner</th>
+              <th class="r-th">AIs</th>
+              <th class="r-th">Source</th>
+              <th class="r-th">Visibility</th>
+              <th class="r-th">Created</th>
+              <th class="r-th"></th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-100">
+          <tbody class="r-tbody">
             {{ range .Lists }}
-            <tr class="hover:bg-zinc-50">
-              <td class="px-5 py-3">
+            <tr class="r-tr">
+              <td class="r-td">
                 <div class="font-medium text-zinc-900">{{ .Name }}</div>
-                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 text-xs text-zinc-500">{{ .Subtitle }}</div>{{ end }}
+                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 r-meta">{{ .Subtitle }}</div>{{ end }}
               </td>
-              <td class="px-5 py-3 text-zinc-700">
+              <td class="r-td text-zinc-700">
                 {{ if .User }}
                   <div class="flex items-center gap-2">
-                    {{ if .User.AvatarURL }}
-                    <img src="{{ .User.AvatarURL }}" alt="" class="h-6 w-6 rounded-full bg-zinc-100">
-                    {{ else }}
-                    <div class="h-6 w-6 rounded-full bg-zinc-200"></div>
-                    {{ end }}
+                    {{ if .User.AvatarURL }}<img src="{{ .User.AvatarURL }}" alt="" class="h-6 w-6 rounded-full bg-zinc-100">{{ else }}<div class="h-6 w-6 rounded-full bg-zinc-200"></div>{{ end }}
                     <span class="text-sm">{{ if .User.Username }}@{{ .User.Username }}{{ else }}{{ .User.Name }}{{ end }}</span>
                   </div>
-                {{ else }}
-                  <span class="text-zinc-400">&mdash;</span>
-                {{ end }}
+                {{ else }}<span class="r-dash">—</span>{{ end }}
               </td>
-              <td class="px-5 py-3 tabular-nums text-zinc-700">{{ .ItemCount }}</td>
-              <td class="px-5 py-3">
-                {{ if .IsAutoGenerated }}
-                <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">Auto</span>
-                {{ else }}
-                <span class="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">Manual</span>
-                {{ end }}
+              <td class="r-td tabular-nums text-zinc-700">{{ .ItemCount }}</td>
+              <td class="r-td">
+                {{ if .IsAutoGenerated }}<span class="r-pill-indigo">Auto</span>{{ else }}<span class="r-pill-zinc">Manual</span>{{ end }}
               </td>
-              <td class="px-5 py-3">
-                {{ if .IsPrivate }}
-                <span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Private</span>
-                {{ else }}
-                <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Public</span>
-                {{ end }}
+              <td class="r-td">
+                {{ if .IsPrivate }}<span class="r-pill-amber">Private</span>{{ else }}<span class="r-pill-green">Public</span>{{ end }}
               </td>
-              <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
-              <td class="px-5 py-3">
-                <a href="/root/lists/{{ .ID }}/edit"
-                   class="rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100">
-                  Edit
-                </a>
-              </td>
+              <td class="r-td r-muted">{{ .CreatedAt.Format "2006-01-02" }}</td>
+              <td class="r-td"><a href="/root/lists/{{ .ID }}/edit" class="r-row-action">Edit</a></td>
             </tr>
             {{ else }}
-            <tr>
-              <td colspan="7" class="px-5 py-8 text-center text-zinc-500">No lists found.</td>
-            </tr>
+            <tr><td colspan="7" class="r-empty">No lists found.</td></tr>
             {{ end }}
           </tbody>
         </table>
       </div>
 
       {{ if or .HasPrev .HasNext }}
-      <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
-        {{ if .HasPrev }}
-        <a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
-        {{ else }}
-        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
-        {{ end }}
-        {{ if .HasNext }}
-        <a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
-        {{ else }}
-        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
-        {{ end }}
+      <div class="r-pager">
+        {{ if .HasPrev }}<a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="r-pager-link">&larr; Previous</a>{{ else }}<span class="r-pager-disabled">&larr; Previous</span>{{ end }}
+        {{ if .HasNext }}<a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="r-pager-link">Next &rarr;</a>{{ else }}<span class="r-pager-disabled">Next &rarr;</span>{{ end }}
       </div>
       {{ end }}
     </section>

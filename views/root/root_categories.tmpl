@@ -7,141 +7,100 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-6 flex items-start justify-between gap-4">
+  <div class="r-page">
+    <header class="r-page-header">
       <div>
-        <h1 class="text-2xl font-semibold tracking-tight">Categories</h1>
-        {{ with .Page }}
-        <p class="mt-1 text-sm text-zinc-500">{{ .Total }} total &middot; page {{ .Page }} of {{ .TotalPages }}.</p>
-        {{ end }}
+        <h1 class="r-page-title">Categories</h1>
+        {{ with .Page }}<p class="r-page-sub">{{ .Total }} total · page {{ .Page }} of {{ .TotalPages }}.</p>{{ end }}
       </div>
-      <a href="/root/categories/new"
-         class="shrink-0 rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
-        + New category
-      </a>
+      <a href="/root/categories/new" class="r-btn-primary">+ New category</a>
     </header>
 
-    <!-- Search & filters -->
-    <form method="GET" action="/root/categories" class="mb-6">
-      <div class="flex flex-wrap gap-2">
-        <!-- Search -->
-        <div class="relative flex-1 min-w-48">
-          <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input type="text" name="q" value="{{ .Filters.Search }}"
-                 placeholder="Search name, slug, subtitle…"
-                 class="w-full rounded-lg border border-zinc-300 bg-white pl-8 pr-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-        </div>
-
-        <!-- Level filter -->
-        <select name="level"
-                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
-          <option value=""{{ if eq .Filters.Level "" }} selected{{ end }}>All levels</option>
-          <option value="top"{{ if eq .Filters.Level "top" }} selected{{ end }}>Top-level</option>
-          <option value="sub"{{ if eq .Filters.Level "sub" }} selected{{ end }}>Subcategory</option>
-        </select>
-
-        <!-- Sort -->
-        <select name="sort"
-                class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500">
-          <option value=""{{ if eq .Filters.Sort "" }} selected{{ end }}>Newest first</option>
-          <option value="oldest"{{ if eq .Filters.Sort "oldest" }} selected{{ end }}>Oldest first</option>
-          <option value="name_asc"{{ if eq .Filters.Sort "name_asc" }} selected{{ end }}>Name A→Z</option>
-          <option value="name_desc"{{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Name Z→A</option>
-        </select>
-
-        <button type="submit"
-                class="rounded-lg bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
-          Apply
-        </button>
-
-        {{ if or .Filters.Search .Filters.Level .Filters.Sort }}
-        <a href="/root/categories"
-           class="flex items-center rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">
-          Clear
-        </a>
-        {{ end }}
+    <form method="GET" action="/root/categories" class="r-filter-bar">
+      <div class="relative flex-1 min-w-48">
+        <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" name="q" value="{{ .Filters.Search }}" placeholder="Search name, slug, subtitle…" class="r-filter-input" />
       </div>
+
+      <select name="level" class="r-filter-select">
+        <option value=""{{ if eq .Filters.Level "" }} selected{{ end }}>All levels</option>
+        <option value="top"{{ if eq .Filters.Level "top" }} selected{{ end }}>Top-level</option>
+        <option value="sub"{{ if eq .Filters.Level "sub" }} selected{{ end }}>Subcategory</option>
+      </select>
+
+      <select name="sort" class="r-filter-select">
+        <option value=""{{ if eq .Filters.Sort "" }} selected{{ end }}>Newest first</option>
+        <option value="oldest"{{ if eq .Filters.Sort "oldest" }} selected{{ end }}>Oldest first</option>
+        <option value="name_asc"{{ if eq .Filters.Sort "name_asc" }} selected{{ end }}>Name A→Z</option>
+        <option value="name_desc"{{ if eq .Filters.Sort "name_desc" }} selected{{ end }}>Name Z→A</option>
+      </select>
+
+      <button type="submit" class="r-filter-apply">Apply</button>
+
+      {{ if or .Filters.Search .Filters.Level .Filters.Sort }}
+      <a href="/root/categories" class="r-filter-clear">Clear</a>
+      {{ end }}
     </form>
 
-    {{ if .Error }}
-    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ .Error }}</div>
-    {{ end }}
+    {{ if .Error }}<div class="r-error">{{ .Error }}</div>{{ end }}
 
     {{ with .Page }}
-    <section class="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-      <!-- Mobile: card list -->
+    <section class="overflow-hidden r-card">
       <ul class="divide-y divide-zinc-100 md:hidden">
         {{ range .Categories }}
         <li class="px-4 py-3">
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="truncate font-medium text-zinc-900">{{ .Name }}</div>
-              <div class="truncate text-xs text-zinc-500">{{ .Slug }}</div>
+              <div class="truncate r-meta">{{ .Slug }}</div>
               {{ if .Subtitle }}<div class="mt-1 line-clamp-2 text-sm text-zinc-600">{{ .Subtitle }}</div>{{ end }}
-              {{ if .Parent }}<div class="mt-1 text-xs text-zinc-500">under <span class="font-medium text-zinc-700">{{ .Parent.Name }}</span></div>{{ end }}
+              {{ if .Parent }}<div class="mt-1 r-meta">under <span class="font-medium text-zinc-700">{{ .Parent.Name }}</span></div>{{ end }}
             </div>
             <div class="flex shrink-0 items-center gap-3">
               <span class="text-xs text-zinc-400">{{ .CreatedAt.Format "2006-01-02" }}</span>
-              <a href="/root/categories/{{ .ID }}/edit" class="text-xs font-medium text-zinc-500 hover:text-zinc-900">Edit</a>
+              <a href="/root/categories/{{ .ID }}/edit" class="r-row-action">Edit</a>
             </div>
           </div>
         </li>
         {{ else }}
-        <li class="px-4 py-8 text-center text-zinc-500">No categories found.</li>
+        <li class="r-empty">No categories found.</li>
         {{ end }}
       </ul>
 
-      <!-- Desktop: table -->
       <div class="hidden md:block">
-        <table class="w-full text-sm">
-          <thead class="bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
+        <table class="r-table">
+          <thead class="r-thead">
             <tr>
-              <th class="px-5 py-2 font-medium">Category</th>
-              <th class="px-5 py-2 font-medium">Slug</th>
-              <th class="px-5 py-2 font-medium">Parent</th>
-              <th class="px-5 py-2 font-medium">Created</th>
-              <th class="px-5 py-2 font-medium"></th>
+              <th class="r-th">Category</th>
+              <th class="r-th">Slug</th>
+              <th class="r-th">Parent</th>
+              <th class="r-th">Created</th>
+              <th class="r-th"></th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-100">
+          <tbody class="r-tbody">
             {{ range .Categories }}
-            <tr class="hover:bg-zinc-50">
-              <td class="px-5 py-3">
+            <tr class="r-tr">
+              <td class="r-td">
                 <div class="font-medium text-zinc-900">{{ .Name }}</div>
-                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 text-xs text-zinc-500">{{ .Subtitle }}</div>{{ end }}
+                {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 r-meta">{{ .Subtitle }}</div>{{ end }}
               </td>
-              <td class="px-5 py-3 text-zinc-700"><code class="rounded bg-zinc-100 px-1.5 py-0.5 text-xs">{{ .Slug }}</code></td>
-              <td class="px-5 py-3 text-zinc-700">
-                {{ if .Parent }}{{ .Parent.Name }}{{ else }}<span class="text-zinc-400">&mdash;</span>{{ end }}
-              </td>
-              <td class="px-5 py-3 text-zinc-500">{{ .CreatedAt.Format "2006-01-02" }}</td>
-              <td class="px-5 py-3 text-right">
-                <a href="/root/categories/{{ .ID }}/edit" class="text-xs font-medium text-zinc-500 hover:text-zinc-900">Edit</a>
-              </td>
+              <td class="r-td text-zinc-700"><code class="r-code">{{ .Slug }}</code></td>
+              <td class="r-td text-zinc-700">{{ if .Parent }}{{ .Parent.Name }}{{ else }}<span class="r-dash">—</span>{{ end }}</td>
+              <td class="r-td r-muted">{{ .CreatedAt.Format "2006-01-02" }}</td>
+              <td class="r-td text-right"><a href="/root/categories/{{ .ID }}/edit" class="r-row-action">Edit</a></td>
             </tr>
             {{ else }}
-            <tr>
-              <td colspan="5" class="px-5 py-8 text-center text-zinc-500">No categories found.</td>
-            </tr>
+            <tr><td colspan="5" class="r-empty">No categories found.</td></tr>
             {{ end }}
           </tbody>
         </table>
       </div>
 
       {{ if or .HasPrev .HasNext }}
-      <div class="flex items-center justify-between border-t border-zinc-200 px-4 py-3 text-sm sm:px-5">
-        {{ if .HasPrev }}
-        <a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">&larr; Previous</a>
-        {{ else }}
-        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">&larr; Previous</span>
-        {{ end }}
-        {{ if .HasNext }}
-        <a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 font-medium text-zinc-700 hover:bg-zinc-100">Next &rarr;</a>
-        {{ else }}
-        <span class="rounded-lg border border-zinc-200 px-3 py-1.5 text-zinc-400">Next &rarr;</span>
-        {{ end }}
+      <div class="r-pager">
+        {{ if .HasPrev }}<a href="?page={{ .PrevPage }}{{ $.Filters.QueryStr }}" class="r-pager-link">&larr; Previous</a>{{ else }}<span class="r-pager-disabled">&larr; Previous</span>{{ end }}
+        {{ if .HasNext }}<a href="?page={{ .NextPage }}{{ $.Filters.QueryStr }}" class="r-pager-link">Next &rarr;</a>{{ else }}<span class="r-pager-disabled">Next &rarr;</span>{{ end }}
       </div>
       {{ end }}
     </section>

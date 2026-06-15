@@ -7,78 +7,266 @@
 <body class="min-h-screen bg-zinc-50 text-zinc-900">
   {{ template "_root_navbar.tmpl" . }}
 
-  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
-    <header class="mb-8 flex flex-wrap items-end justify-between gap-3">
+  <div class="r-page">
+    <header class="r-page-header">
       <div>
-        <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p class="mt-1 text-sm text-zinc-500">Overview of activity across {{ appName }}.</p>
+        <h1 class="r-page-title">Dashboard</h1>
+        <p class="r-page-sub">Overview of activity across {{ appName }}.</p>
       </div>
-      <div class="flex items-center gap-2">
-        <a href="/root/ais/new"
-           class="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800">
-          + AI
-        </a>
-        <a href="/root/categories/new"
-           class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100">
-          + Category
-        </a>
-        <a href="/root/lists/new"
-           class="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100">
-          + List
-        </a>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="/root/ais/new" class="r-btn-primary">+ AI</a>
+        <a href="/root/categories/new" class="r-btn-secondary">+ Category</a>
+        <a href="/root/lists/new" class="r-btn-secondary">+ List</a>
+        <a href="/root/pages/new" class="r-btn-secondary">+ Page</a>
+        <a href="/root/alternatives/new" class="r-btn-secondary">+ Alternative</a>
       </div>
     </header>
 
+    {{ $hasAlerts := or (gt .AltsPending 0) (gt .Uncategorized 0) }}
+    {{ $hasAlerts = or $hasAlerts (gt .MissingGenera 0) }}
+    {{ $hasAlerts = or $hasAlerts (gt .MissingLogo 0) }}
+    {{ $hasAlerts = or $hasAlerts (gt .MissingDescription 0) }}
+    {{ $hasAlerts = or $hasAlerts (gt .MissingSubtitle 0) }}
+    {{ $hasAlerts = or $hasAlerts (gt .EmptyLists 0) }}
+    {{ if $hasAlerts }}
+    <section class="mb-6 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
+      <div class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.5h.008M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Needs attention
+      </div>
+      <div class="flex flex-wrap gap-2">
+        {{ if gt .AltsPending 0 }}
+        <a href="/root/alternatives?status=pending" class="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">
+          <span class="inline-flex h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+          {{ .AltsPending }} pending alternative{{ if ne .AltsPending 1 }}s{{ end }}
+        </a>
+        {{ end }}
+        {{ if gt .Uncategorized 0 }}
+        <a href="/root/ais" class="inline-flex items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">{{ .Uncategorized }} AI{{ if ne .Uncategorized 1 }}s{{ end }} without category</a>
+        {{ end }}
+        {{ if gt .MissingGenera 0 }}
+        <a href="/root/ais" class="inline-flex items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">{{ .MissingGenera }} AI{{ if ne .MissingGenera 1 }}s{{ end }} without genus</a>
+        {{ end }}
+        {{ if gt .MissingLogo 0 }}
+        <a href="/root/ais" class="inline-flex items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">{{ .MissingLogo }} AI{{ if ne .MissingLogo 1 }}s{{ end }} without logo</a>
+        {{ end }}
+        {{ if gt .MissingDescription 0 }}
+        <a href="/root/ais" class="inline-flex items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">{{ .MissingDescription }} AI{{ if ne .MissingDescription 1 }}s{{ end }} without description</a>
+        {{ end }}
+        {{ if gt .MissingSubtitle 0 }}
+        <a href="/root/ais" class="inline-flex items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">{{ .MissingSubtitle }} AI{{ if ne .MissingSubtitle 1 }}s{{ end }} without subtitle</a>
+        {{ end }}
+        {{ if gt .EmptyLists 0 }}
+        <a href="/root/lists" class="inline-flex items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">{{ .EmptyLists }} empty list{{ if ne .EmptyLists 1 }}s{{ end }}</a>
+        {{ end }}
+      </div>
+    </section>
+    {{ end }}
+
     <section class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <a href="/root/users"
-         class="group rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 hover:bg-white">
+      <a href="/root/ais" class="group r-card p-4 hover:border-zinc-300">
         <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-zinc-500">Users</div>
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">AIs</div>
           <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
         </div>
-        <div class="mt-2 text-3xl font-semibold tabular-nums">{{ .Users }}</div>
-        <div class="mt-1 text-xs text-zinc-500">{{ .Admins }} superuser{{ if ne .Admins 1 }}s{{ end }}</div>
-      </a>
-      <a href="/root/ais"
-         class="group rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300">
-        <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-zinc-500">AIs</div>
-          <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
-        </div>
-        <div class="mt-2 text-3xl font-semibold tabular-nums">{{ .AIs }}</div>
-        <div class="mt-1 text-xs text-zinc-500">
-          {{ if gt .Uncategorized 0 }}
-            <span class="text-amber-600">{{ .Uncategorized }} uncategorized</span>
-          {{ else }}
-            all categorized
-          {{ end }}
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .AIs }}</div>
+        <div class="mt-1 r-meta">
+          {{ if gt .AIsLast7 0 }}<span class="text-emerald-600">+{{ .AIsLast7 }}</span> last 7d{{ else }}no change in 7d{{ end }}
         </div>
       </a>
-      <a href="/root/categories"
-         class="group rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300">
+      <a href="/root/users" class="group r-card p-4 hover:border-zinc-300">
         <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-zinc-500">Categories</div>
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Users</div>
           <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
         </div>
-        <div class="mt-2 text-3xl font-semibold tabular-nums">{{ .Categories }}</div>
-        <div class="mt-1 text-xs text-zinc-500">taxonomy</div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .Users }}</div>
+        <div class="mt-1 r-meta">
+          {{ .Admins }} su · {{ .TOTPUsers }} 2FA{{ if gt .UsersLast7 0 }} · <span class="text-emerald-600">+{{ .UsersLast7 }}</span> 7d{{ end }}
+        </div>
       </a>
-      <a href="/root/lists"
-         class="group col-span-2 rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 sm:col-span-1">
+      <a href="/root/alternatives"
+         class="group rounded-xl border {{ if gt .AltsPending 0 }}border-amber-300 bg-amber-50/40{{ else }}border-zinc-200 bg-white{{ end }} p-4 hover:border-zinc-300">
         <div class="flex items-center justify-between">
-          <div class="text-sm font-medium text-zinc-500">Lists</div>
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Alternatives</div>
           <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
         </div>
-        <div class="mt-2 text-3xl font-semibold tabular-nums">{{ .Lists }}</div>
-        <div class="mt-1 text-xs text-zinc-500">curated collections</div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .AltsTotal }}</div>
+        <div class="mt-1 r-meta">
+          {{ if gt .AltsPending 0 }}<span class="font-medium text-amber-700">{{ .AltsPending }} pending</span> · {{ end }}{{ .AltsApproved }} ok · {{ .AltsRejected }} rej
+        </div>
+      </a>
+      <a href="/root/lists" class="group r-card p-4 hover:border-zinc-300">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Lists</div>
+          <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
+        </div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .Lists }}</div>
+        <div class="mt-1 r-meta">{{ .PrivateLists }} private</div>
+      </a>
+
+      <a href="/root/categories" class="group r-card p-4 hover:border-zinc-300">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Categories</div>
+          <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
+        </div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .Categories }}</div>
+        <div class="mt-1 r-meta">taxonomy</div>
+      </a>
+      <a href="/root/genera" class="group r-card p-4 hover:border-zinc-300">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Genera</div>
+          <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
+        </div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .Genera }}</div>
+        <div class="mt-1 r-meta">kinds of AI</div>
+      </a>
+      <a href="/root/artifacts" class="group r-card p-4 hover:border-zinc-300">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Artifacts</div>
+          <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
+        </div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .Artifacts }}</div>
+        <div class="mt-1 r-meta">data schemas</div>
+      </a>
+      <a href="/root/pages" class="group r-card p-4 hover:border-zinc-300">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-medium uppercase tracking-wide r-muted">Pages</div>
+          <span class="text-xs text-zinc-400 group-hover:text-zinc-600">&rarr;</span>
+        </div>
+        <div class="mt-2 text-2xl font-semibold tabular-nums">{{ .Pages }}</div>
+        <div class="mt-1 r-meta">static content</div>
       </a>
     </section>
 
     <section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div class="rounded-xl border border-zinc-200 bg-white">
-        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-          <h2 class="text-sm font-semibold tracking-tight text-zinc-900">Recent AIs</h2>
-          <a href="/root/ais" class="text-xs text-zinc-500 hover:text-zinc-700">All &rarr;</a>
+      <div class="r-card-pad">
+        <div class="flex items-end justify-between">
+          <div>
+            <h2 class="r-card-title">New AIs</h2>
+            <p class="r-meta">Last 30 days</p>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-semibold tabular-nums text-zinc-900">{{ .AIGrowthTotal }}</div>
+            <div class="text-[10px] uppercase tracking-wide text-zinc-400">peak {{ .AIGrowthMax }}/day</div>
+          </div>
+        </div>
+        <div class="mt-4 flex h-24 items-end gap-px">
+          {{ range .AIGrowth }}
+          <div class="group relative flex-1">
+            <div class="absolute inset-x-0 bottom-0 rounded-t-sm bg-zinc-800 transition-colors group-hover:bg-zinc-600"
+                 style="height: {{ .Pct }}%; min-height: {{ if gt .Count 0 }}2px{{ else }}0{{ end }};"></div>
+            <div class="pointer-events-none absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded bg-zinc-900 px-1.5 py-0.5 text-[10px] text-white group-hover:block">{{ .Label }} · {{ .Count }}</div>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+      <div class="r-card-pad">
+        <div class="flex items-end justify-between">
+          <div>
+            <h2 class="r-card-title">New users</h2>
+            <p class="r-meta">Last 30 days</p>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-semibold tabular-nums text-zinc-900">{{ .UserGrowthTotal }}</div>
+            <div class="text-[10px] uppercase tracking-wide text-zinc-400">peak {{ .UserGrowthMax }}/day</div>
+          </div>
+        </div>
+        <div class="mt-4 flex h-24 items-end gap-px">
+          {{ range .UserGrowth }}
+          <div class="group relative flex-1">
+            <div class="absolute inset-x-0 bottom-0 rounded-t-sm bg-emerald-600 transition-colors group-hover:bg-emerald-500"
+                 style="height: {{ .Pct }}%; min-height: {{ if gt .Count 0 }}2px{{ else }}0{{ end }};"></div>
+            <div class="pointer-events-none absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded bg-zinc-900 px-1.5 py-0.5 text-[10px] text-white group-hover:block">{{ .Label }} · {{ .Count }}</div>
+          </div>
+          {{ end }}
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-6 r-card">
+      <div class="r-card-head">
+        <div class="flex items-center gap-2">
+          <h2 class="r-card-title">Pending alternatives</h2>
+          {{ if gt .AltsPending 0 }}
+          <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">{{ .AltsPending }}</span>
+          {{ end }}
+        </div>
+        <a href="/root/alternatives?status=pending" class="r-card-link">All pending &rarr;</a>
+      </div>
+      <ul class="divide-y divide-zinc-100">
+        {{ range .PendingAlts }}
+        <li class="flex items-center gap-3 px-5 py-3">
+          <div class="min-w-0 flex-1 text-sm">
+            <div class="flex items-center gap-2">
+              {{ if .AlternativeAI }}<a href="/root/ais/{{ .AlternativeAI.ID }}/edit" class="truncate font-medium text-zinc-900 hover:underline">{{ .AlternativeAI.Name }}</a>{{ else }}<span class="r-dash">?</span>{{ end }}
+              <span class="r-dash">→ alt of →</span>
+              {{ if .AI }}<a href="/root/ais/{{ .AI.ID }}/edit" class="truncate font-medium text-zinc-900 hover:underline">{{ .AI.Name }}</a>{{ else }}<span class="r-dash">?</span>{{ end }}
+            </div>
+            <div class="mt-0.5 truncate r-meta">
+              {{ if .Note }}{{ .Note }} · {{ end }}
+              {{ if .SuggestedBy }}by @{{ .SuggestedBy.Username }} · {{ end }}
+              {{ .CreatedAt.Format "Jan 02" }}
+            </div>
+          </div>
+          <div class="flex shrink-0 items-center gap-1">
+            <form method="POST" action="/root/alternatives/{{ .ID }}/approve">
+              <input type="hidden" name="back" value="/root">
+              <button class="r-btn-sm-success">Approve</button>
+            </form>
+            <form method="POST" action="/root/alternatives/{{ .ID }}/reject">
+              <input type="hidden" name="back" value="/root">
+              <button class="r-btn-sm-secondary">Reject</button>
+            </form>
+          </div>
+        </li>
+        {{ else }}
+        <li class="r-empty">No pending alternatives. Nice and tidy.</li>
+        {{ end }}
+      </ul>
+    </section>
+
+    <section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="r-card">
+        <div class="r-card-head">
+          <h2 class="r-card-title">Top categories</h2>
+          <a href="/root/categories" class="r-card-link">All &rarr;</a>
+        </div>
+        <ul class="divide-y divide-zinc-100">
+          {{ range .TopCategories }}
+          <li class="flex items-center gap-3 px-5 py-2.5">
+            <a href="/categories/{{ .Slug }}" class="min-w-0 flex-1 truncate text-sm text-zinc-900 hover:underline">{{ .Name }}</a>
+            <span class="shrink-0 tabular-nums r-meta">{{ .Count }}</span>
+          </li>
+          {{ else }}
+          <li class="r-empty">No categories yet.</li>
+          {{ end }}
+        </ul>
+      </div>
+
+      <div class="r-card">
+        <div class="r-card-head">
+          <h2 class="r-card-title">Top genera</h2>
+          <a href="/root/genera" class="r-card-link">All &rarr;</a>
+        </div>
+        <ul class="divide-y divide-zinc-100">
+          {{ range .TopGenera }}
+          <li class="flex items-center gap-3 px-5 py-2.5">
+            <span class="min-w-0 flex-1 truncate text-sm text-zinc-900">{{ .Name }}</span>
+            <span class="shrink-0 tabular-nums r-meta">{{ .Count }}</span>
+          </li>
+          {{ else }}
+          <li class="r-empty">No genera yet.</li>
+          {{ end }}
+        </ul>
+      </div>
+    </section>
+
+    <section class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="r-card">
+        <div class="r-card-head">
+          <h2 class="r-card-title">Recent AIs</h2>
+          <a href="/root/ais" class="r-card-link">All &rarr;</a>
         </div>
         <ul class="divide-y divide-zinc-100">
           {{ range .RecentAIs }}
@@ -86,32 +274,26 @@
             {{ if .LogoURL }}
             <img src="{{ .LogoURL }}" alt="" class="h-8 w-8 shrink-0 rounded-md bg-zinc-100 object-cover">
             {{ else }}
-            <div class="h-8 w-8 shrink-0 rounded-md bg-zinc-100 text-center text-xs font-semibold leading-8 text-zinc-500">
-              {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
-            </div>
+            <div class="h-8 w-8 shrink-0 rounded-md bg-zinc-100 text-center text-xs font-semibold leading-8 text-zinc-500">{{ if .Name }}{{ slice .Name 0 1 }}{{ end }}</div>
             {{ end }}
             <div class="min-w-0 flex-1">
-              <div class="truncate text-sm font-medium text-zinc-900">{{ .Name }}</div>
-              <div class="truncate text-xs text-zinc-500">
-                {{ if .Categories }}
-                  {{ range $i, $c := .Categories }}{{ if $i }}, {{ end }}{{ $c.Name }}{{ end }}
-                {{ else }}
-                  <span class="text-zinc-400">no category</span>
-                {{ end }}
+              <a href="/root/ais/{{ .ID }}/edit" class="truncate block text-sm font-medium text-zinc-900 hover:underline">{{ .Name }}</a>
+              <div class="truncate r-meta">
+                {{ if .Categories }}{{ range $i, $c := .Categories }}{{ if $i }}, {{ end }}{{ $c.Name }}{{ end }}{{ else }}<span class="r-dash">no category</span>{{ end }}
               </div>
             </div>
             <div class="shrink-0 text-xs text-zinc-400">{{ .CreatedAt.Format "Jan 02" }}</div>
           </li>
           {{ else }}
-          <li class="px-5 py-6 text-center text-sm text-zinc-500">No AIs yet.</li>
+          <li class="r-empty">No AIs yet.</li>
           {{ end }}
         </ul>
       </div>
 
-      <div class="rounded-xl border border-zinc-200 bg-white">
-        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-          <h2 class="text-sm font-semibold tracking-tight text-zinc-900">Recent users</h2>
-          <a href="/root/users" class="text-xs text-zinc-500 hover:text-zinc-700">All &rarr;</a>
+      <div class="r-card">
+        <div class="r-card-head">
+          <h2 class="r-card-title">Recent users</h2>
+          <a href="/root/users" class="r-card-link">All &rarr;</a>
         </div>
         <ul class="divide-y divide-zinc-100">
           {{ range .RecentUsers }}
@@ -123,19 +305,16 @@
             {{ end }}
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2">
-                <span class="truncate text-sm font-medium text-zinc-900">{{ if .Name }}{{ .Name }}{{ else }}{{ .Username }}{{ end }}</span>
-                {{ if .IsAdmin }}
-                <span class="inline-flex shrink-0 items-center rounded-full bg-zinc-900 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white">su</span>
-                {{ end }}
+                <a href="/root/users/{{ .ID }}/edit" class="truncate text-sm font-medium text-zinc-900 hover:underline">{{ if .Name }}{{ .Name }}{{ else }}{{ .Username }}{{ end }}</a>
+                {{ if .IsAdmin }}<span class="r-pill-su">su</span>{{ end }}
+                {{ if .TOTPEnabled }}<span class="r-pill-2fa">2fa</span>{{ end }}
               </div>
-              <div class="truncate text-xs text-zinc-500">
-                {{ if .GitHubLogin }}@{{ .GitHubLogin }}{{ else }}{{ .Email }}{{ end }}
-              </div>
+              <div class="truncate r-meta">{{ if .GitHubLogin }}@{{ .GitHubLogin }}{{ else }}{{ .Email }}{{ end }}</div>
             </div>
             <div class="shrink-0 text-xs text-zinc-400">{{ .CreatedAt.Format "Jan 02" }}</div>
           </li>
           {{ else }}
-          <li class="px-5 py-6 text-center text-sm text-zinc-500">No users yet.</li>
+          <li class="r-empty">No users yet.</li>
           {{ end }}
         </ul>
       </div>
