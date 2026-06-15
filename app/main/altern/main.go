@@ -71,6 +71,8 @@ func main() {
 
 	userRoutes := r.Group("", middleware.RequireAuth(database.DB))
 	{
+		userRoutes.GET("/maker/submit", maker.SubmitForm(database.DB))
+		userRoutes.POST("/maker/submit", maker.SubmitCreate(database.DB))
 		userRoutes.GET("/settings", slash.SettingsPage(database.DB))
 		userRoutes.GET("/settings/2fa/setup", slash.Settings2FASetupGet(database.DB))
 		userRoutes.POST("/settings/2fa/setup", slash.Settings2FASetupPost(database.DB))
