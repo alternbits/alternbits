@@ -114,6 +114,10 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		} else {
 			slug = slugify(slug)
 		}
+		statusRaw := models.AIStatus(c.PostForm("status"))
+		if statusRaw != models.AIStatusPending && statusRaw != models.AIStatusRejected {
+			statusRaw = models.AIStatusApproved
+		}
 		subtitle := strings.TrimSpace(c.PostForm("subtitle"))
 		description := strings.TrimSpace(c.PostForm("description"))
 		website := strings.TrimSpace(c.PostForm("website"))
@@ -231,6 +235,7 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 
 		ai.Name = name
 		ai.Slug = slug
+		ai.Status = statusRaw
 		ai.Subtitle = subtitle
 		ai.Description = description
 		ai.Website = website

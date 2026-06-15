@@ -28,6 +28,7 @@ var allowedLogoExts = map[string]bool{
 type aiFormData struct {
 	Name        string
 	Slug        string
+	Status      models.AIStatus
 	Subtitle    string
 	Description string
 	Website     string
@@ -164,9 +165,14 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		if screenshotsRaw != "" && json.Valid([]byte(screenshotsRaw)) {
 			screenshotsJS = template.JS(screenshotsRaw)
 		}
+		statusRaw := models.AIStatus(c.PostForm("status"))
+		if statusRaw != models.AIStatusPending && statusRaw != models.AIStatusRejected {
+			statusRaw = models.AIStatusApproved
+		}
 		form := aiFormData{
 			Name:        strings.TrimSpace(c.PostForm("name")),
 			Slug:        strings.TrimSpace(c.PostForm("slug")),
+			Status:      statusRaw,
 			Subtitle:    strings.TrimSpace(c.PostForm("subtitle")),
 			Description: strings.TrimSpace(c.PostForm("description")),
 			Website:     strings.TrimSpace(c.PostForm("website")),
@@ -248,6 +254,7 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 		ai := models.AI{
 			Name:        form.Name,
 			Slug:        form.Slug,
+			Status:      form.Status,
 			Subtitle:    form.Subtitle,
 			Description: form.Description,
 			Website:     form.Website,
