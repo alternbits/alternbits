@@ -101,9 +101,9 @@
         <div>
           <label for="status" class="r-label">Status</label>
           <select id="status" name="status" class="r-select">
-            <option value="approved"{{ if eq (printf "%s" .AI.Status) "approved" }} selected{{ end }}>Approved</option>
-            <option value="pending"{{ if eq (printf "%s" .AI.Status) "pending" }} selected{{ end }}>Pending</option>
-            <option value="rejected"{{ if eq (printf "%s" .AI.Status) "rejected" }} selected{{ end }}>Rejected</option>
+            <option value="approved"{{ if eq (printf "%s" .Status) "approved" }} selected{{ end }}>Approved</option>
+            <option value="pending"{{ if eq (printf "%s" .Status) "pending" }} selected{{ end }}>Pending</option>
+            <option value="rejected"{{ if eq (printf "%s" .Status) "rejected" }} selected{{ end }}>Rejected</option>
           </select>
         </div>
 

@@ -28,6 +28,7 @@
     {{ $hasAlerts = or $hasAlerts (gt .MissingDescription 0) }}
     {{ $hasAlerts = or $hasAlerts (gt .MissingSubtitle 0) }}
     {{ $hasAlerts = or $hasAlerts (gt .EmptyLists 0) }}
+    {{ $hasAlerts = or $hasAlerts (gt .AIPending 0) }}
     {{ if $hasAlerts }}
     <section class="mb-6 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
       <div class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-800">
@@ -35,6 +36,12 @@
         Needs attention
       </div>
       <div class="flex flex-wrap gap-2">
+        {{ if gt .AIPending 0 }}
+        <a href="/root/ais/review" class="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">
+          <span class="inline-flex h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+          {{ .AIPending }} pending AI{{ if ne .AIPending 1 }}s{{ end }}
+        </a>
+        {{ end }}
         {{ if gt .AltsPending 0 }}
         <a href="/root/alternatives?status=pending" class="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-100">
           <span class="inline-flex h-1.5 w-1.5 rounded-full bg-amber-500"></span>
@@ -182,6 +189,47 @@
           {{ end }}
         </div>
       </div>
+    </section>
+
+    <section class="mt-6 r-card">
+      <div class="r-card-head">
+        <div class="flex items-center gap-2">
+          <h2 class="r-card-title">Pending AIs</h2>
+          {{ if gt .AIPending 0 }}
+          <span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">{{ .AIPending }}</span>
+          {{ end }}
+        </div>
+        <a href="/root/ais/review" class="r-card-link">Review all &rarr;</a>
+      </div>
+      <ul class="divide-y divide-zinc-100">
+        {{ range .PendingAIs }}
+        <li class="flex items-center gap-3 px-5 py-3">
+          <div class="min-w-0 flex-1 text-sm">
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-zinc-900">{{ .Name }}</span>
+              {{ if .Website }}<a href="{{ .Website }}" target="_blank" rel="noopener" class="truncate r-meta hover:underline">{{ .Website }}</a>{{ end }}
+            </div>
+            <div class="mt-0.5 truncate r-meta">
+              {{ if .Subtitle }}{{ .Subtitle }} · {{ end }}
+              {{ if .User }}by {{ if .User.Username }}@{{ .User.Username }}{{ else }}{{ .User.Email }}{{ end }} · {{ end }}
+              {{ .CreatedAt.Format "Jan 02" }}
+            </div>
+          </div>
+          <div class="flex shrink-0 items-center gap-1">
+            <form method="POST" action="/root/ais/{{ .ID }}/approve">
+              <input type="hidden" name="back" value="/root">
+              <button class="r-btn-sm-success">Approve</button>
+            </form>
+            <form method="POST" action="/root/ais/{{ .ID }}/reject">
+              <input type="hidden" name="back" value="/root">
+              <button class="r-btn-sm-secondary">Reject</button>
+            </form>
+          </div>
+        </li>
+        {{ else }}
+        <li class="r-empty">No pending AIs. All clear.</li>
+        {{ end }}
+      </ul>
     </section>
 
     <section class="mt-6 r-card">

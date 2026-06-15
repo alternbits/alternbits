@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{{ appName }} · Review AIs</title>
+  {{ template "_root_head.tmpl" . }}
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+  {{ template "_root_navbar.tmpl" . }}
+
+  <div class="r-page">
+    <header class="r-page-header">
+      <div>
+        <h1 class="r-page-title">Review AIs</h1>
+        <p class="r-page-sub">Approve or reject user-submitted AIs.</p>
+      </div>
+      <a href="/root/ais" class="r-btn-secondary">All AIs</a>
+    </header>
+
+    <section class="overflow-hidden r-card">
+      <ul class="divide-y divide-zinc-100">
+        {{ range .PendingAIs }}
+        <li class="flex items-start gap-4 px-5 py-4">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <a href="/root/ais/{{ .ID }}/edit" class="font-semibold text-zinc-900 hover:underline">{{ .Name }}</a>
+              {{ if .Website }}
+              <a href="{{ .Website }}" target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-0.5 text-xs text-zinc-400 hover:text-orange-500 hover:underline">
+                {{ .Website }}
+                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+              </a>
+              {{ end }}
+            </div>
+            {{ if .Subtitle }}<p class="mt-0.5 text-sm text-zinc-600">{{ .Subtitle }}</p>{{ end }}
+            {{ if .Description }}<p class="mt-1 line-clamp-2 text-xs text-zinc-400">{{ .Description }}</p>{{ end }}
+            <div class="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+              {{ if .User }}
+              <span>by
+                {{ if .User.Username }}<span class="font-medium text-zinc-600">@{{ .User.Username }}</span>{{ else }}<span class="font-medium text-zinc-600">{{ .User.Email }}</span>{{ end }}
+              </span>
+              <span>&middot;</span>
+              {{ end }}
+              <span>{{ .CreatedAt.Format "Jan 2, 2006 15:04" }}</span>
+            </div>
+          </div>
+          <div class="flex shrink-0 items-center gap-1.5 pt-0.5">
+            <a href="/root/ais/{{ .ID }}/edit" class="r-btn-sm-secondary">Edit</a>
+            <form method="POST" action="/root/ais/{{ .ID }}/approve">
+              <input type="hidden" name="back" value="/root/ais/review">
+              <button class="r-btn-sm-success">Approve</button>
+            </form>
+            <form method="POST" action="/root/ais/{{ .ID }}/reject">
+              <input type="hidden" name="back" value="/root/ais/review">
+              <button class="r-btn-sm-secondary">Reject</button>
+            </form>
+          </div>
+        </li>
+        {{ else }}
+        <li class="r-empty">No pending AIs. All clear.</li>
+        {{ end }}
+      </ul>
+    </section>
+  </div>
+
+  {{ template "_root_footer.tmpl" . }}
+</body>
+</html>

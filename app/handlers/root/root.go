@@ -30,6 +30,7 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			uncategorized, missingGenera, missingLogo               int64
 			missingDescription, missingSubtitle                     int64
 			emptyLists, privateLists                                int64
+			aisPending                                              int64
 		)
 
 		db.Model(&models.User{}).Count(&users)
@@ -61,6 +62,7 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			Where("id NOT IN (SELECT list_id FROM list_ais)").
 			Count(&emptyLists)
 		db.Model(&models.List{}).Where(&models.List{IsPrivate: true}).Count(&privateLists)
+		db.Model(&models.AI{}).Where("status = ?", models.AIStatusPending).Count(&aisPending)
 
 		// Growth: last 30 days, new AIs and new users per day.
 		aiGrowth, aiGrowthTotal := loadGrowth(db, "ais", 30)
@@ -101,6 +103,13 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			Order("created_at DESC").
 			Limit(6).
 			Find(&pendingAlts)
+
+		var pendingAIs []models.AI
+		db.Preload("User").
+			Where("status = ?", models.AIStatusPending).
+			Order("created_at ASC").
+			Limit(8).
+			Find(&pendingAIs)
 
 		var recentAIs []models.AI
 		db.Preload("Categories").
@@ -146,6 +155,8 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			"UserGrowthMax":      maxCount(userGrowth),
 			"TopCategories":      topCategories,
 			"TopGenera":          topGenera,
+			"AIPending":          aisPending,
+			"PendingAIs":         pendingAIs,
 			"PendingAlts":        pendingAlts,
 			"RecentAIs":          recentAIs,
 			"RecentUsers":        recentUsers,
