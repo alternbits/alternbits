@@ -5,10 +5,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type AIStatus string
+
+const (
+	AIStatusPending  AIStatus = "pending"
+	AIStatusApproved AIStatus = "approved"
+	AIStatusRejected AIStatus = "rejected"
+)
+
 type AI struct {
 	gorm.Model
-	Name        string `gorm:"not null"`
-	Slug        string `gorm:"uniqueIndex;not null"`
+	Name        string   `gorm:"not null"`
+	Slug        string   `gorm:"uniqueIndex;not null"`
+	Status      AIStatus `gorm:"type:text;not null;default:'approved'"`
 	Subtitle    string
 	Description string
 	LogoURL     string
