@@ -40,6 +40,11 @@ func Handler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := sessionUser(c, db)
 		data := headerData(db, user)
+		if user != nil {
+			var userAIs []models.AI
+			db.Where("user_id = ?", user.ID).Order("created_at DESC").Find(&userAIs)
+			data["UserAIs"] = userAIs
+		}
 		c.HTML(http.StatusOK, "maker_index.tmpl", data)
 	}
 }
