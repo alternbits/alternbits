@@ -64,11 +64,11 @@
               <a href="/root/ais/{{ .ID }}/edit" class="r-row-action">Edit</a>
             </div>
           </div>
-          {{ if .Categories }}
-          <div class="mt-2 flex flex-wrap gap-1">
-            {{ range .Categories }}<span class="r-pill-zinc">{{ .Name }}</span>{{ end }}
+          <div class="mt-2">
+            {{ if eq (printf "%s" .Status) "approved" }}<span class="r-pill-green">Approved</span>
+            {{ else if eq (printf "%s" .Status) "pending" }}<span class="r-pill-amber">Pending</span>
+            {{ else if eq (printf "%s" .Status) "rejected" }}<span class="r-pill-red">Rejected</span>{{ end }}
           </div>
-          {{ end }}
         </li>
         {{ else }}
         <li class="r-empty">No AIs found.</li>
@@ -80,7 +80,7 @@
           <thead class="r-thead">
             <tr>
               <th class="r-th">AI</th>
-              <th class="r-th">Categories</th>
+              <th class="r-th">Status</th>
               <th class="r-th">Submitter</th>
               <th class="r-th">Added</th>
               <th class="r-th"></th>
@@ -95,10 +95,9 @@
                 {{ if .Subtitle }}<div class="mt-0.5 line-clamp-1 r-meta">{{ .Subtitle }}</div>{{ end }}
               </td>
               <td class="r-td">
-                {{ if .Categories }}
-                <div class="flex flex-wrap gap-1">
-                  {{ range .Categories }}<span class="r-pill-zinc">{{ .Name }}</span>{{ end }}
-                </div>
+                {{ if eq (printf "%s" .Status) "approved" }}<span class="r-pill-green">Approved</span>
+                {{ else if eq (printf "%s" .Status) "pending" }}<span class="r-pill-amber">Pending</span>
+                {{ else if eq (printf "%s" .Status) "rejected" }}<span class="r-pill-red">Rejected</span>
                 {{ else }}<span class="r-dash">—</span>{{ end }}
               </td>
               <td class="r-td text-zinc-700">

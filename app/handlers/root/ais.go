@@ -100,8 +100,6 @@ func AIsListHandler(db *gorm.DB) gin.HandlerFunc {
 		var ais []models.AI
 		if len(ids) > 0 {
 			if err := db.
-				Preload("Categories").
-				Preload("Genera").
 				Preload("User").
 				Where("id IN ?", ids).
 				Order(orderClause).
