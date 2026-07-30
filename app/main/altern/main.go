@@ -54,6 +54,7 @@ func main() {
 	})
 	r.LoadHTMLGlob("views/*/*.tmpl")
 	r.Static("/static", "./static")
+	r.Static("/assets", "./assets")
 
 	store := cookie.NewStore([]byte(config.C.Session.Secret))
 	store.Options(sessions.Options{Path: "/", HttpOnly: true, MaxAge: 60 * 60 * 24 * 7})
@@ -71,6 +72,16 @@ func main() {
 		FinalizeSession: finalizePublicSession,
 	}
 
+	var r2svc *utils.R2Service
+	if config.C.R2Enabled() {
+		svc, err := utils.NewR2Service()
+		if err != nil {
+			log.Printf("r2: %v (uploads disabled)", err)
+		} else {
+			r2svc = svc
+		}
+	}
+
 	r.GET("/", slash.Handler(database.DB))
 	r.GET("/maker", maker.Handler(database.DB))
 	r.GET("/ai/:slug", slash.AIHandler(database.DB))
@@ -84,7 +95,7 @@ func main() {
 	userRoutes := r.Group("", middleware.RequireAuth(database.DB))
 	{
 		userRoutes.GET("/maker/submit", maker.SubmitForm(database.DB))
-		userRoutes.POST("/maker/submit", maker.SubmitCreate(database.DB))
+		userRoutes.POST("/maker/submit", maker.SubmitCreate(database.DB, r2svc))
 		userRoutes.GET("/settings", slash.SettingsPage(database.DB))
 		userRoutes.GET("/settings/2fa/setup", slash.Settings2FASetupGet(database.DB))
 		userRoutes.POST("/settings/2fa/setup", slash.Settings2FASetupPost(database.DB))
@@ -119,16 +130,6 @@ func main() {
 		rootGroup.POST("/2fa/setup", totp.Setup(database.DB, rootTOTPOpts))
 		rootGroup.POST("/2fa/setup/done", totp.SetupDone(database.DB, rootTOTPOpts))
 		rootGroup.POST("/2fa/verify", totp.Verify(database.DB, rootTOTPOpts))
-
-		var r2svc *utils.R2Service
-		if config.C.R2Enabled() {
-			svc, err := utils.NewR2Service()
-			if err != nil {
-				log.Printf("r2: %v (uploads disabled)", err)
-			} else {
-				r2svc = svc
-			}
-		}
 
 		authed := rootGroup.Group("", middleware.RequireSuperuser(database.DB))
 		{
