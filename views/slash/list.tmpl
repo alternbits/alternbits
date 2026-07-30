@@ -92,6 +92,9 @@
         {{ if .AI.LogoURL }}
         <img src="{{ .AI.LogoURL }}" alt="{{ .AI.Name }}"
              class="h-10 w-10 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover">
+        {{ else if .AI.Website }}
+        <img src="{{ faviconURL .AI.Website }}" alt="{{ .AI.Name }}"
+             class="h-10 w-10 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover p-2">
         {{ else }}
         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#4A4854] text-sm font-semibold text-zinc-500 dark:text-zinc-400">
           {{ if .AI.Name }}{{ slice .AI.Name 0 1 }}{{ end }}
@@ -127,6 +130,9 @@
         {{ if .AI.LogoURL }}
         <img src="{{ .AI.LogoURL }}" alt="{{ .AI.Name }}"
              class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover">
+        {{ else if .AI.Website }}
+        <img src="{{ faviconURL .AI.Website }}" alt="{{ .AI.Name }}"
+             class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#4A4854] object-cover p-2">
         {{ else }}
         <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#4A4854] text-base font-semibold text-zinc-500 dark:text-zinc-400">
           {{ if .AI.Name }}{{ slice .AI.Name 0 1 }}{{ end }}

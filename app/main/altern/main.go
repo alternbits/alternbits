@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/database"
@@ -38,6 +40,16 @@ func main() {
 				return template.HTML(template.HTMLEscapeString(s))
 			}
 			return template.HTML(buf.String())
+		},
+		"faviconURL": func(website string) string {
+			if website == "" {
+				return ""
+			}
+			u := website
+			if !strings.Contains(u, "://") {
+				u = "https://" + u
+			}
+			return "https://www.google.com/s2/favicons?domain=" + url.QueryEscape(u) + "&sz=64"
 		},
 	})
 	r.LoadHTMLGlob("views/*/*.tmpl")
