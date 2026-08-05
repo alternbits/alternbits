@@ -37,4 +37,9 @@
       },
     }
   </script>
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.store('header', { scrolled: window.scrollY > 20 });
+    });
+  </script>
   <script defer src="/static/js/cdn.min.js"></script>

@@ -1,13 +1,18 @@
 <header x-data="{ mobileOpen: false, searchOpen: false }"
+        @scroll.window="$store.header.scrolled = window.scrollY > 20"
         @keydown.escape.window="searchOpen = false; mobileOpen = false"
-        class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#4A4854] bg-white/95 dark:bg-[#37353E]/95 backdrop-blur-md">
+        :class="$store.header.scrolled ? 'shadow-lg shadow-black/5 dark:shadow-black/20' : ''"
+        class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#4A4854] bg-white/95 dark:bg-[#37353E]/95 backdrop-blur-md transition-shadow duration-300 ease-in-out">
 
-  <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+  <div :class="$store.header.scrolled ? 'h-11' : 'h-14'"
+       class="mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-300 ease-in-out sm:px-6">
 
     <!-- Logo -->
-    <a href="/" class="flex shrink-0 items-center gap-1 text-sm font-semibold tracking-tight text-zinc-900 dark:text-white">
-      <img src="/assets/logo.png" alt="{{ appName }}" class="h-8 w-8 rounded-md object-contain">
-      {{ appName }}
+    <a href="/" class="flex shrink-0 items-center gap-1 font-semibold tracking-tight text-zinc-900 dark:text-white">
+      <img src="/assets/logo.png" alt="{{ appName }}"
+           :class="$store.header.scrolled ? 'h-6 w-6' : 'h-8 w-8'"
+           class="rounded-md object-contain transition-all duration-300 ease-in-out">
+      <span :class="$store.header.scrolled ? 'text-xs' : 'text-sm'" class="transition-all duration-300 ease-in-out">{{ appName }}</span>
     </a>
 
     <!-- Desktop nav -->
@@ -39,7 +44,8 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-1"
-             class="fixed left-0 right-0 top-14 z-50 border-b border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#2B2930] shadow-2xl dark:shadow-black/50 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+             :class="$store.header.scrolled ? 'top-11 max-h-[calc(100vh-2.75rem)]' : 'top-14 max-h-[calc(100vh-3.5rem)]'"
+             class="fixed left-0 right-0 z-50 border-b border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#2B2930] shadow-2xl dark:shadow-black/50 overflow-y-auto transition-[top] duration-300 ease-in-out">
 
           <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
 
@@ -102,7 +108,8 @@
     </nav>
 
     <!-- Right controls -->
-    <div class="flex items-center gap-1">
+    <div :class="$store.header.scrolled ? 'scale-90' : 'scale-100'"
+         class="flex origin-right items-center gap-1 transition-transform duration-300 ease-in-out">
 
       <!-- Search icon -->
       <button @click="searchOpen = true; $nextTick(() => $refs.searchInput.focus())"
