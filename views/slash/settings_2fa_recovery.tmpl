@@ -13,7 +13,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#393939] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
 
@@ -30,11 +30,11 @@
     <h1 class="mb-1 text-center text-xl font-black tracking-tight">Two-factor auth enabled</h1>
     <p class="mb-8 text-center text-sm text-zinc-500 dark:text-zinc-400">Save these recovery codes somewhere safe. Each one can only be used once if you lose access to your authenticator app.</p>
 
-    <div class="mb-6 overflow-hidden rounded-xl border border-zinc-100 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48]">
-      <div class="border-b border-zinc-100 dark:border-[#4A4854] px-5 py-3">
+    <div class="mb-6 overflow-hidden rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#414141]">
+      <div class="border-b border-zinc-100 dark:border-[#4D4D4D] px-5 py-3">
         <p class="text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Recovery codes</p>
       </div>
-      <ul class="grid grid-cols-2 divide-x divide-y divide-zinc-100 dark:divide-[#4A4854]">
+      <ul class="grid grid-cols-2 divide-x divide-y divide-zinc-100 dark:divide-[#4D4D4D]">
         {{ range .Codes }}
         <li class="px-4 py-2.5">
           <code class="text-sm font-mono text-zinc-700 dark:text-zinc-300 select-all">{{ . }}</code>

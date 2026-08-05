@@ -13,7 +13,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#393939] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -44,28 +44,28 @@
         <label for="name" class="block text-sm font-medium text-zinc-700 dark:text-white">Name <span class="text-red-500">*</span></label>
         <input type="text" id="name" name="name" required value="{{ .Form.Name }}"
                placeholder="e.g. ChatGPT"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
       </div>
 
       <div>
         <label for="website" class="block text-sm font-medium text-zinc-700 dark:text-white">Website</label>
         <input type="url" id="website" name="website" value="{{ .Form.Website }}"
                placeholder="https://..."
-               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
       </div>
 
       <div>
         <label for="subtitle" class="block text-sm font-medium text-zinc-700 dark:text-white">Short description</label>
         <input type="text" id="subtitle" name="subtitle" value="{{ .Form.Subtitle }}"
                placeholder="One-line summary"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
       </div>
 
       <div>
         <label for="description" class="block text-sm font-medium text-zinc-700 dark:text-white">Description</label>
         <textarea id="description" name="description" rows="4"
                   placeholder="Tell us more about this AI…"
-                  class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">{{ .Form.Description }}</textarea>
+                  class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">{{ .Form.Description }}</textarea>
       </div>
 
       <div>

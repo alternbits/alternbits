@@ -13,7 +13,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-zinc-50 dark:bg-[#37353E] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-zinc-50 dark:bg-[#393939] text-zinc-900 dark:text-white antialiased">
 
   <!-- minimal nav -->
   <header class="absolute inset-x-0 top-0 flex h-14 items-center justify-between px-6">
@@ -24,7 +24,7 @@
 
     <!-- Dark mode toggle -->
     <button @click="toggle()" title="Toggle dark mode"
-            class="rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#3F3D48] hover:text-zinc-700 dark:hover:text-white">
+            class="rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#414141] hover:text-zinc-700 dark:hover:text-white">
       <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
@@ -58,13 +58,13 @@
       </div>
       {{ end }}
 
-      <div class="rounded-2xl border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#3F3D48] p-8 shadow-sm dark:shadow-black/20">
+      <div class="rounded-2xl border border-zinc-200 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] p-8 shadow-sm dark:shadow-black/20">
         {{ if or .GitHubEnabled .GoogleEnabled }}
         <div class="flex flex-col gap-3">
 
           {{ if .GitHubEnabled }}
           <a href="/auth/github"
-             class="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#47454F] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:bg-zinc-50 dark:hover:bg-[#4F4D58]">
+             class="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-200 dark:border-[#4D4D4D] bg-white dark:bg-[#494949] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#5F5F5F] hover:bg-zinc-50 dark:hover:bg-[#515151]">
             <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0" fill="currentColor" aria-hidden="true">
               <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.9-.39.99 0 1.98.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.07.78 2.16 0 1.56-.01 2.81-.01 3.19 0 .31.21.67.8.56C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
             </svg>
@@ -74,7 +74,7 @@
 
           {{ if .GoogleEnabled }}
           <a href="/auth/google"
-             class="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-200 dark:border-[#4A4854] bg-white dark:bg-[#47454F] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#5C5968] hover:bg-zinc-50 dark:hover:bg-[#4F4D58]">
+             class="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-200 dark:border-[#4D4D4D] bg-white dark:bg-[#494949] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#5F5F5F] hover:bg-zinc-50 dark:hover:bg-[#515151]">
             <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0" aria-hidden="true">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -90,7 +90,7 @@
           No account? Signing in creates one automatically.
         </p>
         {{ else }}
-        <div class="rounded-lg border border-zinc-100 dark:border-[#4A4854] bg-zinc-50 dark:bg-[#47454F] px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
+        <div class="rounded-lg border border-zinc-100 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#494949] px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
           Sign-in is not available yet. Check back soon.
         </div>
         {{ end }}
