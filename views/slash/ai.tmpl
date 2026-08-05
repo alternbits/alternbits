@@ -41,10 +41,12 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#393939] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2d2e3a] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
+
+  <div class="md:pl-[3.75rem]">
 
   {{ if .Error }}
   <div class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
@@ -55,7 +57,7 @@
   {{ with .AI }}
 
   <!-- AI header -->
-  <div class="border-b border-zinc-100 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#343434] px-4 py-8 sm:px-6">
+  <div class="border-b border-zinc-100 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#24252e] px-4 py-8 sm:px-6">
     <div class="mx-auto max-w-5xl">
       <a href="/" class="mb-5 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
@@ -106,7 +108,7 @@
       <!-- Main content -->
       <div class="min-w-0 flex-1">
         {{ if .Description }}
-        <section class="mb-6 rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-6 py-5">
+        <section class="mb-6 rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-6 py-5">
           <h2 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">About</h2>
           <div class="markdown-body text-sm text-zinc-700 dark:text-white">{{ markdownHTML .Description }}</div>
         </section>
@@ -117,7 +119,7 @@
         {{ end }}
 
         {{ if .Screenshots }}
-        <section class="mb-6 rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-6 py-5"
+        <section class="mb-6 rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-6 py-5"
                  x-data="{ open: false, src: '', alt: '' }">
           <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Screenshots</h2>
           <div class="grid gap-3 sm:grid-cols-2">
@@ -127,7 +129,7 @@
               <img src="{{ .URL }}" alt="{{ .Alt }}" loading="lazy"
                    class="w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]">
               {{ if .Alt }}
-              <figcaption class="bg-zinc-50 dark:bg-[#343434] px-3 py-1.5 text-xs text-zinc-400 dark:text-zinc-500">{{ .Alt }}</figcaption>
+              <figcaption class="bg-zinc-50 dark:bg-[#24252e] px-3 py-1.5 text-xs text-zinc-400 dark:text-zinc-500">{{ .Alt }}</figcaption>
               {{ end }}
             </figure>
             {{ end }}
@@ -163,12 +165,12 @@
 
         <!-- Categories -->
         {{ if .Categories }}
-        <div class="rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-4 py-4">
+        <div class="rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-4 py-4">
           <h3 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Categories</h3>
           <div class="flex flex-wrap gap-1.5">
             {{ range .Categories }}
             <a href="/categories/{{ .Slug }}"
-               class="rounded-full border border-zinc-200 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#343434] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
+               class="rounded-full border border-zinc-200 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#24252e] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
               {{ .Name }}
             </a>
             {{ end }}
@@ -178,11 +180,11 @@
 
         <!-- Genera -->
         {{ if .Genera }}
-        <div class="rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] px-4 py-4">
+        <div class="rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-4 py-4">
           <h3 class="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Type</h3>
           <div class="flex flex-wrap gap-1.5">
             {{ range .Genera }}
-            <span class="rounded-full border border-zinc-200 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#343434] px-3 py-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span class="rounded-full border border-zinc-200 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#24252e] px-3 py-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
               {{ .Name }}
             </span>
             {{ end }}
@@ -191,7 +193,7 @@
         {{ end }}
 
         <!-- Meta -->
-        <div class="rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#414141] divide-y divide-zinc-100 dark:divide-[#4D4D4D]">
+        <div class="rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] divide-y divide-zinc-100 dark:divide-[#4D4D4D]">
           {{ if .HaveFree }}
           <div class="flex items-center justify-between px-4 py-3">
             <span class="text-xs text-zinc-400 dark:text-zinc-500">Pricing</span>
@@ -213,7 +215,7 @@
           </div>
           <div class="flex items-center justify-between px-4 py-3">
             <span class="text-xs text-zinc-400 dark:text-zinc-500">Slug</span>
-            <code class="rounded bg-zinc-100 dark:bg-[#343434] px-1.5 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-400">{{ .Slug }}</code>
+            <code class="rounded bg-zinc-100 dark:bg-[#24252e] px-1.5 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-400">{{ .Slug }}</code>
           </div>
         </div>
 
@@ -223,6 +225,8 @@
 
   {{ end }}
   {{ end }}
+
+  </div>
 
   {{ template "_footer.tmpl" . }}
 

@@ -14,7 +14,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#393939] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2d2e3a] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -34,14 +34,14 @@
     {{ if .UserAIs }}
     <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#4D4D4D]">
       <table class="min-w-full divide-y divide-zinc-100 dark:divide-[#4D4D4D]">
-        <thead class="bg-zinc-50 dark:bg-[#343434]">
+        <thead class="bg-zinc-50 dark:bg-[#24252e]">
           <tr>
             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Name</th>
             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Status</th>
             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Submitted</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-zinc-100 dark:divide-[#4D4D4D] bg-white dark:bg-[#414141]">
+        <tbody class="divide-y divide-zinc-100 dark:divide-[#4D4D4D] bg-white dark:bg-[#3a3b4b]">
           {{ range .UserAIs }}
           <tr>
             <td class="px-4 py-3">
