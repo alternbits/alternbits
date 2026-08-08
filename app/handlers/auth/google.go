@@ -35,6 +35,7 @@ func GoogleLogin() gin.HandlerFunc {
 		state := uuid.New().String()
 		session := sessions.Default(c)
 		session.Set("google_oauth_state", state)
+		setAuthNext(session, c.Query("next"))
 		if err := session.Save(); err != nil {
 			c.Redirect(http.StatusFound, "/signin?error=session")
 			return

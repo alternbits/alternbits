@@ -210,5 +210,5 @@ func finalizePublicSession(c *gin.Context, user *models.User) {
 		c.Redirect(http.StatusFound, "/signin?error=session")
 		return
 	}
-	c.Redirect(http.StatusFound, "/")
+	auth.RedirectNext(c, "/")
 }

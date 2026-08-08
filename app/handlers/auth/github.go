@@ -59,6 +59,7 @@ func GitHubUserLogin() gin.HandlerFunc {
 		session := sessions.Default(c)
 		session.Set("oauth_state", state)
 		session.Set("oauth_flow", "public")
+		setAuthNext(session, c.Query("next"))
 		if err := session.Save(); err != nil {
 			c.Redirect(http.StatusFound, "/signin?error=session")
 			return
