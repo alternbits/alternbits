@@ -8,6 +8,7 @@ import (
 
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -71,7 +72,7 @@ type googleUser struct {
 	Picture string `json:"picture"`
 }
 
-func GoogleCallback(db *gorm.DB) gin.HandlerFunc {
+func GoogleCallback(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !config.C.OAuthGoogleEnabled() {
 			c.Redirect(http.StatusFound, "/signin?error=google_disabled")
@@ -160,11 +161,13 @@ func GoogleCallback(db *gorm.DB) gin.HandlerFunc {
 				user.Name = gu.Name
 			}
 			db.Save(&user)
+			tg.NotifyProviderConnected(&user, "Google")
 			c.Redirect(http.StatusFound, "/settings?connected=google")
 			return
 		}
 
 		var user models.User
+		isNewUser := false
 		err = db.Where("google_id = ?", gu.ID).First(&user).Error
 		if err != nil {
 			if db.Where(&models.User{Email: gu.Email}).First(&user).Error != nil {
@@ -180,6 +183,7 @@ func GoogleCallback(db *gorm.DB) gin.HandlerFunc {
 					c.Redirect(http.StatusFound, "/signin?error=create")
 					return
 				}
+				isNewUser = true
 			} else {
 				gid := gu.ID
 				user.GoogleID = &gid
@@ -199,6 +203,12 @@ func GoogleCallback(db *gorm.DB) gin.HandlerFunc {
 				user.Name = gu.Name
 			}
 			db.Save(&user)
+		}
+
+		if isNewUser {
+			tg.NotifyNewSignUp(&user, "Google")
+		} else {
+			tg.NotifyNewSignIn(&user, "Google")
 		}
 
 		loginPublicUser(c, &user)

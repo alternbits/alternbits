@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -31,7 +32,7 @@ func PageEditForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func PageUpdate(db *gorm.DB) gin.HandlerFunc {
+func PageUpdate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
@@ -81,6 +82,9 @@ func PageUpdate(db *gorm.DB) gin.HandlerFunc {
 			renderErr(http.StatusInternalServerError, "Failed to save page: "+err.Error())
 			return
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyPageUpdated(actor, &pg)
 
 		c.Redirect(http.StatusFound, "/root/pages")
 	}

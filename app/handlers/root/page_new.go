@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -25,7 +26,7 @@ func PageNewForm() gin.HandlerFunc {
 	}
 }
 
-func PageCreate(db *gorm.DB) gin.HandlerFunc {
+func PageCreate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		form := pageFormData{
 			Title:       strings.TrimSpace(c.PostForm("title")),
@@ -67,6 +68,9 @@ func PageCreate(db *gorm.DB) gin.HandlerFunc {
 			renderErr(http.StatusInternalServerError, "Failed to save page: "+err.Error())
 			return
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyPageCreated(actor, &pg)
 
 		c.Redirect(http.StatusFound, "/root/pages")
 	}

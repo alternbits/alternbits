@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -36,7 +37,7 @@ func CategoryNewForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func CategoryCreate(db *gorm.DB) gin.HandlerFunc {
+func CategoryCreate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		form := categoryFormData{
 			Name:     strings.TrimSpace(c.PostForm("name")),
@@ -75,6 +76,7 @@ func CategoryCreate(db *gorm.DB) gin.HandlerFunc {
 			Slug:     form.Slug,
 			Subtitle: form.Subtitle,
 		}
+		parentName := ""
 		if form.ParentID != "" {
 			pid, err := strconv.ParseUint(form.ParentID, 10, 64)
 			if err != nil {
@@ -83,12 +85,19 @@ func CategoryCreate(db *gorm.DB) gin.HandlerFunc {
 			}
 			pidU := uint(pid)
 			category.ParentID = &pidU
+			var parent models.Category
+			if db.Select("name").First(&parent, pidU).Error == nil {
+				parentName = parent.Name
+			}
 		}
 
 		if err := db.Create(&category).Error; err != nil {
 			renderErr(http.StatusInternalServerError, "Failed to save category: "+err.Error())
 			return
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyCategoryCreated(actor, &category, parentName)
 
 		c.Redirect(http.StatusFound, "/root/categories")
 	}

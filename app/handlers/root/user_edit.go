@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -29,7 +30,7 @@ func UserEditForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func UserUpdate(db *gorm.DB) gin.HandlerFunc {
+func UserUpdate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
@@ -75,6 +76,8 @@ func UserUpdate(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 
+		wasAdmin := user.IsAdmin
+
 		user.Name = name
 		user.Username = username
 		user.Email = email
@@ -91,6 +94,15 @@ func UserUpdate(db *gorm.DB) gin.HandlerFunc {
 			renderErr("Failed to save user: " + err.Error())
 			return
 		}
+
+		adminChange := ""
+		if !wasAdmin && isAdmin {
+			adminChange = "promoted to admin"
+		} else if wasAdmin && !isAdmin {
+			adminChange = "demoted from admin"
+		}
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyUserUpdated(actor, &user, adminChange)
 
 		c.Redirect(http.StatusFound, "/root/users")
 	}

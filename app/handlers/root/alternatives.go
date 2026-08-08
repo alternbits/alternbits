@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -259,7 +260,7 @@ func AlternativeNewForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
+func AlternativeCreate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		aiIDStr := strings.TrimSpace(c.PostForm("ai_id"))
 		altAIIDStr := strings.TrimSpace(c.PostForm("alternative_ai_id"))
@@ -305,6 +306,8 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		actor, _ := c.MustGet("user").(*models.User)
+
 		if altAIIDStr != "" {
 			altAIID, err := strconv.ParseUint(altAIIDStr, 10, 64)
 			if err != nil {
@@ -344,14 +347,18 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 					})
 				}
 			}
+
+			tg.NotifyAlternativeCreated(actor, aiLabelByID(db, aiIDStr), aiLabelByID(db, altAIIDStr), twoWay, status)
 		}
 
 		// Extras — also link these AIs (alternatives of the picked alternative) to the main AI.
 		extraTwoWay := parseIDSet(c.PostForm("extra_twoway_ids"))
+		var addedExtraLabels []string
 		for _, eid := range extraIDs {
 			if eid == aiID {
 				continue
 			}
+			added := false
 			var existingExtra models.Alternative
 			if db.Where("ai_id = ? AND alternative_ai_id = ?", aiID, eid).First(&existingExtra).Error != nil {
 				db.Create(&models.Alternative{
@@ -360,6 +367,7 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 					Status:          status,
 					Note:            note,
 				})
+				added = true
 			}
 			if extraTwoWay[eid] {
 				var revExtra models.Alternative
@@ -370,9 +378,14 @@ func AlternativeCreate(db *gorm.DB) gin.HandlerFunc {
 						Status:          status,
 						Note:            note,
 					})
+					added = true
 				}
 			}
+			if added {
+				addedExtraLabels = append(addedExtraLabels, aiLabelByID(db, strconv.FormatUint(eid, 10)))
+			}
 		}
+		tg.NotifyAlternativeExtras(actor, aiLabelByID(db, aiIDStr), addedExtraLabels)
 
 		c.Redirect(http.StatusFound, "/root/alternatives")
 	}
@@ -385,40 +398,52 @@ func altRedirect(c *gin.Context) string {
 	return "/root/alternatives"
 }
 
-func AlternativeApprove(db *gorm.DB) gin.HandlerFunc {
+func AlternativeApprove(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			c.Redirect(http.StatusFound, "/root/alternatives")
 			return
 		}
+		var alt models.Alternative
+		db.Preload("AI").Preload("AlternativeAI").First(&alt, id)
 		db.Model(&models.Alternative{}).Where("id = ?", id).
 			Update("status", models.AlternativeStatusApproved)
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyAlternativeStatusChanged(actor, &alt, models.AlternativeStatusApproved)
 		c.Redirect(http.StatusFound, altRedirect(c))
 	}
 }
 
-func AlternativeReject(db *gorm.DB) gin.HandlerFunc {
+func AlternativeReject(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			c.Redirect(http.StatusFound, "/root/alternatives")
 			return
 		}
+		var alt models.Alternative
+		db.Preload("AI").Preload("AlternativeAI").First(&alt, id)
 		db.Model(&models.Alternative{}).Where("id = ?", id).
 			Update("status", models.AlternativeStatusRejected)
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyAlternativeStatusChanged(actor, &alt, models.AlternativeStatusRejected)
 		c.Redirect(http.StatusFound, altRedirect(c))
 	}
 }
 
-func AlternativeDelete(db *gorm.DB) gin.HandlerFunc {
+func AlternativeDelete(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
 			c.Redirect(http.StatusFound, "/root/alternatives")
 			return
 		}
+		var alt models.Alternative
+		db.Preload("AI").Preload("AlternativeAI").First(&alt, id)
 		db.Delete(&models.Alternative{}, id)
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyAlternativeDeleted(actor, &alt)
 		c.Redirect(http.StatusFound, altRedirect(c))
 	}
 }

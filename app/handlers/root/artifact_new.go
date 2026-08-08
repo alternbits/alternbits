@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -26,7 +27,7 @@ func ArtifactNewForm() gin.HandlerFunc {
 	}
 }
 
-func ArtifactCreate(db *gorm.DB) gin.HandlerFunc {
+func ArtifactCreate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		name := strings.TrimSpace(c.PostForm("name"))
 		sl := strings.TrimSpace(c.PostForm("slug"))
@@ -111,6 +112,9 @@ func ArtifactCreate(db *gorm.DB) gin.HandlerFunc {
 			renderErr(http.StatusInternalServerError, "Failed to save artifact: "+err.Error())
 			return
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyArtifactCreated(actor, &artifact, len(fieldInputs))
 
 		c.Redirect(http.StatusFound, "/root/artifacts")
 	}

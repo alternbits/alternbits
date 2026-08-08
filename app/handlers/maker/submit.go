@@ -53,7 +53,7 @@ func SubmitForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func SubmitCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
+func SubmitCreate(db *gorm.DB, r2 *utils.R2Service, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := currentUser(c)
 
@@ -132,6 +132,8 @@ func SubmitCreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			renderErr(http.StatusInternalServerError, "Something went wrong — please try again.")
 			return
 		}
+
+		tg.NotifyNewSubmission(&ai, user)
 
 		c.Redirect(http.StatusFound, "/maker/submit?submitted=1")
 	}

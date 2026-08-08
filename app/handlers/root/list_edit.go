@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -63,7 +64,7 @@ func ListEditForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func ListUpdate(db *gorm.DB) gin.HandlerFunc {
+func ListUpdate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
@@ -162,6 +163,7 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 		// Replace all AIs.
 		db.Where("list_id = ?", list.ID).Delete(&models.ListAI{})
 		aiIDsRaw := strings.TrimSpace(c.PostForm("ai_ids"))
+		aiCount := 0
 		if aiIDsRaw != "" {
 			for sort, part := range strings.Split(aiIDsRaw, ",") {
 				part = strings.TrimSpace(part)
@@ -173,8 +175,12 @@ func ListUpdate(db *gorm.DB) gin.HandlerFunc {
 					continue
 				}
 				db.Create(&models.ListAI{ListID: list.ID, AIID: uint(tid), Sort: sort})
+				aiCount++
 			}
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyListUpdated(actor, &list, aiCount)
 
 		c.Redirect(http.StatusFound, "/root/lists")
 	}

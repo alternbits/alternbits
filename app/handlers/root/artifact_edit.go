@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -36,7 +37,7 @@ func ArtifactEditForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func ArtifactUpdate(db *gorm.DB) gin.HandlerFunc {
+func ArtifactUpdate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
@@ -141,6 +142,9 @@ func ArtifactUpdate(db *gorm.DB) gin.HandlerFunc {
 			renderErr(http.StatusInternalServerError, "Failed to save artifact: "+err.Error())
 			return
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyArtifactUpdated(actor, &artifact, len(fieldInputs))
 
 		c.Redirect(http.StatusFound, "/root/artifacts")
 	}

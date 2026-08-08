@@ -7,6 +7,7 @@ import (
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/handlers/totp"
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -83,7 +84,7 @@ func Settings2FASetupGet(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func Settings2FASetupPost(db *gorm.DB) gin.HandlerFunc {
+func Settings2FASetupPost(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := currentUser(c)
 		if user.TOTPEnabled {
@@ -118,6 +119,8 @@ func Settings2FASetupPost(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		tg.NotifyTOTPEnabled(user)
+
 		data := headerData(db, user)
 		data["Codes"] = plain
 		c.HTML(http.StatusOK, "settings_2fa_recovery.tmpl", data)
@@ -130,7 +133,7 @@ func Settings2FASetupDone() gin.HandlerFunc {
 	}
 }
 
-func Settings2FADisable(db *gorm.DB) gin.HandlerFunc {
+func Settings2FADisable(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := currentUser(c)
 		if !user.TOTPEnabled {
@@ -153,6 +156,7 @@ func Settings2FADisable(db *gorm.DB) gin.HandlerFunc {
 			c.Redirect(http.StatusFound, "/settings?error=save")
 			return
 		}
+		tg.NotifyTOTPDisabled(user)
 		c.Redirect(http.StatusFound, "/settings?2fa=disabled")
 	}
 }

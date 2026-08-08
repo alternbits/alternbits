@@ -43,6 +43,10 @@ type Config struct {
 		Region          string
 		PublicURL       string
 	}
+	Telegram struct {
+		BotToken string
+		ChatID   string
+	}
 }
 
 var C *Config
@@ -94,6 +98,9 @@ func Load() error {
 	}
 	C.CloudflareR2.PublicURL = strings.TrimRight(os.Getenv("CLOUDFLARE_R2_PUBLIC_URL"), "/")
 
+	C.Telegram.BotToken = os.Getenv("TELEGRAM_BOT_TOKEN")
+	C.Telegram.ChatID = os.Getenv("TELEGRAM_CHAT_ID")
+
 	for login := range strings.SplitSeq(os.Getenv("SUPERUSER_GITHUB_LOGINS"), ",") {
 		login = strings.TrimSpace(login)
 		if login != "" {
@@ -117,6 +124,10 @@ func (c *Config) R2Enabled() bool {
 		c.CloudflareR2.AccessKeyID != "" &&
 		c.CloudflareR2.SecretAccessKey != "" &&
 		c.CloudflareR2.Bucket != ""
+}
+
+func (c *Config) TelegramEnabled() bool {
+	return c.Telegram.BotToken != "" && c.Telegram.ChatID != ""
 }
 
 func (c *Config) IsSuperuserLogin(login string) bool {

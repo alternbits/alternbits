@@ -79,7 +79,7 @@ func AIEditForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
+func AIUpdate(db *gorm.DB, r2 *utils.R2Service, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
@@ -268,6 +268,9 @@ func AIUpdate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			db.Where("id IN ?", genIDs).Find(&genera)
 		}
 		db.Model(&ai).Association("Genera").Replace(genera)
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyAIUpdated(actor, &ai)
 
 		c.Redirect(http.StatusFound, "/root/ais")
 	}

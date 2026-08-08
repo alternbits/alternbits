@@ -142,7 +142,7 @@ func AINewForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
+func AICreate(db *gorm.DB, r2 *utils.R2Service, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		catIDStrs := c.PostFormArray("category_ids")
 		genIDStrs := c.PostFormArray("genus_ids")
@@ -290,6 +290,9 @@ func AICreate(db *gorm.DB, r2 *utils.R2Service) gin.HandlerFunc {
 			db.Where("id IN ?", genIDs).Find(&genera)
 			db.Model(&ai).Association("Genera").Replace(genera)
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyAICreated(actor, &ai)
 
 		c.Redirect(http.StatusFound, "/root/ais")
 	}

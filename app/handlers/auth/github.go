@@ -9,6 +9,7 @@ import (
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/handlers/totp"
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -99,7 +100,7 @@ type githubUser struct {
 
 // GitHubCallback handles the shared OAuth callback for root, public, and connect flows.
 // The flow is determined by the "oauth_flow" session key set before the redirect.
-func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
+func GitHubCallback(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !config.C.OAuthGitHubEnabled() {
 			c.Redirect(http.StatusFound, "/signin?error=github_disabled")
@@ -190,6 +191,7 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 				user.Name = gu.Name
 			}
 			db.Save(&user)
+			tg.NotifyProviderConnected(&user, "GitHub")
 			c.Redirect(http.StatusFound, "/settings?connected=github")
 			return
 		}
@@ -201,6 +203,7 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 		isSuperuser := config.C.IsSuperuserLogin(gu.Login)
 
 		var user models.User
+		isNewUser := false
 		err = db.Where(&models.User{GitHubID: githubID}).First(&user).Error
 		if err != nil {
 			if db.Where(&models.User{Email: email}).First(&user).Error != nil {
@@ -217,6 +220,7 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 					errTo("create")
 					return
 				}
+				isNewUser = true
 			} else {
 				user.GitHubID = githubID
 				user.GitHubLogin = gu.Login
@@ -235,6 +239,16 @@ func GitHubCallback(db *gorm.DB) gin.HandlerFunc {
 				user.IsAdmin = true
 			}
 			db.Save(&user)
+		}
+
+		provider := "GitHub"
+		if flow == "root" {
+			provider = "GitHub (root)"
+		}
+		if isNewUser {
+			tg.NotifyNewSignUp(&user, provider)
+		} else {
+			tg.NotifyNewSignIn(&user, provider)
 		}
 
 		if flow == "root" {

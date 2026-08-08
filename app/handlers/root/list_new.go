@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -66,7 +67,7 @@ func ListNewForm(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-func ListCreate(db *gorm.DB) gin.HandlerFunc {
+func ListCreate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		form := listFormData{
 			Name:            strings.TrimSpace(c.PostForm("name")),
@@ -134,6 +135,7 @@ func ListCreate(db *gorm.DB) gin.HandlerFunc {
 
 		// Create ListAI records in submitted order.
 		aiIDsRaw := strings.TrimSpace(c.PostForm("ai_ids"))
+		aiCount := 0
 		if aiIDsRaw != "" {
 			for sort, part := range strings.Split(aiIDsRaw, ",") {
 				part = strings.TrimSpace(part)
@@ -146,8 +148,12 @@ func ListCreate(db *gorm.DB) gin.HandlerFunc {
 				}
 				lt := models.ListAI{ListID: list.ID, AIID: uint(tid), Sort: sort}
 				db.Create(&lt)
+				aiCount++
 			}
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyListCreated(actor, &list, aiCount)
 
 		c.Redirect(http.StatusFound, "/root/lists")
 	}

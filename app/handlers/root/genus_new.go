@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/dariubs/altern/app/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -24,7 +25,7 @@ func GenusNewForm() gin.HandlerFunc {
 	}
 }
 
-func GenusCreate(db *gorm.DB) gin.HandlerFunc {
+func GenusCreate(db *gorm.DB, tg *utils.TelegramService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		form := genusFormData{
 			Name:     strings.TrimSpace(c.PostForm("name")),
@@ -64,6 +65,9 @@ func GenusCreate(db *gorm.DB) gin.HandlerFunc {
 			renderErr(http.StatusInternalServerError, "Failed to save genus: "+err.Error())
 			return
 		}
+
+		actor, _ := c.MustGet("user").(*models.User)
+		tg.NotifyGenusCreated(actor, &genus)
 
 		c.Redirect(http.StatusFound, "/root/genera")
 	}
