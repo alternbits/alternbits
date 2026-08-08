@@ -44,12 +44,12 @@
       <div class="flex items-start gap-4">
         {{ if .LogoURL }}
         <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-             class="h-14 w-14 shrink-0 rounded-2xl bg-zinc-100 dark:bg-[#34353d] object-cover">
+             class="h-14 w-14 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#34353d] object-cover">
         {{ else if .Website }}
         <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
-             class="h-14 w-14 shrink-0 rounded-2xl bg-zinc-100 dark:bg-[#34353d] object-cover p-3">
+             class="h-14 w-14 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#34353d] object-cover p-3">
         {{ else }}
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-orange-100 dark:bg-amber-500/10 text-2xl font-black text-orange-500 dark:text-amber-400">
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-amber-500/10 text-2xl font-black text-orange-500 dark:text-amber-400">
           {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
         </div>
         {{ end }}
@@ -73,15 +73,15 @@
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {{ range .Alternatives }}
       <a href="/ai/{{ .Slug }}"
-         class="group flex items-start gap-4 rounded-xl border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-4 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+         class="group flex items-start gap-4 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-4 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
         {{ if .LogoURL }}
         <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-             class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#34353d] object-cover">
+             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover">
         {{ else if .Website }}
         <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
-             class="h-11 w-11 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#34353d] object-cover p-2">
+             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover p-2">
         {{ else }}
-        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#34353d] text-base font-semibold text-zinc-500 dark:text-zinc-400">
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#34353d] text-base font-semibold text-zinc-500 dark:text-zinc-400">
           {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
         </div>
         {{ end }}
@@ -107,7 +107,7 @@
       {{ end }}
     </div>
     {{ else }}
-    <div class="rounded-xl border border-dashed border-zinc-200 dark:border-[#34353d] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
+    <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#34353d] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
       No alternatives yet for {{ with .AI }}{{ .Name }}{{ end }}.
     </div>
     {{ end }}

@@ -39,7 +39,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {{ range .TopLevel }}
       <a href="/categories/{{ .Slug }}"
-         class="group rounded-xl border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-5 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+         class="group rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-5 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
         <div class="flex items-start justify-between gap-2">
           <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">{{ .Name }}</h2>
           <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -60,7 +60,7 @@
       {{ end }}
     </div>
     {{ else }}
-    <div class="rounded-xl border border-dashed border-zinc-200 dark:border-[#34353d] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
+    <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#34353d] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
       No categories yet — check back soon.
     </div>
     {{ end }}
