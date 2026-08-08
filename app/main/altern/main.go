@@ -91,6 +91,7 @@ func main() {
 	r.GET("/categories/:slug", slash.CategoryHandler(database.DB))
 	r.GET("/page/:slug", slash.PageHandler(database.DB))
 	r.GET("/alternatives/:slug", slash.AlternativesHandler(database.DB))
+	r.GET("/search", slash.SearchAPI(database.DB))
 
 	userRoutes := r.Group("", middleware.RequireAuth(database.DB))
 	{
@@ -114,6 +115,7 @@ func main() {
 	r.POST("/2fa/verify", totp.Verify(database.DB, publicTOTPOpts))
 
 	r.GET("/signin", auth.SignInPage())
+	r.GET("/signup", auth.SignUpPage())
 	r.GET("/auth/github", auth.GitHubUserLogin())
 	r.GET("/auth/github/callback", auth.GitHubCallback(database.DB))
 	r.GET("/auth/google", auth.GoogleLogin())

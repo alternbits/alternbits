@@ -13,7 +13,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#2d2e3a] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -31,7 +31,7 @@
     </div>
     {{ end }}
     {{ if eq .Flash "disabled" }}
-    <div class="mb-6 rounded-xl border border-zinc-200 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#24252e] px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+    <div class="mb-6 rounded-xl border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
       Two-factor authentication has been disabled.
     </div>
     {{ end }}
@@ -64,17 +64,17 @@
     {{ with .User }}
 
     <!-- Profile -->
-    <section class="mb-6 overflow-hidden rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b]">
-      <div class="border-b border-zinc-100 dark:border-[#4D4D4D] px-5 py-3">
+    <section class="mb-6 overflow-hidden rounded-xl border border-zinc-100 dark:border-[#34353d] bg-white dark:bg-[#26272e]">
+      <div class="border-b border-zinc-100 dark:border-[#34353d] px-5 py-3">
         <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">Profile</h2>
       </div>
       <div class="px-5 py-5">
         <div class="flex items-center gap-4">
           {{ if .AvatarURL }}
           <img src="{{ .AvatarURL }}" alt="{{ .Name }}"
-               class="h-14 w-14 shrink-0 rounded-full bg-zinc-100 dark:bg-[#4D4D4D] object-cover">
+               class="h-14 w-14 shrink-0 rounded-full bg-zinc-100 dark:bg-[#34353d] object-cover">
           {{ else }}
-          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#4D4D4D] text-xl font-black text-zinc-500 dark:text-zinc-300">
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#34353d] text-xl font-black text-zinc-500 dark:text-zinc-300">
             {{ if .Name }}{{ slice .Name 0 1 }}{{ else }}?{{ end }}
           </div>
           {{ end }}
@@ -88,8 +88,8 @@
     </section>
 
     <!-- Security -->
-    <section class="mb-6 overflow-hidden rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b]">
-      <div class="border-b border-zinc-100 dark:border-[#4D4D4D] px-5 py-3">
+    <section class="mb-6 overflow-hidden rounded-xl border border-zinc-100 dark:border-[#34353d] bg-white dark:bg-[#26272e]">
+      <div class="border-b border-zinc-100 dark:border-[#34353d] px-5 py-3">
         <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">Security</h2>
       </div>
 
@@ -102,7 +102,7 @@
               {{ if .TOTPEnabled }}
               <span class="rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 text-[11px] font-semibold text-green-700 dark:text-green-400">Enabled</span>
               {{ else }}
-              <span class="rounded-full bg-zinc-100 dark:bg-[#24252e] px-2 py-0.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">Not set up</span>
+              <span class="rounded-full bg-zinc-100 dark:bg-[#202127] px-2 py-0.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">Not set up</span>
               {{ end }}
             </div>
             <p class="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
@@ -119,7 +119,7 @@
           <!-- Disable form -->
           <div x-data="{ open: false }" class="shrink-0 text-right">
             <button @click="open = !open"
-                    class="rounded-lg border border-zinc-200 dark:border-[#4D4D4D] px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#24252e] transition-colors">
+                    class="rounded-lg border border-zinc-200 dark:border-[#34353d] px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
               Disable
             </button>
             <div x-show="open" x-cloak x-transition
@@ -128,7 +128,7 @@
               <form method="POST" action="/settings/2fa/disable" class="flex items-center gap-2">
                 <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code"
                        placeholder="000000"
-                       class="w-28 rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-3 py-1.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-red-400 dark:focus:border-red-500">
+                       class="w-28 rounded-lg border border-zinc-300 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-3 py-1.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-red-400 dark:focus:border-red-500">
                 <button type="submit"
                         class="rounded-lg bg-red-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-600 transition-colors">
                   Confirm disable
@@ -138,7 +138,7 @@
           </div>
           {{ else }}
           <a href="/settings/2fa/setup"
-             class="shrink-0 rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-400 transition-colors">
+             class="shrink-0 rounded-lg bg-orange-500 dark:bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-400 dark:hover:bg-amber-400 transition-colors">
             Set up
           </a>
           {{ end }}
@@ -147,11 +147,11 @@
     </section>
 
     <!-- Connected accounts -->
-    <section class="overflow-hidden rounded-xl border border-zinc-100 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b]">
-      <div class="border-b border-zinc-100 dark:border-[#4D4D4D] px-5 py-3">
+    <section class="overflow-hidden rounded-xl border border-zinc-100 dark:border-[#34353d] bg-white dark:bg-[#26272e]">
+      <div class="border-b border-zinc-100 dark:border-[#34353d] px-5 py-3">
         <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">Connected accounts</h2>
       </div>
-      <ul class="divide-y divide-zinc-100 dark:divide-[#4D4D4D]">
+      <ul class="divide-y divide-zinc-100 dark:divide-[#34353d]">
 
         {{ if $.GitHubEnabled }}
         <li class="flex items-center justify-between gap-4 px-5 py-3.5">
@@ -173,7 +173,7 @@
           </span>
           {{ else }}
           <a href="/settings/connect/github"
-             class="shrink-0 rounded-lg border border-zinc-200 dark:border-[#4D4D4D] px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#24252e] transition-colors">
+             class="shrink-0 rounded-lg border border-zinc-200 dark:border-[#34353d] px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
             Connect
           </a>
           {{ end }}
@@ -200,7 +200,7 @@
           </span>
           {{ else }}
           <a href="/settings/connect/google"
-             class="shrink-0 rounded-lg border border-zinc-200 dark:border-[#4D4D4D] px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#24252e] transition-colors">
+             class="shrink-0 rounded-lg border border-zinc-200 dark:border-[#34353d] px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
             Connect
           </a>
           {{ end }}

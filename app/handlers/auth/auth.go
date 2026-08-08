@@ -49,6 +49,22 @@ func SignInPage() gin.HandlerFunc {
 	}
 }
 
+// SignUpPage renders the public /signup page.
+func SignUpPage() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		if uid, ok := session.Get(SessionUserIDKey).(uint); ok && uid > 0 {
+			c.Redirect(http.StatusFound, "/")
+			return
+		}
+		c.HTML(http.StatusOK, "signup.tmpl", gin.H{
+			"GitHubEnabled": config.C.OAuthGitHubEnabled(),
+			"GoogleEnabled": config.C.OAuthGoogleEnabled(),
+			"Error":         c.Query("error"),
+		})
+	}
+}
+
 // SignOut clears the public session and redirects to /.
 func SignOut() gin.HandlerFunc {
 	return func(c *gin.Context) {

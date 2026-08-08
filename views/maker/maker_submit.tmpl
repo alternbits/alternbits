@@ -13,7 +13,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#2d2e3a] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -27,7 +27,7 @@
       </div>
       <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Submitted!</h2>
       <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Your AI is pending review. We'll add it to the directory once approved.</p>
-      <a href="/maker/submit" class="mt-6 inline-block rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600">Submit another</a>
+      <a href="/maker/submit" class="mt-6 inline-block rounded-lg bg-orange-500 dark:bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 dark:hover:bg-amber-400">Submit another</a>
     </div>
     {{ else }}
 
@@ -44,35 +44,35 @@
         <label for="name" class="block text-sm font-medium text-zinc-700 dark:text-white">Name <span class="text-red-500">*</span></label>
         <input type="text" id="name" name="name" required value="{{ .Form.Name }}"
                placeholder="e.g. ChatGPT"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 dark:focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:focus:ring-amber-500">
       </div>
 
       <div>
         <label for="website" class="block text-sm font-medium text-zinc-700 dark:text-white">Website</label>
         <input type="url" id="website" name="website" value="{{ .Form.Website }}"
                placeholder="https://..."
-               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 dark:focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:focus:ring-amber-500">
       </div>
 
       <div>
         <label for="subtitle" class="block text-sm font-medium text-zinc-700 dark:text-white">Short description</label>
         <input type="text" id="subtitle" name="subtitle" value="{{ .Form.Subtitle }}"
                placeholder="One-line summary"
-               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+               class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 dark:focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:focus:ring-amber-500">
       </div>
 
       <div>
         <label for="description" class="block text-sm font-medium text-zinc-700 dark:text-white">Description</label>
         <textarea id="description" name="description" rows="4"
                   placeholder="Tell us more about this AI…"
-                  class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">{{ .Form.Description }}</textarea>
+                  class="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-orange-500 dark:focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-orange-500 dark:focus:ring-amber-500">{{ .Form.Description }}</textarea>
       </div>
 
       <div>
         <label for="logo" class="block text-sm font-medium text-zinc-700 dark:text-white">Logo</label>
         {{ if .R2Enabled }}
         <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.gif,.webp,.svg,image/*"
-               class="mt-1 block w-full text-sm text-zinc-700 dark:text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-500 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-orange-600">
+               class="mt-1 block w-full text-sm text-zinc-700 dark:text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-500 dark:file:bg-amber-500 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-orange-600 dark:hover:file:bg-amber-400">
         <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">JPG, PNG, GIF, WebP, or SVG. Max 5 MB.</p>
         {{ else }}
         <div class="mt-1 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 px-3 py-2 text-xs text-amber-800 dark:text-amber-400">
@@ -82,7 +82,7 @@
       </div>
 
       <button type="submit"
-              class="w-full rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+              class="w-full rounded-lg bg-orange-500 dark:bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 dark:hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-amber-500 focus:ring-offset-2">
         Submit for review
       </button>
 

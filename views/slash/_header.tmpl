@@ -1,205 +1,233 @@
-<header x-data="{ mobileOpen: false, searchOpen: false }"
+<header x-data="header()"
         @scroll.window="$store.header.scrolled = window.scrollY > 20"
-        @keydown.escape.window="searchOpen = false; mobileOpen = false"
+        @keydown.escape.window="closeSearch(); mobileOpen = false"
         :class="$store.header.scrolled ? 'shadow-lg shadow-black/5 dark:shadow-black/20' : ''"
-        class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#4D4D4D] bg-white/95 dark:bg-[#2d2e3a]/95 backdrop-blur-md transition-shadow duration-300 ease-in-out">
+        class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#34353d] bg-white/95 dark:bg-[#1c1d22]/95 backdrop-blur-md transition-shadow duration-300 ease-in-out">
 
   <div :class="$store.header.scrolled ? 'h-11' : 'h-14'"
-       class="mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-300 ease-in-out sm:px-6">
+       class="relative mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-300 ease-in-out sm:px-6">
 
-    <!-- Logo -->
-    <a href="/" class="flex shrink-0 items-center gap-1 font-semibold tracking-tight text-zinc-900 dark:text-white">
-      <img src="/assets/logo.png" alt="{{ appName }}"
-           :class="$store.header.scrolled ? 'h-6 w-6' : 'h-8 w-8'"
-           class="rounded-md object-contain transition-all duration-300 ease-in-out">
-      <span :class="$store.header.scrolled ? 'text-xs' : 'text-sm'" class="transition-all duration-300 ease-in-out">{{ appName }}</span>
-    </a>
+    <!-- Normal header content (hidden while search is open) -->
+    <div x-show="!searchOpen"
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-100"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="flex w-full items-center justify-between">
 
-    <!-- Desktop nav -->
-    <nav class="hidden flex-1 items-center gap-0.5 pl-6 md:flex">
-      <a href="/#ais" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] hover:text-zinc-900 transition-colors">AIs</a>
+      <!-- Logo -->
+      <a href="/" class="flex shrink-0 items-center gap-1 font-semibold tracking-tight text-zinc-900 dark:text-white">
+        <img src="/assets/logo.png" alt="{{ appName }}" width="36" height="36"
+             :class="$store.header.scrolled ? 'h-6 w-6' : 'h-8 w-8'"
+             class="rounded-md object-contain transition-all duration-300 ease-in-out">
+        <span :class="$store.header.scrolled ? 'text-xs' : 'text-sm'" class="transition-all duration-300 ease-in-out">{{ appName }}</span>
+      </a>
 
-      <!-- Categories mega menu -->
-      <div x-data="{ megaOpen: false, catSearch: '' }"
-           @click.outside="megaOpen = false"
-           @keydown.escape.window="megaOpen = false"
-           class="relative">
+      <!-- Desktop nav -->
+      <nav class="hidden flex-1 items-center gap-0.5 pl-6 md:flex">
+        <a href="/#ais" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] hover:text-zinc-900 transition-colors">AIs</a>
 
-        <button @click="megaOpen = !megaOpen; catSearch = ''; megaOpen && $nextTick(() => $refs.catSearch.focus())"
-                :class="megaOpen ? 'bg-zinc-100 dark:bg-[#3a3b4b] text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-white'"
-                class="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] hover:text-zinc-900 transition-colors">
-          Categories
-          <svg :class="megaOpen ? 'rotate-180' : ''"
-               class="h-3.5 w-3.5 transition-transform duration-200"
-               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-          </svg>
-        </button>
+        <!-- Categories mega menu -->
+        <div x-data="{ megaOpen: false, catSearch: '' }"
+             @click.outside="megaOpen = false"
+             @keydown.escape.window="megaOpen = false"
+             class="relative">
 
-        <!-- Mega panel (fixed, full-width, DOM child so @click.outside ignores it) -->
-        <div x-show="megaOpen" x-cloak
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-1"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-1"
-             :class="$store.header.scrolled ? 'top-11 max-h-[calc(100vh-2.75rem)]' : 'top-14 max-h-[calc(100vh-3.5rem)]'"
-             class="fixed left-0 right-0 z-50 border-b border-zinc-200 dark:border-[#4D4D4D] bg-white dark:bg-[#2C2C2C] shadow-2xl dark:shadow-black/50 overflow-y-auto transition-[top] duration-300 ease-in-out">
+          <button @click="megaOpen = !megaOpen; catSearch = ''; megaOpen && $nextTick(() => $refs.catSearch.focus())"
+                  :class="megaOpen ? 'bg-zinc-100 dark:bg-[#26272e] text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-white'"
+                  class="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-[#26272e] hover:text-zinc-900 transition-colors">
+            Categories
+            <svg :class="megaOpen ? 'rotate-180' : ''"
+                 class="h-3.5 w-3.5 transition-transform duration-200"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>
+          </button>
 
-          <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+          <!-- Mega panel (fixed, full-width, DOM child so @click.outside ignores it) -->
+          <div x-show="megaOpen" x-cloak
+               x-transition:enter="transition ease-out duration-200"
+               x-transition:enter-start="opacity-0 -translate-y-1"
+               x-transition:enter-end="opacity-100 translate-y-0"
+               x-transition:leave="transition ease-in duration-150"
+               x-transition:leave-start="opacity-100 translate-y-0"
+               x-transition:leave-end="opacity-0 -translate-y-1"
+               :class="$store.header.scrolled ? 'top-11 max-h-[calc(100vh-2.75rem)]' : 'top-14 max-h-[calc(100vh-3.5rem)]'"
+               class="fixed left-0 right-0 z-50 border-b border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#202127] shadow-2xl dark:shadow-black/50 overflow-y-auto transition-[top] duration-300 ease-in-out">
 
-            <!-- Mega header -->
-            <div class="mb-5 flex items-center justify-between">
-              <div>
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-orange-500 dark:text-orange-400">Explore</p>
-                <h3 class="mt-0.5 text-sm font-semibold text-zinc-900 dark:text-white">Browse by Category</h3>
+            <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+
+              <!-- Mega header -->
+              <div class="mb-5 flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold uppercase tracking-wider text-orange-500 dark:text-amber-400">Explore</p>
+                  <h3 class="mt-0.5 text-sm font-semibold text-zinc-900 dark:text-white">Browse by Category</h3>
+                </div>
+                <a href="/categories" @click="megaOpen = false"
+                   class="flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-amber-400 transition-colors">
+                  View all categories
+                  <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                  </svg>
+                </a>
               </div>
-              <a href="/categories" @click="megaOpen = false"
-                 class="flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors">
-                View all categories
-                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
-                </svg>
-              </a>
-            </div>
 
-            <!-- Search -->
-            <div class="relative mb-5">
-              <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
-                   xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-              </svg>
-              <input
-                x-ref="catSearch"
-                x-model="catSearch"
-                type="search"
-                placeholder="Search categories…"
-                class="w-full rounded-xl border border-zinc-200 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#3a3b4b] pl-9 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-orange-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-orange-500/10 transition-colors"
-              />
-            </div>
-
-            <!-- Category grid -->
-            {{ if .Categories }}
-            <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
-              {{ range .Categories }}
-              <a data-cat="{{ .Name }}"
-                 x-show="!catSearch || $el.dataset.cat.toLowerCase().includes(catSearch.toLowerCase())"
-                 href="/categories/{{ .Slug }}"
-                 @click="megaOpen = false"
-                 class="group flex items-center gap-2 rounded-lg border border-zinc-100 dark:border-[#4D4D4D]/60 bg-zinc-50/80 dark:bg-[#3a3b4b]/80 px-3.5 py-2.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-orange-200 dark:hover:border-orange-500/30 hover:bg-orange-50 dark:hover:bg-[#494949] hover:text-orange-700 dark:hover:text-orange-300 transition-all">
-                <span class="truncate">{{ .Name }}</span>
-                <svg class="ml-auto h-3 w-3 shrink-0 text-zinc-300 dark:text-[#4D4D4D] group-hover:text-orange-400 dark:group-hover:text-orange-500/70 transition-colors"
-                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+              <!-- Search -->
+              <div class="relative mb-5">
+                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
-              </a>
+                <input
+                  x-ref="catSearch"
+                  x-model="catSearch"
+                  type="search"
+                  placeholder="Search categories…"
+                  class="w-full rounded-xl border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#26272e] pl-9 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors"
+                />
+              </div>
+
+              <!-- Category grid -->
+              {{ if .Categories }}
+              <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
+                {{ range .Categories }}
+                <a data-cat="{{ .Name }}"
+                   x-show="!catSearch || $el.dataset.cat.toLowerCase().includes(catSearch.toLowerCase())"
+                   href="/categories/{{ .Slug }}"
+                   @click="megaOpen = false"
+                   class="group flex items-center gap-2 rounded-lg border border-zinc-100 dark:border-[#34353d]/60 bg-zinc-50/80 dark:bg-[#26272e]/80 px-3.5 py-2.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-orange-200 dark:hover:border-amber-500/30 hover:bg-orange-50 dark:hover:bg-[#2b2c33] hover:text-orange-700 dark:hover:text-amber-300 transition-all">
+                  <span class="truncate">{{ .Name }}</span>
+                  <svg class="ml-auto h-3 w-3 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-orange-400 dark:group-hover:text-amber-500/70 transition-colors"
+                       xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                  </svg>
+                </a>
+                {{ end }}
+              </div>
+              {{ else }}
+              <p class="py-4 text-center text-sm text-zinc-400 dark:text-zinc-500">No categories yet.</p>
               {{ end }}
-            </div>
-            {{ else }}
-            <p class="py-4 text-center text-sm text-zinc-400 dark:text-zinc-500">No categories yet.</p>
-            {{ end }}
 
+            </div>
           </div>
         </div>
-      </div>
 
-      <a href="/lists" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] hover:text-zinc-900 transition-colors">Lists</a>
-    </nav>
+        <a href="/lists" class="rounded-lg px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] hover:text-zinc-900 transition-colors">Lists</a>
+      </nav>
 
-    <!-- Right controls -->
-    <div :class="$store.header.scrolled ? 'scale-90' : 'scale-100'"
-         class="flex origin-right items-center gap-1 transition-transform duration-300 ease-in-out">
+      <!-- Right controls -->
+      <div :class="$store.header.scrolled ? 'scale-90' : 'scale-100'"
+           class="flex origin-right items-center gap-1 transition-transform duration-300 ease-in-out">
 
-      <!-- Search icon -->
-      <button @click="searchOpen = true; $nextTick(() => $refs.searchInput.focus())"
-              title="Search"
-              class="rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#3a3b4b] hover:text-zinc-700 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-        </svg>
-      </button>
-
-      <!-- Dark mode toggle -->
-      <button @click="toggle()" title="Toggle dark mode"
-              class="rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#3a3b4b] hover:text-zinc-700 transition-colors">
-        <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-        <svg x-show="darkMode" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-      </button>
-
-      <!-- Auth -->
-      {{ if .CurrentUser }}
-      <div x-data="{ open: false }" class="relative">
-        <button @click="open = !open" class="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">
-          {{ if .CurrentUser.AvatarURL }}
-          <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200 dark:bg-[#4D4D4D]">
-          {{ else }}
-          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#4D4D4D] text-xs font-semibold text-zinc-600 dark:text-white">
-            {{ if .CurrentUser.Name }}{{ slice .CurrentUser.Name 0 1 }}{{ else }}?{{ end }}
-          </span>
-          {{ end }}
-          <span class="hidden text-zinc-700 dark:text-white sm:inline">{{ if .CurrentUser.Name }}{{ .CurrentUser.Name }}{{ else }}{{ .CurrentUser.Username }}{{ end }}</span>
-          <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+        <!-- Search icon -->
+        <button @click="openSearch()"
+                title="Search"
+                class="rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#26272e] hover:text-zinc-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
         </button>
-        <div x-show="open" x-cloak @click.outside="open = false"
-             x-transition:enter="transition ease-out duration-100"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             class="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 dark:border-[#4D4D4D] bg-white dark:bg-[#3a3b4b] py-1 shadow-lg dark:shadow-black/30">
-          <a href="/maker" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#494949]">
-            <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.653-4.655m5.8-7.471 1.95-.975a2.25 2.25 0 0 1 2.055.173l.793.497c.813.513 1.077 1.593.62 2.436l-.975 1.95m-5.443-.825 2.147-2.147m-5.5 5.5L7.5 12.5"/>
-            </svg>
-            Maker
-          </a>
-          <a href="/settings" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#494949]">
-            <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-            </svg>
-            Settings
-          </a>
-          <div class="my-1 border-t border-zinc-100 dark:border-[#4D4D4D]"></div>
-          <form method="POST" action="/signout">
-            <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#494949]">
-              Sign out
-            </button>
-          </form>
-        </div>
-      </div>
-      {{ else }}
-      <a href="/signin"
-         class="rounded-lg border border-zinc-200 dark:border-[#4D4D4D] px-3 py-1.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-zinc-300 dark:hover:border-[#5F5F5F] hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">
-        Sign in
-      </a>
-      {{ end }}
 
-      <!-- Mobile hamburger -->
-      <button @click="mobileOpen = !mobileOpen"
-              class="ml-1 rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#3a3b4b] hover:text-zinc-700 transition-colors md:hidden">
-        <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-        <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <!-- Auth -->
+        {{ if .CurrentUser }}
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" class="flex items-center gap-2 rounded-lg px-2 py-1 text-sm hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+            {{ if .CurrentUser.AvatarURL }}
+            <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200 dark:bg-[#34353d]">
+            {{ else }}
+            <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#34353d] text-xs font-semibold text-zinc-600 dark:text-white">
+              {{ if .CurrentUser.Name }}{{ slice .CurrentUser.Name 0 1 }}{{ else }}?{{ end }}
+            </span>
+            {{ end }}
+            <span class="hidden text-zinc-700 dark:text-white sm:inline">{{ if .CurrentUser.Name }}{{ .CurrentUser.Name }}{{ else }}{{ .CurrentUser.Username }}{{ end }}</span>
+            <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <div x-show="open" x-cloak @click.outside="open = false"
+               x-transition:enter="transition ease-out duration-100"
+               x-transition:enter-start="opacity-0 scale-95"
+               x-transition:enter-end="opacity-100 scale-100"
+               class="absolute right-0 mt-1 w-44 rounded-xl border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] py-1 shadow-lg dark:shadow-black/30">
+            <a href="/maker" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#2b2c33]">
+              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.653-4.655m5.8-7.471 1.95-.975a2.25 2.25 0 0 1 2.055.173l.793.497c.813.513 1.077 1.593.62 2.436l-.975 1.95m-5.443-.825 2.147-2.147m-5.5 5.5L7.5 12.5"/>
+              </svg>
+              Maker
+            </a>
+            <a href="/settings" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#2b2c33]">
+              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+              </svg>
+              Settings
+            </a>
+            <div class="my-1 border-t border-zinc-100 dark:border-[#34353d]"></div>
+            <form method="POST" action="/signout">
+              <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#2b2c33]">
+                Sign out
+              </button>
+            </form>
+          </div>
+        </div>
+        {{ else }}
+        <div class="flex items-center gap-2">
+          <a href="/signin"
+             class="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+            Sign in
+          </a>
+          <a href="/signup"
+             class="rounded-lg bg-orange-500 dark:bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-orange-400 dark:hover:bg-amber-400 transition-colors">
+            Sign up
+          </a>
+        </div>
+        {{ end }}
+
+        <!-- Mobile hamburger -->
+        <button @click="mobileOpen = !mobileOpen"
+                class="ml-1 rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#26272e] hover:text-zinc-700 transition-colors md:hidden">
+          <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Inline search bar (replaces normal content while open) -->
+    <div x-show="searchOpen" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-[0.98]"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-[0.98]"
+         class="absolute inset-0 flex items-center gap-2 px-4 sm:px-6">
+      <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+      </svg>
+      <input x-ref="searchInput" x-model="query" @input="runSearch()" @keydown="onSearchKeydown($event)"
+             type="text" autocomplete="off" spellcheck="false"
+             placeholder="Search AIs, categories, lists…"
+             class="min-w-0 flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none sm:text-base">
+      <svg x-show="loading" x-cloak class="h-4 w-4 shrink-0 animate-spin text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      <kbd class="hidden shrink-0 items-center rounded border border-zinc-200 dark:border-[#34353d] px-1.5 py-0.5 text-[10px] font-medium text-zinc-400 dark:text-zinc-500 sm:inline-flex">Esc</kbd>
+      <button @click="closeSearch()" title="Close search"
+              class="shrink-0 rounded-lg p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#26272e] hover:text-zinc-700 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
-
     </div>
+
   </div>
 
   <!-- Mobile menu -->
@@ -207,95 +235,238 @@
        x-transition:enter="transition ease-out duration-150"
        x-transition:enter-start="opacity-0 -translate-y-1"
        x-transition:enter-end="opacity-100 translate-y-0"
-       class="border-t border-zinc-100 dark:border-[#4D4D4D] md:hidden">
+       class="border-t border-zinc-100 dark:border-[#34353d] md:hidden">
     <div class="mx-auto flex max-w-6xl flex-col gap-0.5 px-4 py-3 sm:px-6">
       <a href="/#ais" @click="mobileOpen = false"
-         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">AIs</a>
+         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">AIs</a>
       <a href="/categories" @click="mobileOpen = false"
-         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">Categories</a>
+         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Categories</a>
       <a href="/lists" @click="mobileOpen = false"
-         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">Lists</a>
+         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Lists</a>
       {{ if .CurrentUser }}
-      <div class="my-1 border-t border-zinc-100 dark:border-[#4D4D4D]"></div>
+      <div class="my-1 border-t border-zinc-100 dark:border-[#34353d]"></div>
       <a href="/maker" @click="mobileOpen = false"
-         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">Maker</a>
+         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Maker</a>
       <a href="/settings" @click="mobileOpen = false"
-         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">Settings</a>
+         class="rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Settings</a>
       {{ end }}
     </div>
   </div>
 
-  <!-- Search modal -->
-  <div x-show="searchOpen" x-cloak
+  <!-- Search backdrop (click to close; leaves the header bar itself clickable) -->
+  <div x-show="searchOpen" x-cloak @click="closeSearch()"
        x-transition:enter="transition ease-out duration-200"
        x-transition:enter-start="opacity-0"
        x-transition:enter-end="opacity-100"
        x-transition:leave="transition ease-in duration-150"
        x-transition:leave-start="opacity-100"
        x-transition:leave-end="opacity-0"
-       class="fixed inset-0 z-[60] flex items-start justify-center px-4 pt-[15vh]">
+       :class="$store.header.scrolled ? 'top-11' : 'top-14'"
+       class="fixed inset-x-0 bottom-0 z-[55] bg-black/20 dark:bg-black/50 backdrop-blur-[2px]"></div>
 
-    <!-- Backdrop -->
-    <div @click="searchOpen = false" class="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-md"></div>
+  <!-- Search results panel -->
+  <div x-show="searchOpen" x-cloak
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0 -translate-y-1"
+       x-transition:enter-end="opacity-100 translate-y-0"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100 translate-y-0"
+       x-transition:leave-end="opacity-0 -translate-y-1"
+       :class="$store.header.scrolled ? 'top-11 max-h-[calc(100vh-2.75rem)]' : 'top-14 max-h-[calc(100vh-3.5rem)]'"
+       class="fixed left-0 right-0 z-[60] border-b border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#202127] shadow-2xl dark:shadow-black/70 overflow-y-auto transition-[top] duration-300 ease-in-out">
 
-    <!-- Panel -->
-    <div class="relative w-full max-w-xl overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#4D4D4D] bg-white dark:bg-[#2C2C2C] shadow-2xl dark:shadow-black/70"
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
-         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-         x-transition:leave-end="opacity-0 scale-95 -translate-y-2">
+    <div class="mx-auto max-w-xl px-4 py-2 sm:px-6">
 
-      <!-- Input row -->
-      <div class="flex items-center gap-3 border-b border-zinc-100 dark:border-[#4D4D4D] px-4 py-3.5">
-        <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-        </svg>
-        <input x-ref="searchInput" type="search" placeholder="Search AIs, categories, lists…"
-               class="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none">
-        <kbd class="hidden sm:inline-flex items-center rounded border border-zinc-200 dark:border-[#4D4D4D] px-1.5 py-0.5 text-[10px] font-medium text-zinc-400 dark:text-zinc-500">Esc</kbd>
-      </div>
-
-      <!-- Quick links -->
-      <div class="p-2">
-        <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Quick links</p>
-        <a href="/#ais" @click="searchOpen = false"
-           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">
-          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#3a3b4b] text-zinc-500 dark:text-zinc-400">
-            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
-          </span>
-          All AIs
-          <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
-        </a>
-        <a href="/categories" @click="searchOpen = false"
-           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">
-          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#3a3b4b] text-zinc-500 dark:text-zinc-400">
-            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-          </span>
-          Categories
-          <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
-        </a>
-        <a href="/lists" @click="searchOpen = false"
-           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b4b] transition-colors">
-          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#3a3b4b] text-zinc-500 dark:text-zinc-400">
-            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
-          </span>
-          Curated lists
-          <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
-        </a>
-      </div>
-
-      <!-- Footer -->
-      <div class="flex items-center justify-between border-t border-zinc-100 dark:border-[#4D4D4D] px-4 py-2.5">
-        <span class="text-xs text-zinc-400 dark:text-zinc-500">{{ .AICount }} AIs indexed</span>
-        <div class="flex items-center gap-2 text-[10px] text-zinc-400 dark:text-zinc-500">
-          <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 dark:border-[#4D4D4D] px-1 py-0.5 font-medium">↑↓</kbd> navigate</span>
-          <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 dark:border-[#4D4D4D] px-1 py-0.5 font-medium">↵</kbd> open</span>
+      <!-- Quick links (shown while query is empty) -->
+      <template x-if="!query.trim()">
+        <div class="py-2">
+          <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Quick links</p>
+          <a href="/#ais" @click="closeSearch()"
+             class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#26272e] text-zinc-500 dark:text-zinc-400">
+              <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+            </span>
+            All AIs
+            <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
+          </a>
+          <a href="/categories" @click="closeSearch()"
+             class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#26272e] text-zinc-500 dark:text-zinc-400">
+              <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
+            </span>
+            Categories
+            <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
+          </a>
+          <a href="/lists" @click="closeSearch()"
+             class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#26272e] text-zinc-500 dark:text-zinc-400">
+              <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
+            </span>
+            Curated lists
+            <span class="ml-auto text-xs text-zinc-400 dark:text-zinc-500">Browse →</span>
+          </a>
         </div>
-      </div>
+      </template>
+
+      <!-- Loading -->
+      <template x-if="query.trim() && loading">
+        <div class="flex items-center justify-center gap-2 py-10 text-sm text-zinc-400 dark:text-zinc-500">
+          <svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Searching…
+        </div>
+      </template>
+
+      <!-- No results -->
+      <template x-if="query.trim() && !loading && !hasResults">
+        <p class="py-10 text-center text-sm text-zinc-400 dark:text-zinc-500">No results for "<span x-text="query"></span>"</p>
+      </template>
+
+      <!-- Live results -->
+      <template x-if="query.trim() && !loading && hasResults">
+        <div class="space-y-1 py-2">
+
+          <template x-if="results.ais.length">
+            <div>
+              <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">AIs</p>
+              <template x-for="item in results.ais" :key="'ai-' + item.slug">
+                <a :href="item.url" @click="closeSearch()"
+                   :class="flatResults[activeIndex] === item ? 'bg-zinc-50 dark:bg-[#26272e]' : ''"
+                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-zinc-100 dark:bg-[#26272e] text-zinc-500 dark:text-zinc-400">
+                    <img x-show="item.logo_url" :src="item.logo_url" class="h-full w-full object-cover" alt="">
+                    <svg x-show="!item.logo_url" class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+                  </span>
+                  <span class="min-w-0 flex-1 truncate">
+                    <span x-text="item.name" class="block truncate font-medium"></span>
+                    <span x-show="item.subtitle" x-text="item.subtitle" class="block truncate text-xs text-zinc-400 dark:text-zinc-500"></span>
+                  </span>
+                </a>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="results.categories.length">
+            <div>
+              <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Categories</p>
+              <template x-for="item in results.categories" :key="'cat-' + item.slug">
+                <a :href="item.url" @click="closeSearch()"
+                   :class="flatResults[activeIndex] === item ? 'bg-zinc-50 dark:bg-[#26272e]' : ''"
+                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#26272e] text-zinc-500 dark:text-zinc-400">
+                    <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
+                  </span>
+                  <span x-text="item.name" class="truncate"></span>
+                </a>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="results.lists.length">
+            <div>
+              <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Lists</p>
+              <template x-for="item in results.lists" :key="'list-' + item.slug">
+                <a :href="item.url" @click="closeSearch()"
+                   :class="flatResults[activeIndex] === item ? 'bg-zinc-50 dark:bg-[#26272e]' : ''"
+                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#26272e] text-zinc-500 dark:text-zinc-400">
+                    <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
+                  </span>
+                  <span x-text="item.name" class="truncate"></span>
+                </a>
+              </template>
+            </div>
+          </template>
+
+        </div>
+      </template>
 
     </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between border-t border-zinc-100 dark:border-[#34353d] px-4 py-2.5">
+      <span class="text-xs text-zinc-400 dark:text-zinc-500">{{ .AICount }} AIs indexed</span>
+      <div class="flex items-center gap-2 text-[10px] text-zinc-400 dark:text-zinc-500">
+        <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 dark:border-[#34353d] px-1 py-0.5 font-medium">↑↓</kbd> navigate</span>
+        <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 dark:border-[#34353d] px-1 py-0.5 font-medium">↵</kbd> open</span>
+      </div>
+    </div>
+
   </div>
+
+  <script>
+    function header() {
+      return {
+        mobileOpen: false,
+        searchOpen: false,
+        query: '',
+        results: { ais: [], categories: [], lists: [] },
+        loading: false,
+        activeIndex: -1,
+        _searchTimer: null,
+
+        openSearch() {
+          this.searchOpen = true;
+          this.$nextTick(() => this.$refs.searchInput && this.$refs.searchInput.focus());
+        },
+
+        closeSearch() {
+          this.searchOpen = false;
+          this.query = '';
+          this.results = { ais: [], categories: [], lists: [] };
+          this.activeIndex = -1;
+          this.loading = false;
+          clearTimeout(this._searchTimer);
+        },
+
+        runSearch() {
+          clearTimeout(this._searchTimer);
+          const q = this.query.trim();
+          this.activeIndex = -1;
+          if (!q) {
+            this.results = { ais: [], categories: [], lists: [] };
+            this.loading = false;
+            return;
+          }
+          this.loading = true;
+          this._searchTimer = setTimeout(async () => {
+            try {
+              const res = await fetch('/search?q=' + encodeURIComponent(q));
+              this.results = await res.json();
+            } catch (e) {
+              this.results = { ais: [], categories: [], lists: [] };
+            }
+            this.loading = false;
+          }, 200);
+        },
+
+        get flatResults() {
+          return [...this.results.ais, ...this.results.categories, ...this.results.lists];
+        },
+
+        get hasResults() {
+          return this.results.ais.length > 0 || this.results.categories.length > 0 || this.results.lists.length > 0;
+        },
+
+        onSearchKeydown(e) {
+          const items = this.flatResults;
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (items.length) this.activeIndex = (this.activeIndex + 1) % items.length;
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (items.length) this.activeIndex = (this.activeIndex - 1 + items.length) % items.length;
+          } else if (e.key === 'Enter') {
+            const item = items[this.activeIndex];
+            if (item) window.location.href = item.url;
+          } else if (e.key === 'Escape') {
+            this.closeSearch();
+          }
+        },
+      };
+    }
+  </script>
 
 </header>

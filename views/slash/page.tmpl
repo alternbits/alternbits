@@ -25,9 +25,9 @@
     .dark .markdown-body pre { background: rgba(255,255,255,0.07); }
     .markdown-body pre code { background: none; padding: 0; }
     .markdown-body blockquote { border-left: 3px solid #e5e7eb; padding-left: 1rem; color: #6b7280; margin: 1rem 0; }
-    .dark .markdown-body blockquote { border-left-color: #4D4D4D; color: #9ca3af; }
+    .dark .markdown-body blockquote { border-left-color: #34353d; color: #9ca3af; }
     .markdown-body hr { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
-    .dark .markdown-body hr { border-top-color: #4D4D4D; }
+    .dark .markdown-body hr { border-top-color: #34353d; }
     .markdown-body strong { font-weight: 700; }
     .markdown-body em { font-style: italic; }
   </style>
@@ -41,7 +41,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#2d2e3a] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -51,13 +51,13 @@
   {{ if .Error }}
   <div class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
     <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ .Error }}</p>
-    <a href="/" class="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-400">← Back home</a>
+    <a href="/" class="mt-4 inline-block text-sm font-medium text-orange-500 dark:text-[#ffc107] hover:text-orange-400 dark:hover:text-[#ffc107]">← Back home</a>
   </div>
   {{ else }}
   {{ with .Page }}
 
   <!-- Page header -->
-  <div class="border-b border-zinc-100 dark:border-[#4D4D4D] bg-zinc-50 dark:bg-[#24252e] px-4 py-10 sm:px-6">
+  <div class="border-b border-zinc-100 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-4 py-10 sm:px-6">
     <div class="mx-auto max-w-3xl">
       <a href="/" class="mb-5 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
