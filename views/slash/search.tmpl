@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {{ if .Query }}
+  <title>Search: {{ .Query }} — {{ appName }}</title>
+  {{ else }}
+  <title>Search — {{ appName }}</title>
+  {{ end }}
+  <meta name="description" content="Search {{ appName }} for AI tools, categories, and curated lists.">
+  {{ template "_slash_head.tmpl" . }}
+</head>
+<body x-data="{
+  darkMode: document.documentElement.classList.contains('dark'),
+  toggle() {
+    this.darkMode = !this.darkMode;
+    this.darkMode
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  }
+}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
+
+  {{ template "_header.tmpl" . }}
+  {{ template "_sidebar.tmpl" . }}
+
+  <div class="md:pl-[3.75rem]">
+
+  <!-- Page header -->
+  <div class="border-b border-zinc-100 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-4 py-8 sm:px-6">
+    <div class="mx-auto max-w-5xl">
+      <a href="/" class="mb-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Home
+      </a>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Search</h1>
+      {{ if .Query }}
+      <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        {{ .ResultCount }} result{{ if ne .ResultCount 1 }}s{{ end }} for "<span class="font-medium text-zinc-700 dark:text-white">{{ .Query }}</span>"
+      </p>
+      {{ else }}
+      <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Find AI tools, categories, and curated lists.</p>
+      {{ end }}
+
+      <!-- Search form -->
+      <form method="GET" action="/search" class="relative mt-5 max-w-xl">
+        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+        </svg>
+        <input type="search" name="q" value="{{ .Query }}" autocomplete="off" spellcheck="false"
+               placeholder="Search AIs, categories, lists…" autofocus
+               class="w-full rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] py-3 pl-10 pr-24 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors">
+        <button type="submit"
+                class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded bg-orange-500 dark:bg-amber-500 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-orange-400 dark:hover:bg-amber-400 transition-colors">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+
+    {{ if not .Query }}
+    <!-- Empty state: no query yet -->
+    <div class="py-6 text-center">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-[#26272e] text-zinc-400 dark:text-zinc-500">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+        </svg>
+      </div>
+      <p class="mt-3 text-sm text-zinc-400 dark:text-zinc-500">Start typing above to search {{ appName }}.</p>
+    </div>
+
+    {{ if .Categories }}
+    <div class="mt-6">
+      <p class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Popular categories</p>
+      <div class="flex flex-wrap gap-1.5">
+        {{ range .Categories }}
+        <a href="/categories/{{ .Slug }}"
+           class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#26272e] px-3 py-1 text-xs font-medium text-zinc-600 dark:text-white hover:border-orange-400 dark:hover:border-amber-500/50 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">
+          {{ .Name }}
+        </a>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+
+    {{ else if eq .ResultCount 0 }}
+    <!-- No results -->
+    <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#34353d] py-20 text-center">
+      <p class="text-sm text-zinc-500 dark:text-zinc-400">No results for "<span class="font-medium text-zinc-700 dark:text-white">{{ .Query }}</span>"</p>
+      <p class="mt-1 text-xs text-zinc-400 dark:text-zinc-500">Try a different search term, or browse by category.</p>
+      <a href="/categories" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-orange-500 dark:text-amber-400 hover:text-orange-400 dark:hover:text-amber-300 transition-colors">
+        Browse categories
+        <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+        </svg>
+      </a>
+    </div>
+
+    {{ else }}
+    <!-- Results -->
+    <div class="space-y-10">
+
+      {{ if .AIs }}
+      <div>
+        <div class="mb-4 flex items-center gap-2">
+          <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">AIs</h2>
+          <span class="rounded-full bg-zinc-100 dark:bg-[#26272e] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ len .AIs }}</span>
+        </div>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {{ range .AIs }}
+          <a href="/ai/{{ .Slug }}"
+             class="group flex items-start gap-4 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-4 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+            {{ if .LogoURL }}
+            <img src="{{ .LogoURL }}" alt="{{ .Name }}"
+                 class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover">
+            {{ else if .Website }}
+            <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
+                 class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover p-2">
+            {{ else }}
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#34353d] text-base font-semibold text-zinc-500 dark:text-zinc-400">
+              {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
+            </div>
+            {{ end }}
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white">{{ .Name }}</span>
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+              {{ if .Subtitle }}
+              <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+              {{ end }}
+              {{ if .Genera }}
+              <div class="mt-2 flex flex-wrap gap-1">
+                {{ range .Genera }}
+                <span class="rounded-full bg-zinc-100 dark:bg-[#34353d] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ .Name }}</span>
+                {{ end }}
+              </div>
+              {{ end }}
+            </div>
+          </a>
+          {{ end }}
+        </div>
+      </div>
+      {{ end }}
+
+      {{ if .Cats }}
+      <div>
+        <div class="mb-4 flex items-center gap-2">
+          <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">Categories</h2>
+          <span class="rounded-full bg-zinc-100 dark:bg-[#26272e] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ len .Cats }}</span>
+        </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {{ range .Cats }}
+          <a href="/categories/{{ .Slug }}"
+             class="group rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-5 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+            <div class="flex items-start justify-between gap-2">
+              <h3 class="text-sm font-semibold text-zinc-900 dark:text-white">{{ .Name }}</h3>
+              <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+            {{ if .Subtitle }}
+            <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+            {{ end }}
+          </a>
+          {{ end }}
+        </div>
+      </div>
+      {{ end }}
+
+      {{ if .Lists }}
+      <div>
+        <div class="mb-4 flex items-center gap-2">
+          <h2 class="text-sm font-semibold text-zinc-900 dark:text-white">Lists</h2>
+          <span class="rounded-full bg-zinc-100 dark:bg-[#26272e] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ len .Lists }}</span>
+        </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {{ range .Lists }}
+          <a href="/lists/{{ .Slug }}"
+             class="group flex flex-col rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-5 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+            <div class="flex items-start justify-between gap-2">
+              <h3 class="text-sm font-semibold text-zinc-900 dark:text-white">{{ .Name }}</h3>
+              <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+            {{ if .Subtitle }}
+            <p class="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400 flex-1">{{ .Subtitle }}</p>
+            {{ end }}
+          </a>
+          {{ end }}
+        </div>
+      </div>
+      {{ end }}
+
+    </div>
+    {{ end }}
+
+  </div>
+
+  </div>
+
+  {{ template "_footer.tmpl" . }}
+
+</body>
+</html>

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/dariubs/altern/app/models"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -15,6 +16,71 @@ type searchResult struct {
 	Subtitle string `json:"subtitle,omitempty"`
 	LogoURL  string `json:"logo_url,omitempty"`
 	URL      string `json:"url"`
+}
+
+// SearchPage is the full-page search results view at GET /search.
+// It renders approved AIs, categories, and public lists matching the query.
+func SearchPage(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		q := strings.TrimSpace(c.Query("q"))
+
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
+
+		var currentUser *models.User
+		session := sessions.Default(c)
+		if uid, ok := session.Get(sessionUserIDKey).(uint); ok && uid > 0 {
+			var u models.User
+			if db.First(&u, uid).Error == nil {
+				currentUser = &u
+			}
+		}
+
+		var topCategories []models.Category
+		db.Where("parent_id IS NULL").Order("name ASC").Find(&topCategories)
+
+		data := gin.H{
+			"Query":       q,
+			"Categories":  topCategories,
+			"AICount":     aiCount,
+			"CurrentUser": currentUser,
+		}
+
+		if q == "" {
+			c.HTML(http.StatusOK, "search.tmpl", data)
+			return
+		}
+
+		like := "%" + q + "%"
+
+		var ais []models.AI
+		db.Where(&models.AI{Status: models.AIStatusApproved}).
+			Where("name ILIKE ? OR subtitle ILIKE ? OR slug ILIKE ? OR description ILIKE ?", like, like, like, like).
+			Preload("Genera").
+			Order("name ASC").
+			Limit(60).
+			Find(&ais)
+
+		var cats []models.Category
+		db.Where("name ILIKE ? OR slug ILIKE ? OR subtitle ILIKE ?", like, like, like).
+			Order("name ASC").
+			Limit(30).
+			Find(&cats)
+
+		var lists []models.List
+		db.Where(&models.List{IsPrivate: false}).
+			Where("name ILIKE ? OR slug ILIKE ? OR subtitle ILIKE ?", like, like, like).
+			Order("name ASC").
+			Limit(30).
+			Find(&lists)
+
+		data["AIs"] = ais
+		data["Cats"] = cats
+		data["Lists"] = lists
+		data["ResultCount"] = len(ais) + len(cats) + len(lists)
+
+		c.HTML(http.StatusOK, "search.tmpl", data)
+	}
 }
 
 // SearchAPI is the public autocomplete endpoint used by the header search bar.

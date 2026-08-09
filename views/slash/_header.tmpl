@@ -310,7 +310,7 @@
           this.loading = true;
           this._searchTimer = setTimeout(async () => {
             try {
-              const res = await fetch('/search?q=' + encodeURIComponent(q));
+              const res = await fetch('/search/suggest?q=' + encodeURIComponent(q));
               this.results = await res.json();
             } catch (e) {
               this.results = { ais: [], categories: [], lists: [] };
@@ -337,7 +337,11 @@
             if (items.length) this.activeIndex = (this.activeIndex - 1 + items.length) % items.length;
           } else if (e.key === 'Enter') {
             const item = items[this.activeIndex];
-            if (item) window.location.href = item.url;
+            if (item) {
+              window.location.href = item.url;
+            } else if (this.query.trim()) {
+              window.location.href = '/search?q=' + encodeURIComponent(this.query.trim());
+            }
           } else if (e.key === 'Escape') {
             this.closeSearch();
             e.target.blur();
