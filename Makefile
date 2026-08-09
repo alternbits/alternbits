@@ -1,4 +1,4 @@
-.PHONY: run build migrate seed-sample
+.PHONY: run build migrate seed-sample kill
 
 # Build all binaries into bin/.
 build:
@@ -9,8 +9,24 @@ build:
 # Run the app with hot reload (watches Go files and views/).
 # Uses `air` via `go run` so no global install is required —
 # the first run populates the module cache; subsequent runs are instant.
-run:
+# Always kills whatever is still bound to the app port first, so a
+# terminal that got closed/killed without letting air clean up doesn't
+# leave a ghost `tmp/altern` blocking the next run.
+run: kill
 	go run github.com/air-verse/air@latest -c .air.toml
+
+# Free the app port and stop any leftover air/altern processes from a
+# previous `make run` that didn't shut down cleanly.
+kill:
+	@PORT=$$(grep -E '^PORT=' .env 2>/dev/null | cut -d= -f2); \
+	PORT=$${PORT:-1337}; \
+	PIDS=$$(lsof -ti tcp:$$PORT 2>/dev/null); \
+	if [ -n "$$PIDS" ]; then \
+		echo "Killing process(es) on port $$PORT: $$PIDS"; \
+		kill -9 $$PIDS 2>/dev/null || true; \
+	fi; \
+	pkill -f "$(CURDIR)/tmp/altern" 2>/dev/null || true; \
+	true
 
 # Apply database migrations (AutoMigrate all models).
 migrate:
