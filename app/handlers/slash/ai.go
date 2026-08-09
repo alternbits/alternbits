@@ -52,12 +52,42 @@ func AIHandler(db *gorm.DB) gin.HandlerFunc {
 			_ = json.Unmarshal(ai.Screenshots, &screenshots)
 		}
 
+		var altRels []models.Alternative
+		db.Preload("AI").Preload("AlternativeAI").
+			Where("(ai_id = ? OR alternative_ai_id = ?) AND status = ?",
+				ai.ID, ai.ID, models.AlternativeStatusApproved).
+			Order("created_at DESC").
+			Find(&altRels)
+
+		seen := map[uint]bool{ai.ID: true}
+		alternatives := make([]models.AI, 0, len(altRels))
+		for _, r := range altRels {
+			var other *models.AI
+			if r.AIID == ai.ID {
+				other = r.AlternativeAI
+			} else {
+				other = r.AI
+			}
+			if other == nil || seen[other.ID] {
+				continue
+			}
+			seen[other.ID] = true
+			alternatives = append(alternatives, *other)
+		}
+
+		alternativesPreview := alternatives
+		if len(alternativesPreview) > 2 {
+			alternativesPreview = alternativesPreview[:2]
+		}
+
 		c.HTML(http.StatusOK, "ai.tmpl", gin.H{
-			"AI":          ai,
-			"Screenshots": screenshots,
-			"Categories":  categories,
-			"AICount":     aiCount,
-			"CurrentUser": currentUser,
+			"AI":                  ai,
+			"Screenshots":         screenshots,
+			"Categories":          categories,
+			"AICount":             aiCount,
+			"CurrentUser":         currentUser,
+			"AlternativesPreview": alternativesPreview,
+			"AlternativesCount":   len(alternatives),
 		})
 	}
 }
