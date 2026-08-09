@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -19,6 +20,17 @@ type taxonomyTop struct {
 	Name  string
 	Slug  string
 	Count int64
+}
+
+type listTop struct {
+	Name  string
+	Slug  string
+	Count int64
+}
+
+type artifactSummary struct {
+	models.Artifact
+	FieldCount int64
 }
 
 func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
@@ -63,6 +75,19 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			Count(&emptyLists)
 		db.Model(&models.List{}).Where(&models.List{IsPrivate: true}).Count(&privateLists)
 		db.Model(&models.AI{}).Where("status = ?", models.AIStatusPending).Count(&aisPending)
+
+		// AI status breakdown & content quality signals
+		var aisApproved, aisRejected, aisFree, aisCommunitySubmitted int64
+		db.Model(&models.AI{}).Where("status = ?", models.AIStatusApproved).Count(&aisApproved)
+		db.Model(&models.AI{}).Where("status = ?", models.AIStatusRejected).Count(&aisRejected)
+		db.Model(&models.AI{}).Where(&models.AI{HaveFree: true}).Count(&aisFree)
+		db.Model(&models.AI{}).Where("user_id IS NOT NULL").Count(&aisCommunitySubmitted)
+
+		// User sign-up source breakdown
+		var usersGitHub, usersGoogle, usersOther int64
+		db.Model(&models.User{}).Where("git_hub_id IS NOT NULL AND git_hub_id != ''").Count(&usersGitHub)
+		db.Model(&models.User{}).Where("google_id IS NOT NULL").Count(&usersGoogle)
+		usersOther = max(users-usersGitHub-usersGoogle, 0)
 
 		// Growth: last 30 days, new AIs and new users per day.
 		aiGrowth, aiGrowthTotal := loadGrowth(db, "ais", 30)
@@ -122,6 +147,38 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			Limit(5).
 			Find(&recentUsers)
 
+		var recentLists []models.List
+		db.Order("created_at DESC").
+			Limit(5).
+			Find(&recentLists)
+
+		var recentPages []models.Page
+		db.Order("created_at DESC").
+			Limit(5).
+			Find(&recentPages)
+
+		var recentArtifactRows []models.Artifact
+		db.Order("created_at DESC").
+			Limit(5).
+			Find(&recentArtifactRows)
+		recentArtifacts := make([]artifactSummary, len(recentArtifactRows))
+		for i, a := range recentArtifactRows {
+			var fc int64
+			db.Model(&models.ArtifactField{}).Where("artifact_id = ?", a.ID).Count(&fc)
+			recentArtifacts[i] = artifactSummary{Artifact: a, FieldCount: fc}
+		}
+
+		// Top lists by AI count
+		topLists := []listTop{}
+		db.Raw(`
+			SELECT l.name, l.slug, COUNT(la.ai_id) AS count
+			FROM lists l
+			LEFT JOIN list_ais la ON la.list_id = l.id
+			GROUP BY l.id
+			ORDER BY count DESC, l.name ASC
+			LIMIT 6
+		`).Scan(&topLists)
+
 		c.HTML(http.StatusOK, "root_dashboard.tmpl", gin.H{
 			"ActiveNav":          "dashboard",
 			"Users":              users,
@@ -156,10 +213,25 @@ func DashboardHandler(db *gorm.DB) gin.HandlerFunc {
 			"TopCategories":      topCategories,
 			"TopGenera":          topGenera,
 			"AIPending":          aisPending,
+			"AIsApproved":        aisApproved,
+			"AIsRejected":        aisRejected,
+			"AIsFree":            aisFree,
+			"AIsCommunity":       aisCommunitySubmitted,
+			"UsersGitHub":        usersGitHub,
+			"UsersGoogle":        usersGoogle,
+			"UsersOther":         usersOther,
 			"PendingAIs":         pendingAIs,
 			"PendingAlts":        pendingAlts,
 			"RecentAIs":          recentAIs,
 			"RecentUsers":        recentUsers,
+			"RecentLists":        recentLists,
+			"RecentPages":        recentPages,
+			"RecentArtifacts":    recentArtifacts,
+			"TopLists":           topLists,
+			"GitHubOAuthOn":      config.C.OAuthGitHubEnabled(),
+			"GoogleOAuthOn":      config.C.OAuthGoogleEnabled(),
+			"R2On":               config.C.R2Enabled(),
+			"TelegramOn":         config.C.TelegramEnabled(),
 		})
 	}
 }
