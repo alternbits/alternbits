@@ -27,31 +27,41 @@
   <div class="md:pl-[3.75rem]">
 
   <!-- Hero -->
-  <section class="border-b border-zinc-100 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-4 py-12 text-center sm:px-6 sm:py-16">
-    <div class="mx-auto max-w-xl">
-      <h1 class="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
-        Find Almost Any AI
+  <section class="bg-white dark:bg-[#2d2e39] px-4 py-8 text-center sm:px-6 sm:py-12">
+    <div class="mx-auto max-w-2xl">
+
+      <h1 class="text-3xl font-bold leading-[1.1] tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+        Find anything related to AI
       </h1>
 
-      <div x-data="{ open: false }" class="relative mt-6 text-left" @click.outside="open = false">
+     
+
+      <div x-data="heroSearch()" class="relative mx-auto mt-8 max-w-xl text-left" @click.outside="closeSearch()">
         <form action="/search" method="GET"
-              class="flex items-center gap-2 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-4 py-2.5 shadow-sm transition-colors"
-              :class="open ? 'border-zinc-400 dark:border-amber-500/50 ring-2 ring-zinc-900/5 dark:ring-amber-500/10' : ''">
-          <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              class="flex items-center gap-3 rounded-lg border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#343434] px-5 py-3.5 shadow-sm transition-colors"
+              :class="open ? 'border-zinc-400 dark:border-amber-500/50 ring-4 ring-zinc-900/5 dark:ring-amber-500/10' : ''">
+          <svg class="h-5 w-5 shrink-0 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
-          <input type="search" name="q" placeholder="Search AIs, categories…"
-                 @focus="open = true"
-                 autocomplete="off"
-                 class="flex-1 bg-transparent text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none">
+          <input x-model="query" name="q" placeholder="Search AIs, categories, lists…"
+                 @focus="openSearch()" @input="runSearch()" @keydown="onSearchKeydown($event)"
+                 type="text" autocomplete="off" spellcheck="false"
+                 class="flex-1 bg-transparent text-base text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none">
+          <button x-show="query" x-cloak type="button"
+                  @click="query = ''; results = { ais: [], categories: [], lists: [] }; activeIndex = -1"
+                  class="shrink-0 text-zinc-400 dark:text-white hover:text-zinc-600">
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
           <button type="submit"
-                  class="shrink-0 rounded bg-zinc-900 dark:bg-amber-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-zinc-800 dark:hover:bg-amber-400">
+                  class="shrink-0 rounded-md bg-zinc-900 dark:bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:hover:bg-amber-400 transition-colors">
             Search
           </button>
         </form>
 
-        <!-- Expanding dropdown -->
-        <div x-show="open"
+        <!-- Live results dropdown (shared with header search) -->
+        <div x-show="open" x-cloak
              x-transition:enter="transition ease-out duration-150"
              x-transition:enter-start="opacity-0 -translate-y-1"
              x-transition:enter-end="opacity-100 translate-y-0"
@@ -59,67 +69,107 @@
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-1"
              class="absolute left-0 right-0 top-full z-50 mt-2 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] shadow-xl dark:shadow-black/40 overflow-hidden">
-
-          <div class="px-4 pt-4 pb-3">
-            <p class="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-white">Categories</p>
-            <div class="flex flex-wrap gap-1.5">
-              <a href="/categories/writing-content" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Writing & Content</a>
-              <a href="/categories/image-generation" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Image Generation</a>
-              <a href="/categories/code-development" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Code & Development</a>
-              <a href="/categories/video-animation" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Video & Animation</a>
-              <a href="/categories/audio-music" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Audio & Music</a>
-              <a href="/categories/productivity" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Productivity</a>
-              <a href="/categories/chatbots-assistants" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Chatbots & Assistants</a>
-              <a href="/categories/design-ux" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-white transition-colors">Design & UX</a>
-            </div>
-          </div>
-
-          <div class="border-t border-zinc-100 dark:border-[#43444c] px-4 pt-3 pb-2">
-            <p class="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-white">Trending</p>
-            <ul>
-              <li><a href="/ai/chatgpt" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-white dark:hover:bg-white/5 transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] text-xs font-semibold text-zinc-500 dark:text-white">C</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">ChatGPT</span><span class="block truncate text-xs text-zinc-400 dark:text-white">Conversational AI by OpenAI</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-              </a></li>
-              <li><a href="/ai/midjourney" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-white dark:hover:bg-white/5 transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] text-xs font-semibold text-zinc-500 dark:text-white">M</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">Midjourney</span><span class="block truncate text-xs text-zinc-400 dark:text-white">High-quality AI art from text prompts</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-              </a></li>
-              <li><a href="/ai/github-copilot" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-white dark:hover:bg-white/5 transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] text-xs font-semibold text-zinc-500 dark:text-white">G</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">GitHub Copilot</span><span class="block truncate text-xs text-zinc-400 dark:text-white">AI pair programmer in your editor</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-              </a></li>
-              <li><a href="/ai/elevenlabs" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-white dark:hover:bg-white/5 transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] text-xs font-semibold text-zinc-500 dark:text-white">E</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">ElevenLabs</span><span class="block truncate text-xs text-zinc-400 dark:text-white">Realistic AI voice synthesis and cloning</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-              </a></li>
-              <li><a href="/ai/perplexity" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-white dark:hover:bg-white/5 transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] text-xs font-semibold text-zinc-500 dark:text-white">P</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">Perplexity</span><span class="block truncate text-xs text-zinc-400 dark:text-white">AI-powered search with cited answers</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-              </a></li>
-            </ul>
-          </div>
-
-          <div class="border-t border-zinc-100 dark:border-[#43444c] px-4 py-2.5">
-            <a href="/#ais" class="flex items-center justify-between text-xs font-medium text-orange-500 dark:text-white hover:text-orange-600 dark:hover:text-white">
-              <span>Browse all AIs</span>
-              <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-            </a>
-          </div>
-
+          {{ template "_search_results.tmpl" . }}
         </div>
       </div>
+
+      {{ if .TrendingAIs }}
+      <div class="mx-auto mt-8 flex max-w-xl flex-wrap items-center justify-center gap-2">
+        <span class="text-xs text-zinc-400 dark:text-zinc-500">Recently added</span>
+        {{ range .TrendingAIs }}
+        <a href="/ai/{{ .Slug }}"
+           class="group flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] py-1 pl-1 pr-3 hover:border-orange-300 dark:hover:border-amber-500/40 hover:bg-white dark:hover:bg-white/5 transition-colors">
+          {{ if .LogoURL }}
+          <img src="{{ .LogoURL }}" alt="" class="h-5 w-5 shrink-0 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-0.5">
+          {{ else if .Website }}
+          <img src="{{ faviconURL .Website }}" alt="" class="h-5 w-5 shrink-0 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-0.5">
+          {{ else }}
+          <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] text-[10px] font-semibold text-zinc-500">
+            {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
+          </span>
+          {{ end }}
+          <span class="text-xs font-medium text-zinc-700 dark:text-white group-hover:text-orange-600 dark:group-hover:text-white">{{ .Name }}</span>
+        </a>
+        {{ end }}
+      </div>
+      {{ end }}
 
     </div>
   </section>
 
+  <script>
+    function heroSearch() {
+      return {
+        open: false,
+        query: '',
+        results: { ais: [], categories: [], lists: [] },
+        loading: false,
+        activeIndex: -1,
+        _searchTimer: null,
+
+        openSearch() {
+          this.open = true;
+        },
+
+        closeSearch() {
+          this.open = false;
+        },
+
+        runSearch() {
+          clearTimeout(this._searchTimer);
+          const q = this.query.trim();
+          this.activeIndex = -1;
+          this.open = true;
+          if (!q) {
+            this.results = { ais: [], categories: [], lists: [] };
+            this.loading = false;
+            return;
+          }
+          this.loading = true;
+          this._searchTimer = setTimeout(async () => {
+            try {
+              const res = await fetch('/search/suggest?q=' + encodeURIComponent(q));
+              this.results = await res.json();
+            } catch (e) {
+              this.results = { ais: [], categories: [], lists: [] };
+            }
+            this.loading = false;
+          }, 200);
+        },
+
+        get flatResults() {
+          return [...this.results.ais, ...this.results.categories, ...this.results.lists];
+        },
+
+        get hasResults() {
+          return this.results.ais.length > 0 || this.results.categories.length > 0 || this.results.lists.length > 0;
+        },
+
+        onSearchKeydown(e) {
+          const items = this.flatResults;
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (items.length) this.activeIndex = (this.activeIndex + 1) % items.length;
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (items.length) this.activeIndex = (this.activeIndex - 1 + items.length) % items.length;
+          } else if (e.key === 'Enter') {
+            const item = items[this.activeIndex];
+            if (item) {
+              e.preventDefault();
+              window.location.href = item.url;
+            }
+          } else if (e.key === 'Escape') {
+            this.closeSearch();
+            e.target.blur();
+          }
+        },
+      };
+    }
+  </script>
+
   <!-- AIs -->
-  <section id="ais" class="px-4 py-12 sm:px-6">
+  <section id="ais" class="px-4 pb-12 pt-2 sm:px-6 sm:pt-4">
     <div class="mx-auto max-w-7xl">
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">AIs</h2>

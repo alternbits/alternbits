@@ -11,6 +11,7 @@ import (
 
 type pageData struct {
 	AIs           []models.AI
+	TrendingAIs   []models.AI
 	Categories    []models.Category
 	Lists         []models.List
 	Genera        []models.Genus
@@ -45,6 +46,11 @@ func Handler(db *gorm.DB) gin.HandlerFunc {
 		db.Order("created_at desc").Limit(6).Find(&data.Lists)
 		db.Order("name asc").Find(&data.Genera)
 		db.Model(&models.AI{}).Count(&data.AICount)
+
+		data.TrendingAIs = data.AIs
+		if len(data.TrendingAIs) > 4 {
+			data.TrendingAIs = data.TrendingAIs[:4]
+		}
 
 		session := sessions.Default(c)
 		if uid, ok := session.Get(sessionUserIDKey).(uint); ok && uid > 0 {
