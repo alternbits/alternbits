@@ -19,7 +19,14 @@
     })();
   </script>
   <style>
-    html { font-size: 18px; }
+    @font-face {
+      font-family: 'Inter Tight';
+      src: url('/static/fonts/InterTight-Variable.woff2') format('woff2-variations'), url('/static/fonts/InterTight-Variable.woff2') format('woff2');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    html { font-size: 18px; font-family: 'Inter Tight', system-ui, -apple-system, sans-serif; }
     [x-cloak] { display: none !important; }
   </style>
   <script src="/static/js/tailwind.3.4.17.js"></script>
@@ -29,7 +36,7 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            sans: ['Inter Tight', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
           },
         },
       },

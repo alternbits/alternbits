@@ -58,8 +58,8 @@
             <a :href="item.url" @click="closeSearch()"
                :class="flatResults[activeIndex] === item ? 'bg-zinc-50 dark:bg-[#35363d]' : ''"
                class="flex items-center gap-3 rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">
-              <span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded bg-zinc-100 dark:bg-[#35363d] text-zinc-500 dark:text-white">
-                <img x-show="item.logo_url" :src="item.logo_url" class="h-full w-full object-cover" alt="">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] p-1 text-zinc-500">
+                <img x-show="item.logo_url" :src="item.logo_url" class="h-full w-full object-contain" alt="">
                 <svg x-show="!item.logo_url" class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
               </span>
               <span class="min-w-0 flex-1 truncate">

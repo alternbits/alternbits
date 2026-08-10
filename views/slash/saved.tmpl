@@ -42,12 +42,12 @@
         <a href="/ai/{{ .Slug }}" class="absolute inset-0" aria-label="{{ .Name }}"></a>
         {{ if .LogoURL }}
         <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#43444c] object-cover">
+             class="h-11 w-11 shrink-0 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1.5">
         {{ else if .Website }}
         <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
-             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#43444c] object-cover p-2">
+             class="h-11 w-11 shrink-0 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1.5">
         {{ else }}
-        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#43444c] text-base font-semibold text-zinc-500 dark:text-white">
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] text-base font-semibold text-zinc-500">
           {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
         </div>
         {{ end }}

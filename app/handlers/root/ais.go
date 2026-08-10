@@ -46,8 +46,8 @@ func filteredAIs(db *gorm.DB, search, category, genus string) *gorm.DB {
 	if genus != "" {
 		q = q.
 			Joins("JOIN ai_genera ON ai_genera.ai_id = ais.id").
-			Joins("JOIN genera ON genera.id = ai_genera.genus_id").
-			Where("genera.slug = ?", genus)
+			Joins("JOIN genus ON genus.id = ai_genera.genus_id").
+			Where("genus.slug = ?", genus)
 	}
 	return q
 }
