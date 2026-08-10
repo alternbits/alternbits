@@ -1,13 +1,46 @@
 package slash
 
 import (
+	"encoding/json"
+	"fmt"
+	"html/template"
 	"net/http"
 
+	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/models"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+type ldListItem struct {
+	Type     string `json:"@type"`
+	Position int    `json:"position"`
+	Name     string `json:"name"`
+	Item     string `json:"item,omitempty"`
+	URL      string `json:"url,omitempty"`
+}
+
+type ldBreadcrumbList struct {
+	Context         string       `json:"@context"`
+	Type            string       `json:"@type"`
+	ItemListElement []ldListItem `json:"itemListElement"`
+}
+
+type ldItemList struct {
+	Context         string       `json:"@context"`
+	Type            string       `json:"@type"`
+	Name            string       `json:"name"`
+	ItemListElement []ldListItem `json:"itemListElement"`
+}
+
+func marshalLD(v any) template.JS {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return ""
+	}
+	return template.JS(b)
+}
 
 func AlternativesHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -63,13 +96,48 @@ func AlternativesHandler(db *gorm.DB) gin.HandlerFunc {
 			}
 		}
 
+		domain := config.C.App.Domain
+		canonicalURL := fmt.Sprintf("https://%s/alternatives/%s", domain, ai.Slug)
+
+		var breadcrumbJSON, itemListJSON template.JS
+		if len(alts) > 0 {
+			breadcrumbJSON = marshalLD(ldBreadcrumbList{
+				Context: "https://schema.org",
+				Type:    "BreadcrumbList",
+				ItemListElement: []ldListItem{
+					{Type: "ListItem", Position: 1, Name: "Home", Item: fmt.Sprintf("https://%s/", domain)},
+					{Type: "ListItem", Position: 2, Name: ai.Name, Item: fmt.Sprintf("https://%s/ai/%s", domain, ai.Slug)},
+					{Type: "ListItem", Position: 3, Name: "Alternatives", Item: canonicalURL},
+				},
+			})
+
+			items := make([]ldListItem, 0, len(alts))
+			for i, a := range alts {
+				items = append(items, ldListItem{
+					Type:     "ListItem",
+					Position: i + 1,
+					Name:     a.Name,
+					URL:      fmt.Sprintf("https://%s/ai/%s", domain, a.Slug),
+				})
+			}
+			itemListJSON = marshalLD(ldItemList{
+				Context:         "https://schema.org",
+				Type:            "ItemList",
+				Name:            fmt.Sprintf("Alternatives to %s", ai.Name),
+				ItemListElement: items,
+			})
+		}
+
 		c.HTML(http.StatusOK, "alternatives.tmpl", gin.H{
-			"AI":           ai,
-			"Alternatives": alts,
-			"Categories":   categories,
-			"AICount":      aiCount,
-			"CurrentUser":  currentUser,
-			"SavedIDs":     savedIDSet(db, currentUser),
+			"AI":             ai,
+			"Alternatives":   alts,
+			"Categories":     categories,
+			"AICount":        aiCount,
+			"CurrentUser":    currentUser,
+			"SavedIDs":       savedIDSet(db, currentUser),
+			"CanonicalURL":   canonicalURL,
+			"BreadcrumbJSON": breadcrumbJSON,
+			"ItemListJSON":   itemListJSON,
 		})
 	}
 }

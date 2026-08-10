@@ -5,7 +5,7 @@
         class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#43444c] bg-white/95 dark:bg-[#2b2c31]/95 backdrop-blur-md transition-shadow duration-300 ease-in-out">
 
   <div :class="$store.header.scrolled ? 'h-11' : 'h-14'"
-       class="relative mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-300 ease-in-out sm:px-6">
+       class="relative mx-auto flex max-w-7xl items-center justify-between px-4 transition-[height] duration-300 ease-in-out sm:px-6">
 
     <div class="flex w-full items-center justify-between">
 
@@ -49,7 +49,7 @@
                :class="$store.header.scrolled ? 'top-11 max-h-[calc(100vh-2.75rem)]' : 'top-14 max-h-[calc(100vh-3.5rem)]'"
                class="fixed left-0 right-0 z-50 border-b border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2f3036] shadow-2xl dark:shadow-black/50 overflow-y-auto transition-[top] duration-300 ease-in-out">
 
-            <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
 
               <!-- Mega header -->
               <div class="mb-5 flex items-center justify-between">
@@ -114,7 +114,7 @@
            class="flex origin-right items-center gap-1 transition-transform duration-300 ease-in-out">
 
         <!-- Search box (persistent input, not a header takeover) -->
-        <div class="relative hidden sm:block" @click.outside="open = false">
+        <div class="relative hidden md:block" @click.outside="open = false">
           <div class="relative">
             <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-white"
                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -122,7 +122,7 @@
             </svg>
             <input x-model="query" @focus="openSearch()" @input="runSearch()" @keydown="onSearchKeydown($event)"
                    type="text" autocomplete="off" spellcheck="false" placeholder="Search…"
-                   class="w-32 rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] py-1.5 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none transition-all duration-200 focus:w-56 focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 lg:w-44 lg:focus:w-64">
+                   class="w-56 rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] py-1.5 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none transition-colors duration-200 focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 lg:w-64">
             <button x-show="query" x-cloak type="button"
                     @click="query = ''; results = { ais: [], categories: [], lists: [] }; activeIndex = -1"
                     class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white">
@@ -230,36 +230,36 @@
 
   </div>
 
+  <!-- Mobile search bar (always-visible second line) -->
+  <div class="border-t border-zinc-100 dark:border-[#43444c] px-4 py-2 md:hidden">
+    <div class="relative">
+      <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-white"
+           xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+      </svg>
+      <input x-model="query" @focus="openSearch()" @input="runSearch()" @keydown="onSearchKeydown($event)"
+             type="text" autocomplete="off" spellcheck="false" placeholder="Search AIs, categories, lists…"
+             class="w-full rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] py-2 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors">
+      <button x-show="query" x-cloak type="button"
+              @click="query = ''; results = { ais: [], categories: [], lists: [] }; activeIndex = -1"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white">
+        <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div x-show="open" x-cloak class="mt-2 overflow-hidden rounded-md border border-zinc-100 dark:border-[#43444c]">
+      {{ template "_search_results.tmpl" . }}
+    </div>
+  </div>
+
   <!-- Mobile menu -->
   <div x-show="mobileOpen" x-cloak
        x-transition:enter="transition ease-out duration-150"
        x-transition:enter-start="opacity-0 -translate-y-1"
        x-transition:enter-end="opacity-100 translate-y-0"
        class="border-t border-zinc-100 dark:border-[#43444c] md:hidden">
-    <div class="mx-auto flex max-w-6xl flex-col gap-0.5 px-4 py-3 sm:px-6">
-
-      <!-- Search box (mobile) -->
-      <div class="relative mb-1">
-        <div class="relative">
-          <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-white"
-               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-          </svg>
-          <input x-model="query" @focus="openSearch()" @input="runSearch()" @keydown="onSearchKeydown($event)"
-                 type="text" autocomplete="off" spellcheck="false" placeholder="Search AIs, categories, lists…"
-                 class="w-full rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] py-2 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors">
-          <button x-show="query" x-cloak type="button"
-                  @click="query = ''; results = { ais: [], categories: [], lists: [] }; activeIndex = -1"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white">
-            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-        <div x-show="open" x-cloak class="mt-2 overflow-hidden rounded-md border border-zinc-100 dark:border-[#43444c]">
-          {{ template "_search_results.tmpl" . }}
-        </div>
-      </div>
+    <div class="mx-auto flex max-w-7xl flex-col gap-0.5 px-4 py-3 sm:px-6">
 
       <a href="/#ais" @click="mobileOpen = false"
          class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">AIs</a>
