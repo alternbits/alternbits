@@ -4,6 +4,10 @@
   {{ with .Page }}
   <title>{{ .Title }} — {{ appName }}</title>
   <meta name="description" content="{{ .Subtitle }}">
+  <meta property="og:title" content="{{ .Title }} — {{ appName }}">
+  <meta property="og:description" content="{{ .Subtitle }}">
+  <meta name="twitter:title" content="{{ .Title }} — {{ appName }}">
+  <meta name="twitter:description" content="{{ .Subtitle }}">
   {{ else }}
   <title>Not found — {{ appName }}</title>
   {{ end }}

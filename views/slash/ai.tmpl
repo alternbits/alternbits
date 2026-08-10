@@ -4,6 +4,10 @@
   {{ with .AI }}
   <title>{{ .Name }} — {{ appName }}</title>
   <meta name="description" content="{{ .Subtitle }}">
+  <meta property="og:title" content="{{ .Name }} — {{ appName }}">
+  <meta property="og:description" content="{{ .Subtitle }}">
+  <meta name="twitter:title" content="{{ .Name }} — {{ appName }}">
+  <meta name="twitter:description" content="{{ .Subtitle }}">
   {{ else }}
   <title>Not found — {{ appName }}</title>
   {{ end }}

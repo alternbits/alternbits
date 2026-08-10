@@ -3,10 +3,17 @@
 <head>
   {{ if .Query }}
   <title>Search: {{ .Query }} — {{ appName }}</title>
+  <meta property="og:title" content="Search: {{ .Query }} — {{ appName }}">
+  <meta name="twitter:title" content="Search: {{ .Query }} — {{ appName }}">
+  <meta name="robots" content="noindex,follow">
   {{ else }}
   <title>Search — {{ appName }}</title>
+  <meta property="og:title" content="Search — {{ appName }}">
+  <meta name="twitter:title" content="Search — {{ appName }}">
   {{ end }}
   <meta name="description" content="Search {{ appName }} for AI tools, categories, and curated lists.">
+  <meta property="og:description" content="Search {{ appName }} for AI tools, categories, and curated lists.">
+  <meta name="twitter:description" content="Search {{ appName }} for AI tools, categories, and curated lists.">
   {{ template "_slash_head.tmpl" . }}
 </head>
 <body x-data="{
