@@ -29,6 +29,7 @@ func main() {
 		&models.ArtifactField{},
 		&models.Page{},
 		&models.Alternative{},
+		&models.SavedAI{},
 	); err != nil {
 		log.Fatal("migrate:", err)
 	}

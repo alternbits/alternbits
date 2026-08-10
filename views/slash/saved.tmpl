@@ -1,12 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  {{ with .AI }}
-  <title>Alternatives to {{ .Name }} — {{ appName }}</title>
-  <meta name="description" content="Discover alternatives to {{ .Name }}.">
-  {{ else }}
-  <title>Not found — {{ appName }}</title>
-  {{ end }}
+  <title>Saved — {{ appName }}</title>
+  <meta name="description" content="AIs you've saved for later.">
   {{ template "_slash_head.tmpl" . }}
 </head>
 <body x-data="{
@@ -25,53 +21,23 @@
 
   <div class="md:pl-[3.75rem]">
 
-  {{ if .Error }}
-  <div class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-    <p class="text-sm text-zinc-500 dark:text-white">{{ .Error }}</p>
-    <a href="/" class="mt-4 inline-block text-sm font-medium text-orange-500 dark:text-white hover:text-orange-400 dark:hover:text-white">← Home</a>
-  </div>
-  {{ else }}
-  {{ with .AI }}
-
-  <!-- Header -->
+  <!-- Page header -->
   <div class="border-b border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-4 py-8 sm:px-6">
     <div class="mx-auto max-w-5xl">
-      <a href="/ai/{{ .Slug }}" class="mb-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white transition-colors">
+      <a href="/" class="mb-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white transition-colors">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-        Back to {{ .Name }}
+        Home
       </a>
-
-      <div class="flex items-start gap-4">
-        {{ if .LogoURL }}
-        <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-             class="h-14 w-14 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#43444c] object-cover">
-        {{ else if .Website }}
-        <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
-             class="h-14 w-14 shrink-0 rounded-lg bg-zinc-100 dark:bg-[#43444c] object-cover p-3">
-        {{ else }}
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-orange-100 dark:bg-amber-500/10 text-2xl font-black text-orange-500 dark:text-white">
-          {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
-        </div>
-        {{ end }}
-        <div class="min-w-0">
-          <p class="text-xs font-medium uppercase tracking-wider text-orange-500 dark:text-white">Alternatives to</p>
-          <h1 class="mt-0.5 text-2xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-3xl">{{ .Name }}</h1>
-          {{ if .Subtitle }}
-          <p class="mt-1 text-sm text-zinc-500 dark:text-white">{{ .Subtitle }}</p>
-          {{ end }}
-          <p class="mt-2 text-xs text-zinc-400 dark:text-white">{{ len $.Alternatives }} approved alternative{{ if ne (len $.Alternatives) 1 }}s{{ end }}</p>
-        </div>
-      </div>
+      <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-3xl">Saved</h1>
+      <p class="mt-1 text-sm text-zinc-500 dark:text-white">AIs you've saved for later.</p>
     </div>
   </div>
 
-  {{ end }}
-
-  <!-- Alternatives -->
+  <!-- AIs -->
   <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-    {{ if .Alternatives }}
+    {{ if .AIs }}
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {{ range .Alternatives }}
+      {{ range .AIs }}
       <div class="group relative flex items-start gap-4 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] p-4 hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
         <a href="/ai/{{ .Slug }}" class="absolute inset-0" aria-label="{{ .Name }}"></a>
         {{ if .LogoURL }}
@@ -98,9 +64,9 @@
           {{ if .Subtitle }}
           <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-white">{{ .Subtitle }}</p>
           {{ end }}
-          {{ if .Categories }}
+          {{ if .Genera }}
           <div class="mt-2 flex flex-wrap gap-1">
-            {{ range .Categories }}
+            {{ range .Genera }}
             <span class="rounded-full bg-zinc-100 dark:bg-[#43444c] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-white">{{ .Name }}</span>
             {{ end }}
           </div>
@@ -111,12 +77,10 @@
     </div>
     {{ else }}
     <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#43444c] py-20 text-center text-sm text-zinc-400 dark:text-white">
-      No alternatives yet for {{ with .AI }}{{ .Name }}{{ end }}.
+      Nothing saved yet — tap the bookmark icon on any AI to save it here.
     </div>
     {{ end }}
   </div>
-
-  {{ end }}
 
   </div>
 

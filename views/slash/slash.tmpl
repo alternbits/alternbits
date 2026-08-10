@@ -14,7 +14,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2b2c31] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
 
@@ -23,7 +23,7 @@
   <div class="md:pl-[3.75rem]">
 
   <!-- Hero -->
-  <section class="border-b border-zinc-100 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-4 py-12 text-center sm:px-6 sm:py-16">
+  <section class="border-b border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-4 py-12 text-center sm:px-6 sm:py-16">
     <div class="mx-auto max-w-xl">
       <h1 class="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
         Find Almost Any AI
@@ -31,9 +31,9 @@
 
       <div x-data="{ open: false }" class="relative mt-6 text-left" @click.outside="open = false">
         <form action="/search" method="GET"
-              class="flex items-center gap-2 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-4 py-2.5 shadow-sm transition-colors"
+              class="flex items-center gap-2 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] px-4 py-2.5 shadow-sm transition-colors"
               :class="open ? 'border-zinc-400 dark:border-amber-500/50 ring-2 ring-zinc-900/5 dark:ring-amber-500/10' : ''">
-          <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <svg class="h-4 w-4 shrink-0 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
           <input type="search" name="q" placeholder="Search AIs, categories…"
@@ -54,55 +54,55 @@
              x-transition:leave="transition ease-in duration-100"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-1"
-             class="absolute left-0 right-0 top-full z-50 mt-2 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] shadow-xl dark:shadow-black/40 overflow-hidden">
+             class="absolute left-0 right-0 top-full z-50 mt-2 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] shadow-xl dark:shadow-black/40 overflow-hidden">
 
           <div class="px-4 pt-4 pb-3">
-            <p class="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Categories</p>
+            <p class="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-white">Categories</p>
             <div class="flex flex-wrap gap-1.5">
-              <a href="/categories/writing-content" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Writing & Content</a>
-              <a href="/categories/image-generation" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Image Generation</a>
-              <a href="/categories/code-development" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Code & Development</a>
-              <a href="/categories/video-animation" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Video & Animation</a>
-              <a href="/categories/audio-music" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Audio & Music</a>
-              <a href="/categories/productivity" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Productivity</a>
-              <a href="/categories/chatbots-assistants" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Chatbots & Assistants</a>
-              <a href="/categories/design-ux" class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">Design & UX</a>
+              <a href="/categories/writing-content" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Writing & Content</a>
+              <a href="/categories/image-generation" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Image Generation</a>
+              <a href="/categories/code-development" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Code & Development</a>
+              <a href="/categories/video-animation" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Video & Animation</a>
+              <a href="/categories/audio-music" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Audio & Music</a>
+              <a href="/categories/productivity" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Productivity</a>
+              <a href="/categories/chatbots-assistants" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Chatbots & Assistants</a>
+              <a href="/categories/design-ux" class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-3 py-1 text-xs font-medium text-zinc-700 dark:text-white hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-amber-500/10 hover:text-orange-600 dark:hover:text-white transition-colors">Design & UX</a>
             </div>
           </div>
 
-          <div class="border-t border-zinc-100 dark:border-[#34353d] px-4 pt-3 pb-2">
-            <p class="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Trending</p>
+          <div class="border-t border-zinc-100 dark:border-[#43444c] px-4 pt-3 pb-2">
+            <p class="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-white">Trending</p>
             <ul>
-              <li><a href="/ai/chatgpt" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#34353d] text-xs font-semibold text-zinc-500 dark:text-zinc-400">C</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">ChatGPT</span><span class="block truncate text-xs text-zinc-400 dark:text-zinc-500">Conversational AI by OpenAI</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <li><a href="/ai/chatgpt" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#2f3036] transition-colors">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#43444c] text-xs font-semibold text-zinc-500 dark:text-white">C</div>
+                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">ChatGPT</span><span class="block truncate text-xs text-zinc-400 dark:text-white">Conversational AI by OpenAI</span></div>
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
               </a></li>
-              <li><a href="/ai/midjourney" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#34353d] text-xs font-semibold text-zinc-500 dark:text-zinc-400">M</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">Midjourney</span><span class="block truncate text-xs text-zinc-400 dark:text-zinc-500">High-quality AI art from text prompts</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <li><a href="/ai/midjourney" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#2f3036] transition-colors">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#43444c] text-xs font-semibold text-zinc-500 dark:text-white">M</div>
+                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">Midjourney</span><span class="block truncate text-xs text-zinc-400 dark:text-white">High-quality AI art from text prompts</span></div>
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
               </a></li>
-              <li><a href="/ai/github-copilot" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#34353d] text-xs font-semibold text-zinc-500 dark:text-zinc-400">G</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">GitHub Copilot</span><span class="block truncate text-xs text-zinc-400 dark:text-zinc-500">AI pair programmer in your editor</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <li><a href="/ai/github-copilot" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#2f3036] transition-colors">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#43444c] text-xs font-semibold text-zinc-500 dark:text-white">G</div>
+                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">GitHub Copilot</span><span class="block truncate text-xs text-zinc-400 dark:text-white">AI pair programmer in your editor</span></div>
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
               </a></li>
-              <li><a href="/ai/elevenlabs" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#34353d] text-xs font-semibold text-zinc-500 dark:text-zinc-400">E</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">ElevenLabs</span><span class="block truncate text-xs text-zinc-400 dark:text-zinc-500">Realistic AI voice synthesis and cloning</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <li><a href="/ai/elevenlabs" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#2f3036] transition-colors">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#43444c] text-xs font-semibold text-zinc-500 dark:text-white">E</div>
+                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">ElevenLabs</span><span class="block truncate text-xs text-zinc-400 dark:text-white">Realistic AI voice synthesis and cloning</span></div>
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
               </a></li>
-              <li><a href="/ai/perplexity" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#202127] transition-colors">
-                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#34353d] text-xs font-semibold text-zinc-500 dark:text-zinc-400">P</div>
-                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">Perplexity</span><span class="block truncate text-xs text-zinc-400 dark:text-zinc-500">AI-powered search with cited answers</span></div>
-                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <li><a href="/ai/perplexity" class="flex items-center gap-3 rounded px-1.5 py-1.5 hover:bg-zinc-50 dark:hover:bg-[#2f3036] transition-colors">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-zinc-100 dark:bg-[#43444c] text-xs font-semibold text-zinc-500 dark:text-white">P</div>
+                <div class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-zinc-900 dark:text-white">Perplexity</span><span class="block truncate text-xs text-zinc-400 dark:text-white">AI-powered search with cited answers</span></div>
+                <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
               </a></li>
             </ul>
           </div>
 
-          <div class="border-t border-zinc-100 dark:border-[#34353d] px-4 py-2.5">
-            <a href="/#ais" class="flex items-center justify-between text-xs font-medium text-orange-500 dark:text-amber-400 hover:text-orange-600 dark:hover:text-amber-300">
+          <div class="border-t border-zinc-100 dark:border-[#43444c] px-4 py-2.5">
+            <a href="/#ais" class="flex items-center justify-between text-xs font-medium text-orange-500 dark:text-white hover:text-orange-600 dark:hover:text-white">
               <span>Browse all AIs</span>
               <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             </a>
@@ -114,72 +114,53 @@
     </div>
   </section>
 
-  <!-- Categories -->
-  {{ if .Categories }}
-  <section id="categories" class="border-b border-zinc-100 dark:border-[#34353d] px-4 py-10 sm:px-6">
-    <div class="mx-auto max-w-6xl">
-      <div class="mb-6 flex items-center justify-between">
-        <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Browse by category</h2>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        {{ range .Categories }}
-        <a href="/categories/{{ .Slug }}"
-           class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-4 py-1.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:bg-zinc-50 dark:hover:bg-[#2b2c33] hover:text-zinc-900">
-          {{ .Name }}
-        </a>
-        {{ end }}
-      </div>
-    </div>
-  </section>
-  {{ end }}
-
   <!-- AIs -->
   <section id="ais" class="px-4 py-12 sm:px-6">
-    <div class="mx-auto max-w-6xl">
+    <div class="mx-auto max-w-7xl">
       <div class="mb-6 flex items-center justify-between">
         <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Recently added</h2>
         <a href="/#ais" class="text-sm text-zinc-500 dark:text-white hover:text-zinc-700">All AIs &rarr;</a>
       </div>
 
       {{ if .AIs }}
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {{ range .AIs }}
-        <a href="/ai/{{ .Slug }}"
-           class="group flex items-start gap-4 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-4 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20">
+      <div class="overflow-hidden rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d]">
+        {{ range $i, $ai := .AIs }}
+        <div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-[#3a3b42] transition-colors {{ if $i }}border-t border-zinc-100 dark:border-[#43444c]{{ end }}">
+          <a href="/ai/{{ .Slug }}" class="absolute inset-0" aria-label="{{ .Name }}"></a>
           {{ if .LogoURL }}
           <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-               class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover">
+               class="h-9 w-9 shrink-0 rounded bg-zinc-100 dark:bg-[#43444c] object-cover">
           {{ else if .Website }}
           <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
-               class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover p-2">
+               class="h-9 w-9 shrink-0 rounded bg-zinc-100 dark:bg-[#43444c] object-cover p-2">
           {{ else }}
-          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#34353d] text-base font-semibold text-zinc-500 dark:text-zinc-400">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#43444c] text-sm font-semibold text-zinc-500 dark:text-white">
             {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
           </div>
           {{ end }}
           <div class="min-w-0 flex-1">
-            <div class="flex items-center justify-between gap-2">
-              <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-700 dark:group-hover:text-white">{{ .Name }}</span>
-              <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-              </svg>
-            </div>
+            <span class="text-sm font-semibold text-zinc-900 dark:text-white">{{ .Name }}</span>
             {{ if .Subtitle }}
-            <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
-            {{ end }}
-            {{ if .Categories }}
-            <div class="mt-2 flex flex-wrap gap-1">
-              {{ range .Categories }}
-              <span class="rounded-full bg-zinc-100 dark:bg-[#34353d] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ .Name }}</span>
-              {{ end }}
-            </div>
+            <span class="ml-2 hidden truncate text-xs text-zinc-500 dark:text-white sm:inline">{{ .Subtitle }}</span>
             {{ end }}
           </div>
-        </a>
+          {{ if .Categories }}
+          <div class="hidden shrink-0 gap-1 md:flex">
+            {{ range .Categories }}
+            <span class="rounded-full bg-zinc-100 dark:bg-[#43444c] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-white">{{ .Name }}</span>
+            {{ end }}
+          </div>
+          {{ end }}
+          <span class="hidden w-16 shrink-0 text-right text-xs text-zinc-400 dark:text-white sm:block">{{ .CreatedAt.Format "Jan 2" }}</span>
+          {{ template "_save_button.tmpl" (dict "AI" . "Saved" (index $.SavedIDs .ID) "LoggedIn" $.CurrentUser) }}
+          <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
         {{ end }}
       </div>
       {{ else }}
-      <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#34353d] py-16 text-center text-sm text-zinc-400 dark:text-zinc-500">
+      <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#43444c] py-16 text-center text-sm text-zinc-400 dark:text-white">
         No AIs yet — check back soon.
       </div>
       {{ end }}
@@ -188,28 +169,47 @@
 
   <!-- Lists -->
   {{ if .Lists }}
-  <section id="lists" class="border-t border-zinc-100 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-4 py-12 sm:px-6">
+  <section id="lists" class="border-t border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-4 py-12 sm:px-6">
     <div class="mx-auto max-w-6xl">
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Curated lists</h2>
-          <p class="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Hand-picked collections for every use case.</p>
+          <p class="mt-0.5 text-sm text-zinc-500 dark:text-white">Hand-picked collections for every use case.</p>
         </div>
         <a href="/lists" class="text-sm text-zinc-500 dark:text-white hover:text-zinc-700">All lists &rarr;</a>
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {{ range .Lists }}
         <a href="/lists/{{ .Slug }}"
-           class="group rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-5 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20">
+           class="group rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] p-5 hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:shadow-sm dark:hover:shadow-black/20">
           <div class="flex items-start justify-between gap-2">
             <h3 class="text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-zinc-700 dark:group-hover:text-white">{{ .Name }}</h3>
-            <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white group-hover:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
           {{ if .Subtitle }}
-          <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+          <p class="mt-1 text-xs text-zinc-500 dark:text-white">{{ .Subtitle }}</p>
           {{ end }}
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  {{ end }}
+
+  <!-- Categories -->
+  {{ if .Categories }}
+  <section id="categories" class="border-t border-zinc-100 dark:border-[#43444c] px-4 py-10 sm:px-6">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Browse by category</h2>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        {{ range .Categories }}
+        <a href="/categories/{{ .Slug }}"
+           class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] px-4 py-1.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:bg-zinc-50 dark:hover:bg-[#3a3b42] hover:text-zinc-900">
+          {{ .Name }}
         </a>
         {{ end }}
       </div>

@@ -15,6 +15,7 @@ type pageData struct {
 	Lists       []models.List
 	AICount     int64
 	CurrentUser *models.User
+	SavedIDs    map[uint]bool
 }
 
 func Handler(db *gorm.DB) gin.HandlerFunc {
@@ -33,6 +34,7 @@ func Handler(db *gorm.DB) gin.HandlerFunc {
 				data.CurrentUser = &u
 			}
 		}
+		data.SavedIDs = savedIDSet(db, data.CurrentUser)
 
 		c.HTML(http.StatusOK, "slash.tmpl", data)
 	}

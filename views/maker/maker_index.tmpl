@@ -14,7 +14,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2b2c31] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -26,55 +26,55 @@
     <div class="flex items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Your submissions</h1>
-        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">AIs you've submitted for review.</p>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-white">AIs you've submitted for review.</p>
       </div>
       <a href="/maker/submit" class="shrink-0 rounded-lg bg-orange-500 dark:bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 dark:hover:bg-amber-400">+ Submit an AI</a>
     </div>
 
     {{ if .UserAIs }}
-    <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#34353d]">
-      <table class="min-w-full divide-y divide-zinc-100 dark:divide-[#34353d]">
-        <thead class="bg-zinc-50 dark:bg-[#202127]">
+    <div class="mt-6 overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#43444c]">
+      <table class="min-w-full divide-y divide-zinc-100 dark:divide-[#43444c]">
+        <thead class="bg-zinc-50 dark:bg-[#2f3036]">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Name</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Status</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Submitted</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-white">Name</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-white">Status</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-white">Submitted</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-zinc-100 dark:divide-[#34353d] bg-white dark:bg-[#26272e]">
+        <tbody class="divide-y divide-zinc-100 dark:divide-[#43444c] bg-white dark:bg-[#35363d]">
           {{ range .UserAIs }}
           <tr>
             <td class="px-4 py-3">
               <div class="font-medium text-zinc-900 dark:text-white">{{ .Name }}</div>
-              {{ if .Subtitle }}<div class="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ .Subtitle }}</div>{{ end }}
+              {{ if .Subtitle }}<div class="mt-0.5 text-xs text-zinc-500 dark:text-white line-clamp-1">{{ .Subtitle }}</div>{{ end }}
             </td>
             <td class="px-4 py-3">
               {{ if eq (printf "%s" .Status) "approved" }}
-              <span class="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/40 px-2.5 py-0.5 text-xs font-semibold text-green-700 dark:text-green-400">
+              <span class="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/40 px-2.5 py-0.5 text-xs font-semibold text-green-700 dark:text-white">
                 <svg class="h-2.5 w-2.5" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="3"/></svg>
                 Approved
               </span>
               {{ else if eq (printf "%s" .Status) "pending" }}
-              <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/40 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
+              <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/40 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-white">
                 <svg class="h-2.5 w-2.5" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="3"/></svg>
                 Pending review
               </span>
               {{ else if eq (printf "%s" .Status) "rejected" }}
-              <span class="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/40 px-2.5 py-0.5 text-xs font-semibold text-red-700 dark:text-red-400">
+              <span class="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/40 px-2.5 py-0.5 text-xs font-semibold text-red-700 dark:text-white">
                 <svg class="h-2.5 w-2.5" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="3"/></svg>
                 Rejected
               </span>
               {{ end }}
             </td>
-            <td class="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">{{ .CreatedAt.Format "Jan 2, 2006" }}</td>
+            <td class="px-4 py-3 text-sm text-zinc-500 dark:text-white">{{ .CreatedAt.Format "Jan 2, 2006" }}</td>
           </tr>
           {{ end }}
         </tbody>
       </table>
     </div>
     {{ else }}
-    <div class="mt-6 rounded-2xl border border-dashed border-zinc-300 dark:border-[#34353d] px-6 py-12 text-center">
-      <p class="text-sm text-zinc-500 dark:text-zinc-400">You haven't submitted any AIs yet.</p>
+    <div class="mt-6 rounded-2xl border border-dashed border-zinc-300 dark:border-[#43444c] px-6 py-12 text-center">
+      <p class="text-sm text-zinc-500 dark:text-white">You haven't submitted any AIs yet.</p>
       <a href="/maker/submit" class="mt-4 inline-block rounded-lg bg-orange-500 dark:bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 dark:hover:bg-amber-400">Submit your first AI</a>
     </div>
     {{ end }}
@@ -85,11 +85,11 @@
 
   <div class="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 text-center">
     <div class="max-w-lg">
-      <span class="inline-block rounded-full bg-orange-500/10 dark:bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-orange-500 dark:text-amber-400">For makers</span>
+      <span class="inline-block rounded-full bg-orange-500/10 dark:bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-orange-500 dark:text-white">For makers</span>
       <h1 class="mt-6 text-4xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
         {{ appName }} for Makers
       </h1>
-      <p class="mt-4 text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
+      <p class="mt-4 text-base text-zinc-500 dark:text-white leading-relaxed">
         Submit your AI products and resources to the directory. Sign in to get started.
       </p>
       <a href="/signin" class="mt-8 inline-block rounded-lg bg-orange-500 dark:bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 dark:hover:bg-amber-400">Sign in to submit</a>

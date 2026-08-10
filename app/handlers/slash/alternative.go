@@ -69,6 +69,7 @@ func AlternativesHandler(db *gorm.DB) gin.HandlerFunc {
 			"Categories":   categories,
 			"AICount":      aiCount,
 			"CurrentUser":  currentUser,
+			"SavedIDs":     savedIDSet(db, currentUser),
 		})
 	}
 }

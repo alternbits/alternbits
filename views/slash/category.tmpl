@@ -18,7 +18,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2b2c31] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -27,35 +27,35 @@
 
   {{ if .Error }}
   <div class="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
-    <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ .Error }}</p>
-    <a href="/categories" class="mt-4 inline-block text-sm font-medium text-orange-500 dark:text-[#ffc107] hover:text-orange-400 dark:hover:text-[#ffc107]">← All categories</a>
+    <p class="text-sm text-zinc-500 dark:text-white">{{ .Error }}</p>
+    <a href="/categories" class="mt-4 inline-block text-sm font-medium text-orange-500 dark:text-white hover:text-orange-400 dark:hover:text-white">← All categories</a>
   </div>
   {{ else }}
   {{ with .Category }}
 
   <!-- Category header -->
-  <div class="border-b border-zinc-100 dark:border-[#34353d] bg-zinc-50 dark:bg-[#202127] px-4 py-8 sm:px-6">
+  <div class="border-b border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-4 py-8 sm:px-6">
     <div class="mx-auto max-w-5xl">
-      <a href="/categories" class="mb-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+      <a href="/categories" class="mb-4 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white transition-colors">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
         {{ if .Parent }}{{ .Parent.Name }}{{ else }}All categories{{ end }}
       </a>
 
       <div class="flex items-start gap-4">
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#34353d] text-2xl font-black text-zinc-500 dark:text-zinc-300">
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-[#43444c] text-2xl font-black text-zinc-500 dark:text-white">
           {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
         </div>
         <div class="min-w-0">
           <h1 class="text-2xl font-black tracking-tight text-zinc-900 dark:text-white sm:text-3xl">{{ .Name }}</h1>
           {{ if .Subtitle }}
-          <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+          <p class="mt-1 text-sm text-zinc-500 dark:text-white">{{ .Subtitle }}</p>
           {{ end }}
           <!-- Subcategory chips -->
           {{ if .Children }}
           <div class="mt-3 flex flex-wrap gap-1.5">
             {{ range .Children }}
             <a href="/categories/{{ .Slug }}"
-               class="rounded-full border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] px-3 py-0.5 text-xs font-medium text-zinc-600 dark:text-white hover:border-orange-400 dark:hover:border-amber-500/50 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">
+               class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] px-3 py-0.5 text-xs font-medium text-zinc-600 dark:text-white hover:border-orange-400 dark:hover:border-amber-500/50 hover:text-orange-600 dark:hover:text-white transition-colors">
               {{ .Name }}
             </a>
             {{ end }}
@@ -72,42 +72,45 @@
     {{ if .AIs }}
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {{ range .AIs }}
-      <a href="/ai/{{ .Slug }}"
-         class="group flex items-start gap-4 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-4 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+      <div class="group relative flex items-start gap-4 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] p-4 hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+        <a href="/ai/{{ .Slug }}" class="absolute inset-0" aria-label="{{ .Name }}"></a>
         {{ if .LogoURL }}
         <img src="{{ .LogoURL }}" alt="{{ .Name }}"
-             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover">
+             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#43444c] object-cover">
         {{ else if .Website }}
         <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
-             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#34353d] object-cover p-2">
+             class="h-11 w-11 shrink-0 rounded bg-zinc-100 dark:bg-[#43444c] object-cover p-2">
         {{ else }}
-        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#34353d] text-base font-semibold text-zinc-500 dark:text-zinc-400">
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-[#43444c] text-base font-semibold text-zinc-500 dark:text-white">
           {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
         </div>
         {{ end }}
         <div class="min-w-0 flex-1">
           <div class="flex items-center justify-between gap-2">
             <span class="truncate text-sm font-semibold text-zinc-900 dark:text-white">{{ .Name }}</span>
-            <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-            </svg>
+            <div class="flex shrink-0 items-center gap-1">
+              {{ template "_save_button.tmpl" (dict "AI" . "Saved" (index $.SavedIDs .ID) "LoggedIn" $.CurrentUser) }}
+              <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
           </div>
           {{ if .Subtitle }}
-          <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{{ .Subtitle }}</p>
+          <p class="mt-0.5 truncate text-xs text-zinc-500 dark:text-white">{{ .Subtitle }}</p>
           {{ end }}
           {{ if .Genera }}
           <div class="mt-2 flex flex-wrap gap-1">
             {{ range .Genera }}
-            <span class="rounded-full bg-zinc-100 dark:bg-[#34353d] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-zinc-400">{{ .Name }}</span>
+            <span class="rounded-full bg-zinc-100 dark:bg-[#43444c] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-white">{{ .Name }}</span>
             {{ end }}
           </div>
           {{ end }}
         </div>
-      </a>
+      </div>
       {{ end }}
     </div>
     {{ else }}
-    <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#34353d] py-20 text-center text-sm text-zinc-400 dark:text-zinc-500">
+    <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#43444c] py-20 text-center text-sm text-zinc-400 dark:text-white">
       No AIs in this category yet.
     </div>
     {{ end }}

@@ -44,6 +44,7 @@ func SearchPage(db *gorm.DB) gin.HandlerFunc {
 			"Categories":  topCategories,
 			"AICount":     aiCount,
 			"CurrentUser": currentUser,
+			"SavedIDs":    savedIDSet(db, currentUser),
 		}
 
 		if q == "" {

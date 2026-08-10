@@ -4,12 +4,12 @@
   <title>Sign up · {{ appName }}</title>
   {{ template "_slash_head.tmpl" . }}
 </head>
-<body class="min-h-screen bg-zinc-50 dark:bg-[#1c1d22] text-zinc-900 dark:text-white antialiased">
+<body class="min-h-screen bg-zinc-50 dark:bg-[#2b2c31] text-zinc-900 dark:text-white antialiased">
 
   <div class="grid min-h-screen lg:grid-cols-2">
 
     <!-- Branded panel -->
-    <div class="relative hidden overflow-hidden bg-[#1c1d22] lg:flex lg:flex-col lg:justify-between px-12 py-10">
+    <div class="relative hidden overflow-hidden bg-[#2b2c31] lg:flex lg:flex-col lg:justify-between px-12 py-10">
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute -left-24 -top-24 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl"></div>
         <div class="absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-orange-600/10 blur-3xl"></div>
@@ -66,24 +66,24 @@
 
         <div class="mb-8 text-center lg:text-left">
           <h1 class="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">Create your account</h1>
-          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Join {{ appName }} in a few seconds — no password required.</p>
+          <p class="mt-2 text-sm text-zinc-500 dark:text-white">Join {{ appName }} in a few seconds — no password required.</p>
         </div>
 
         {{ if .Error }}
-        <div class="mb-4 rounded border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+        <div class="mb-4 rounded border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-white">
           {{ if eq .Error "forbidden" }}This account is not authorised.
           {{ else }}Sign-up failed. Please try again.
           {{ end }}
         </div>
         {{ end }}
 
-        <div class="rounded-lg border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] p-8 shadow-sm dark:shadow-black/20">
+        <div class="rounded-lg border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] p-8 shadow-sm dark:shadow-black/20">
           {{ if or .GitHubEnabled .GoogleEnabled }}
           <div class="flex flex-col gap-3">
 
             {{ if .GitHubEnabled }}
             <a href="/auth/github{{ .NextParam }}"
-               class="flex w-full items-center justify-center gap-3 rounded border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#2b2c33] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:bg-zinc-50 dark:hover:bg-[#3d3e47]">
+               class="flex w-full items-center justify-center gap-3 rounded border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#3a3b42] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:bg-zinc-50 dark:hover:bg-[#4c4d56]">
               <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0" fill="currentColor" aria-hidden="true">
                 <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.9-.39.99 0 1.98.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.07.78 2.16 0 1.56-.01 2.81-.01 3.19 0 .31.21.67.8.56C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
               </svg>
@@ -93,7 +93,7 @@
 
             {{ if .GoogleEnabled }}
             <a href="/auth/google{{ .NextParam }}"
-               class="flex w-full items-center justify-center gap-3 rounded border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#2b2c33] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:border-zinc-300 dark:hover:border-[#3d3e47] hover:bg-zinc-50 dark:hover:bg-[#3d3e47]">
+               class="flex w-full items-center justify-center gap-3 rounded border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#3a3b42] px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:bg-zinc-50 dark:hover:bg-[#4c4d56]">
               <svg viewBox="0 0 24 24" class="h-4 w-4 shrink-0" aria-hidden="true">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -105,20 +105,20 @@
             {{ end }}
 
           </div>
-          <p class="mt-6 text-center text-xs text-zinc-400 dark:text-zinc-500">
+          <p class="mt-6 text-center text-xs text-zinc-400 dark:text-white">
             By creating an account you agree to the
-            <a href="/terms" class="underline hover:text-zinc-600 dark:hover:text-zinc-300">Terms</a>
+            <a href="/terms" class="underline hover:text-zinc-600 dark:hover:text-white">Terms</a>
             and
-            <a href="/privacy" class="underline hover:text-zinc-600 dark:hover:text-zinc-300">Privacy Policy</a>.
+            <a href="/privacy" class="underline hover:text-zinc-600 dark:hover:text-white">Privacy Policy</a>.
           </p>
           {{ else }}
-          <div class="rounded border border-zinc-100 dark:border-[#34353d] bg-zinc-50 dark:bg-[#2b2c33] px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
+          <div class="rounded border border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#3a3b42] px-4 py-3 text-sm text-zinc-500 dark:text-white">
             Sign-up is not available yet. Check back soon.
           </div>
           {{ end }}
         </div>
 
-        <p class="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <p class="mt-6 text-center text-sm text-zinc-500 dark:text-white">
           Already have an account?
           <a href="/signin{{ .NextParam }}" class="font-medium text-orange-500 hover:text-orange-400">Sign in</a>
         </p>

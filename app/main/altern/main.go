@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"html/template"
 	"log"
 	"net/http"
@@ -50,6 +51,20 @@ func main() {
 				u = "https://" + u
 			}
 			return "https://www.google.com/s2/favicons?domain=" + url.QueryEscape(u) + "&sz=64"
+		},
+		"dict": func(pairs ...any) (map[string]any, error) {
+			if len(pairs)%2 != 0 {
+				return nil, errors.New("dict expects an even number of arguments")
+			}
+			m := make(map[string]any, len(pairs)/2)
+			for i := 0; i < len(pairs); i += 2 {
+				key, ok := pairs[i].(string)
+				if !ok {
+					return nil, errors.New("dict keys must be strings")
+				}
+				m[key] = pairs[i+1]
+			}
+			return m, nil
 		},
 	})
 	r.LoadHTMLGlob("views/*/*.tmpl")
@@ -108,6 +123,8 @@ func main() {
 		userRoutes.POST("/settings/2fa/setup", slash.Settings2FASetupPost(database.DB, tgsvc))
 		userRoutes.POST("/settings/2fa/done", slash.Settings2FASetupDone())
 		userRoutes.POST("/settings/2fa/disable", slash.Settings2FADisable(database.DB, tgsvc))
+		userRoutes.GET("/saved", slash.SavedPage(database.DB))
+		userRoutes.POST("/saved/toggle", slash.SavedToggle(database.DB))
 		if config.C.OAuthGitHubEnabled() {
 			userRoutes.GET("/settings/connect/github", auth.ConnectGitHub())
 		}

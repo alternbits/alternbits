@@ -2,7 +2,7 @@
         @scroll.window="$store.header.scrolled = window.scrollY > 20"
         @keydown.escape.window="closeSearch(); mobileOpen = false"
         :class="$store.header.scrolled ? 'shadow-lg shadow-black/5 dark:shadow-black/20' : ''"
-        class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#34353d] bg-white/95 dark:bg-[#1c1d22]/95 backdrop-blur-md transition-shadow duration-300 ease-in-out">
+        class="sticky top-0 z-50 border-b border-zinc-100 dark:border-[#43444c] bg-white/95 dark:bg-[#2b2c31]/95 backdrop-blur-md transition-shadow duration-300 ease-in-out">
 
   <div :class="$store.header.scrolled ? 'h-11' : 'h-14'"
        class="relative mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-300 ease-in-out sm:px-6">
@@ -19,7 +19,7 @@
 
       <!-- Desktop nav -->
       <nav class="hidden flex-1 items-center gap-0.5 pl-6 md:flex">
-        <a href="/#ais" class="rounded px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] hover:text-zinc-900 transition-colors">AIs</a>
+        <a href="/#ais" class="rounded px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] hover:text-zinc-900 transition-colors">AIs</a>
 
         <!-- Categories mega menu -->
         <div x-data="{ megaOpen: false, catSearch: '' }"
@@ -28,8 +28,8 @@
              class="relative">
 
           <button @click="megaOpen = !megaOpen; catSearch = ''; megaOpen && $nextTick(() => $refs.catSearch.focus())"
-                  :class="megaOpen ? 'bg-zinc-100 dark:bg-[#26272e] text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-white'"
-                  class="flex items-center gap-1 rounded px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-[#26272e] hover:text-zinc-900 transition-colors">
+                  :class="megaOpen ? 'bg-zinc-100 dark:bg-[#35363d] text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-white'"
+                  class="flex items-center gap-1 rounded px-3 py-1.5 text-sm hover:bg-zinc-50 dark:hover:bg-[#35363d] hover:text-zinc-900 transition-colors">
             Categories
             <svg :class="megaOpen ? 'rotate-180' : ''"
                  class="h-3.5 w-3.5 transition-transform duration-200"
@@ -47,18 +47,18 @@
                x-transition:leave-start="opacity-100 translate-y-0"
                x-transition:leave-end="opacity-0 -translate-y-1"
                :class="$store.header.scrolled ? 'top-11 max-h-[calc(100vh-2.75rem)]' : 'top-14 max-h-[calc(100vh-3.5rem)]'"
-               class="fixed left-0 right-0 z-50 border-b border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#202127] shadow-2xl dark:shadow-black/50 overflow-y-auto transition-[top] duration-300 ease-in-out">
+               class="fixed left-0 right-0 z-50 border-b border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2f3036] shadow-2xl dark:shadow-black/50 overflow-y-auto transition-[top] duration-300 ease-in-out">
 
             <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
 
               <!-- Mega header -->
               <div class="mb-5 flex items-center justify-between">
                 <div>
-                  <p class="text-[11px] font-semibold uppercase tracking-wider text-orange-500 dark:text-amber-400">Explore</p>
+                  <p class="text-[11px] font-semibold uppercase tracking-wider text-orange-500 dark:text-white">Explore</p>
                   <h3 class="mt-0.5 text-sm font-semibold text-zinc-900 dark:text-white">Browse by Category</h3>
                 </div>
                 <a href="/categories" @click="megaOpen = false"
-                   class="flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-amber-400 transition-colors">
+                   class="flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-white hover:text-orange-500 dark:hover:text-white transition-colors">
                   View all categories
                   <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
@@ -68,7 +68,7 @@
 
               <!-- Search -->
               <div class="relative mb-5">
-                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-white"
                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
@@ -77,7 +77,7 @@
                   x-model="catSearch"
                   type="search"
                   placeholder="Search categories…"
-                  class="w-full rounded-md border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#26272e] pl-9 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors"
+                  class="w-full rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] pl-9 pr-4 py-2.5 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors"
                 />
               </div>
 
@@ -89,9 +89,9 @@
                    x-show="!catSearch || $el.dataset.cat.toLowerCase().includes(catSearch.toLowerCase())"
                    href="/categories/{{ .Slug }}"
                    @click="megaOpen = false"
-                   class="group flex items-center gap-2 rounded border border-zinc-100 dark:border-[#34353d]/60 bg-zinc-50/80 dark:bg-[#26272e]/80 px-3.5 py-2.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-orange-200 dark:hover:border-amber-500/30 hover:bg-orange-50 dark:hover:bg-[#2b2c33] hover:text-orange-700 dark:hover:text-amber-300 transition-all">
+                   class="group flex items-center gap-2 rounded border border-zinc-100 dark:border-[#43444c]/60 bg-zinc-50/80 dark:bg-[#35363d]/80 px-3.5 py-2.5 text-sm font-medium text-zinc-700 dark:text-white hover:border-orange-200 dark:hover:border-amber-500/30 hover:bg-orange-50 dark:hover:bg-[#3a3b42] hover:text-orange-700 dark:hover:text-white transition-all">
                   <span class="truncate">{{ .Name }}</span>
-                  <svg class="ml-auto h-3 w-3 shrink-0 text-zinc-300 dark:text-[#34353d] group-hover:text-orange-400 dark:group-hover:text-amber-500/70 transition-colors"
+                  <svg class="ml-auto h-3 w-3 shrink-0 text-zinc-300 dark:text-white group-hover:text-orange-400 dark:group-hover:text-white transition-colors"
                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                   </svg>
@@ -99,14 +99,14 @@
                 {{ end }}
               </div>
               {{ else }}
-              <p class="py-4 text-center text-sm text-zinc-400 dark:text-zinc-500">No categories yet.</p>
+              <p class="py-4 text-center text-sm text-zinc-400 dark:text-white">No categories yet.</p>
               {{ end }}
 
             </div>
           </div>
         </div>
 
-        <a href="/lists" class="rounded px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] hover:text-zinc-900 transition-colors">Lists</a>
+        <a href="/lists" class="rounded px-3 py-1.5 text-sm text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] hover:text-zinc-900 transition-colors">Lists</a>
       </nav>
 
       <!-- Right controls -->
@@ -116,16 +116,16 @@
         <!-- Search box (persistent input, not a header takeover) -->
         <div class="relative hidden sm:block" @click.outside="open = false">
           <div class="relative">
-            <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+            <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-white"
                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
             </svg>
             <input x-model="query" @focus="openSearch()" @input="runSearch()" @keydown="onSearchKeydown($event)"
                    type="text" autocomplete="off" spellcheck="false" placeholder="Search…"
-                   class="w-32 rounded-md border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#26272e] py-1.5 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none transition-all duration-200 focus:w-56 focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 lg:w-44 lg:focus:w-64">
+                   class="w-32 rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] py-1.5 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none transition-all duration-200 focus:w-56 focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 lg:w-44 lg:focus:w-64">
             <button x-show="query" x-cloak type="button"
                     @click="query = ''; results = { ais: [], categories: [], lists: [] }; activeIndex = -1"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white">
               <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -139,14 +139,14 @@
                x-transition:leave="transition ease-in duration-100"
                x-transition:leave-start="opacity-100 translate-y-0"
                x-transition:leave-end="opacity-0 -translate-y-1"
-               class="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#202127] shadow-2xl dark:shadow-black/70">
+               class="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2f3036] shadow-2xl dark:shadow-black/70">
             {{ template "_search_results.tmpl" . }}
           </div>
         </div>
 
         <!-- Submit AI -->
         <a href="/maker/submit"
-           class="hidden items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors sm:inline-flex">
+           class="hidden items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors sm:inline-flex">
           <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.126A59.77 59.77 0 0 1 21.485 12 59.77 59.77 0 0 1 3.27 20.876L5.999 12Zm0 0h7.5"/>
           </svg>
@@ -156,16 +156,16 @@
         <!-- Auth -->
         {{ if .CurrentUser }}
         <div x-data="{ open: false }" class="relative">
-          <button @click="open = !open" class="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+          <button @click="open = !open" class="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">
             {{ if .CurrentUser.AvatarURL }}
-            <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200 dark:bg-[#34353d]">
+            <img src="{{ .CurrentUser.AvatarURL }}" alt="" class="h-7 w-7 rounded-full bg-zinc-200 dark:bg-[#43444c]">
             {{ else }}
-            <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#34353d] text-xs font-semibold text-zinc-600 dark:text-white">
+            <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 dark:bg-[#43444c] text-xs font-semibold text-zinc-600 dark:text-white">
               {{ if .CurrentUser.Name }}{{ slice .CurrentUser.Name 0 1 }}{{ else }}?{{ end }}
             </span>
             {{ end }}
             <span class="hidden text-zinc-700 dark:text-white sm:inline">{{ if .CurrentUser.Name }}{{ .CurrentUser.Name }}{{ else }}{{ .CurrentUser.Username }}{{ end }}</span>
-            <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
             </svg>
           </button>
@@ -173,23 +173,29 @@
                x-transition:enter="transition ease-out duration-100"
                x-transition:enter-start="opacity-0 scale-95"
                x-transition:enter-end="opacity-100 scale-100"
-               class="absolute right-0 mt-1 w-44 rounded-md border border-zinc-200 dark:border-[#34353d] bg-white dark:bg-[#26272e] py-1 shadow-lg dark:shadow-black/30">
-            <a href="/maker" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#2b2c33]">
-              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+               class="absolute right-0 mt-1 w-44 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d] py-1 shadow-lg dark:shadow-black/30">
+            <a href="/maker" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b42]">
+              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.653-4.655m5.8-7.471 1.95-.975a2.25 2.25 0 0 1 2.055.173l.793.497c.813.513 1.077 1.593.62 2.436l-.975 1.95m-5.443-.825 2.147-2.147m-5.5 5.5L7.5 12.5"/>
               </svg>
               Maker
             </a>
-            <a href="/settings" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#2b2c33]">
-              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <a href="/saved" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b42]">
+              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"/>
+              </svg>
+              Saved
+            </a>
+            <a href="/settings" class="flex items-center gap-2 px-4 py-2 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b42]">
+              <svg class="h-3.5 w-3.5 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
               </svg>
               Settings
             </a>
-            <div class="my-1 border-t border-zinc-100 dark:border-[#34353d]"></div>
+            <div class="my-1 border-t border-zinc-100 dark:border-[#43444c]"></div>
             <form method="POST" action="/signout">
-              <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#2b2c33]">
+              <button type="submit" class="w-full px-4 py-2 text-left text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#3a3b42]">
                 Sign out
               </button>
             </form>
@@ -198,7 +204,7 @@
         {{ else }}
         <div class="flex items-center gap-2">
           <a href="/signin"
-             class="rounded px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
+             class="rounded px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">
             Sign in
           </a>
           <a href="/signup"
@@ -210,7 +216,7 @@
 
         <!-- Mobile hamburger -->
         <button @click="mobileOpen = !mobileOpen"
-                class="ml-1 rounded p-1.5 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-[#26272e] hover:text-zinc-700 transition-colors md:hidden">
+                class="ml-1 rounded p-1.5 text-zinc-500 dark:text-white hover:bg-zinc-100 dark:hover:bg-[#35363d] hover:text-zinc-700 transition-colors md:hidden">
           <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
@@ -229,51 +235,53 @@
        x-transition:enter="transition ease-out duration-150"
        x-transition:enter-start="opacity-0 -translate-y-1"
        x-transition:enter-end="opacity-100 translate-y-0"
-       class="border-t border-zinc-100 dark:border-[#34353d] md:hidden">
+       class="border-t border-zinc-100 dark:border-[#43444c] md:hidden">
     <div class="mx-auto flex max-w-6xl flex-col gap-0.5 px-4 py-3 sm:px-6">
 
       <!-- Search box (mobile) -->
       <div class="relative mb-1">
         <div class="relative">
-          <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
+          <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400 dark:text-white"
                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
           <input x-model="query" @focus="openSearch()" @input="runSearch()" @keydown="onSearchKeydown($event)"
                  type="text" autocomplete="off" spellcheck="false" placeholder="Search AIs, categories, lists…"
-                 class="w-full rounded-md border border-zinc-200 dark:border-[#34353d] bg-zinc-50 dark:bg-[#26272e] py-2 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors">
+                 class="w-full rounded-md border border-zinc-200 dark:border-[#43444c] bg-zinc-50 dark:bg-[#35363d] py-2 pl-8 pr-7 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none focus:border-zinc-400 dark:focus:border-amber-500/60 focus:ring-2 focus:ring-zinc-900/5 dark:focus:ring-amber-500/10 transition-colors">
           <button x-show="query" x-cloak type="button"
                   @click="query = ''; results = { ais: [], categories: [], lists: [] }; activeIndex = -1"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300">
+                  class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white">
             <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
-        <div x-show="open" x-cloak class="mt-2 overflow-hidden rounded-md border border-zinc-100 dark:border-[#34353d]">
+        <div x-show="open" x-cloak class="mt-2 overflow-hidden rounded-md border border-zinc-100 dark:border-[#43444c]">
           {{ template "_search_results.tmpl" . }}
         </div>
       </div>
 
       <a href="/#ais" @click="mobileOpen = false"
-         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">AIs</a>
+         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">AIs</a>
       <a href="/categories" @click="mobileOpen = false"
-         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Categories</a>
+         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">Categories</a>
       <a href="/lists" @click="mobileOpen = false"
-         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Lists</a>
+         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">Lists</a>
       <a href="/maker/submit" @click="mobileOpen = false"
-         class="flex items-center gap-2 rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">
-        <svg class="h-4 w-4 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+         class="flex items-center gap-2 rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">
+        <svg class="h-4 w-4 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
         </svg>
         Submit
       </a>
       {{ if .CurrentUser }}
-      <div class="my-1 border-t border-zinc-100 dark:border-[#34353d]"></div>
+      <div class="my-1 border-t border-zinc-100 dark:border-[#43444c]"></div>
       <a href="/maker" @click="mobileOpen = false"
-         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Maker</a>
+         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">Maker</a>
+      <a href="/saved" @click="mobileOpen = false"
+         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">Saved</a>
       <a href="/settings" @click="mobileOpen = false"
-         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#26272e] transition-colors">Settings</a>
+         class="rounded px-3 py-2.5 text-sm text-zinc-700 dark:text-white hover:bg-zinc-50 dark:hover:bg-[#35363d] transition-colors">Settings</a>
       {{ end }}
     </div>
   </div>

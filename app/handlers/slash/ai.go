@@ -88,6 +88,7 @@ func AIHandler(db *gorm.DB) gin.HandlerFunc {
 			"CurrentUser":         currentUser,
 			"AlternativesPreview": alternativesPreview,
 			"AlternativesCount":   len(alternatives),
+			"SavedIDs":            savedIDSet(db, currentUser),
 		})
 	}
 }

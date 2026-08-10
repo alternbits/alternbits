@@ -34,5 +34,36 @@
     document.addEventListener('alpine:init', () => {
       Alpine.store('header', { scrolled: window.scrollY > 20 });
     });
+
+    function saveButton(aiId, initSaved, loggedIn) {
+      return {
+        saved: initSaved,
+        loading: false,
+        async toggle() {
+          if (!loggedIn) {
+            window.location.href = '/signin?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+            return;
+          }
+          if (this.loading) return;
+          this.loading = true;
+          const prev = this.saved;
+          this.saved = !prev;
+          try {
+            const res = await fetch('/saved/toggle', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: 'ai_id=' + encodeURIComponent(aiId),
+            });
+            if (!res.ok) throw new Error('save toggle failed');
+            const data = await res.json();
+            this.saved = !!data.saved;
+          } catch (e) {
+            this.saved = prev;
+          } finally {
+            this.loading = false;
+          }
+        },
+      };
+    }
   </script>
   <script defer src="/static/js/cdn.min.js"></script>
