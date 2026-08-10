@@ -45,7 +45,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#2b2c31] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2d2e39] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -61,7 +61,7 @@
   {{ with .Page }}
 
   <!-- Page header -->
-  <div class="border-b border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-4 py-10 sm:px-6">
+  <div class="border-b border-zinc-100 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-4 py-10 sm:px-6">
     <div class="mx-auto max-w-3xl">
       <a href="/" class="mb-5 inline-flex items-center gap-1.5 text-xs text-zinc-400 dark:text-white hover:text-zinc-600 dark:hover:text-white transition-colors">
         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

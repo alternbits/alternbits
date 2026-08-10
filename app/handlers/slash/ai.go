@@ -23,6 +23,7 @@ func AIHandler(db *gorm.DB) gin.HandlerFunc {
 		if err := db.
 			Preload("Categories").
 			Preload("Genera").
+			Preload("User").
 			Where("slug = ?", slug).
 			First(&ai).Error; err != nil {
 			c.HTML(http.StatusNotFound, "ai.tmpl", gin.H{

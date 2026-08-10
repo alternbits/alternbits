@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/database"
@@ -51,6 +53,43 @@ func main() {
 				u = "https://" + u
 			}
 			return "https://www.google.com/s2/favicons?domain=" + url.QueryEscape(u) + "&sz=64"
+		},
+		"timeAgo": func(t time.Time) string {
+			d := time.Since(t)
+			switch {
+			case d < time.Minute:
+				return "just now"
+			case d < time.Hour:
+				if m := int(d.Minutes()); m == 1 {
+					return "1 minute ago"
+				} else {
+					return fmt.Sprintf("%d minutes ago", m)
+				}
+			case d < 24*time.Hour:
+				if h := int(d.Hours()); h == 1 {
+					return "1 hour ago"
+				} else {
+					return fmt.Sprintf("%d hours ago", h)
+				}
+			case d < 30*24*time.Hour:
+				if days := int(d.Hours() / 24); days == 1 {
+					return "1 day ago"
+				} else {
+					return fmt.Sprintf("%d days ago", days)
+				}
+			case d < 365*24*time.Hour:
+				if months := int(d.Hours() / 24 / 30); months == 1 {
+					return "1 month ago"
+				} else {
+					return fmt.Sprintf("%d months ago", months)
+				}
+			default:
+				if years := int(d.Hours() / 24 / 365); years == 1 {
+					return "1 year ago"
+				} else {
+					return fmt.Sprintf("%d years ago", years)
+				}
+			}
 		},
 		"dict": func(pairs ...any) (map[string]any, error) {
 			if len(pairs)%2 != 0 {

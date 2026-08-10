@@ -39,7 +39,7 @@
       : document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
   }
-}" class="min-h-screen bg-white dark:bg-[#2b2c31] text-zinc-900 dark:text-white antialiased">
+}" class="min-h-screen bg-white dark:bg-[#2d2e39] text-zinc-900 dark:text-white antialiased">
 
   {{ template "_header.tmpl" . }}
   {{ template "_sidebar.tmpl" . }}
@@ -55,7 +55,7 @@
   {{ with .AI }}
 
   <!-- Header -->
-  <div class="border-b border-zinc-100 dark:border-[#43444c] bg-zinc-50 dark:bg-[#2f3036] px-4 py-8 sm:px-6">
+  <div class="border-b border-zinc-100 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-4 py-8 sm:px-6">
     <div class="mx-auto max-w-5xl">
       <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-1.5 text-xs text-zinc-400 dark:text-white">
         <a href="/" class="hover:text-zinc-600 dark:hover:text-white transition-colors">Home</a>
@@ -101,9 +101,9 @@
       Looking for a tool like {{ .Name }}{{ if .Subtitle }} ({{ .Subtitle }}){{ end }}? Below {{ if eq (len $.Alternatives) 1 }}is{{ else }}are{{ end }} {{ len $.Alternatives }} AI tool{{ if ne (len $.Alternatives) 1 }}s{{ end }} people use as an alternative to {{ .Name }}. Each one is approved by our editors and worth comparing before you decide.
     </p>
     {{ end }}
-    <div class="overflow-hidden rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#35363d]">
+    <div class="overflow-hidden rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39]">
       {{ range $i, $alt := .Alternatives }}
-      <div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-[#3a3b42] transition-colors {{ if $i }}border-t border-zinc-100 dark:border-[#43444c]{{ end }}">
+      <div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-white dark:hover:bg-white/5 transition-colors {{ if $i }}border-t border-zinc-100 dark:border-[#43444c]{{ end }}">
         <a href="/ai/{{ .Slug }}" class="absolute inset-0" aria-label="{{ .Name }}"></a>
         {{ if .LogoURL }}
         <img src="{{ .LogoURL }}" alt="{{ .Name }}"
@@ -125,7 +125,7 @@
         {{ if .Categories }}
         <div class="hidden shrink-0 gap-1 md:flex">
           {{ range .Categories }}
-          <span class="rounded-full bg-zinc-100 dark:bg-[#43444c] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-white">{{ .Name }}</span>
+          <span class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:text-white">{{ .Name }}</span>
           {{ end }}
         </div>
         {{ end }}
