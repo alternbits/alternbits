@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/dariubs/altern/app/config"
 	"github.com/dariubs/altern/app/models"
@@ -138,6 +139,115 @@ func AlternativesHandler(db *gorm.DB) gin.HandlerFunc {
 			"CanonicalURL":   canonicalURL,
 			"BreadcrumbJSON": breadcrumbJSON,
 			"ItemListJSON":   itemListJSON,
+		})
+	}
+}
+
+// alternativePair is one recently-approved alternative relationship, shown
+// on the /alternatives index as "AlternativeAI is an alternative to AI".
+type alternativePair struct {
+	AI            models.AI
+	AlternativeAI models.AI
+	CreatedAt     time.Time
+}
+
+// aiAlternativeCard summarizes one AI's approved-alternatives page for the
+// "browse by tool" grid on the /alternatives index.
+type aiAlternativeCard struct {
+	ID      uint
+	Name    string
+	Slug    string
+	LogoURL string
+	Website string
+	Count   int64
+	Latest  time.Time
+}
+
+// AlternativesIndexHandler renders the public /alternatives hub: a hero,
+// a feed of the most recently approved alternative pairs, and a browsable
+// grid of every AI that has at least one approved alternative — each card
+// links to that AI's own /alternatives/:slug page.
+func AlternativesIndexHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var rels []models.Alternative
+		db.Preload("AI").Preload("AlternativeAI").
+			Where("status = ?", models.AlternativeStatusApproved).
+			Order("created_at DESC").
+			Limit(18).
+			Find(&rels)
+
+		latest := make([]alternativePair, 0, len(rels))
+		for _, r := range rels {
+			if r.AI == nil || r.AlternativeAI == nil {
+				continue
+			}
+			latest = append(latest, alternativePair{AI: *r.AI, AlternativeAI: *r.AlternativeAI, CreatedAt: r.CreatedAt})
+		}
+
+		var cards []aiAlternativeCard
+		db.Raw(`
+			SELECT a.id, a.name, a.slug, a.logo_url, a.website,
+				COUNT(alt.id) AS count,
+				MAX(alt.created_at) AS latest
+			FROM ais a
+			INNER JOIN alternatives alt ON (alt.ai_id = a.id OR alt.alternative_ai_id = a.id)
+				AND alt.deleted_at IS NULL AND alt.status = ?
+			WHERE a.deleted_at IS NULL
+			GROUP BY a.id, a.name, a.slug, a.logo_url, a.website
+			ORDER BY latest DESC
+			LIMIT 60
+		`, models.AlternativeStatusApproved).Scan(&cards)
+
+		var totalPairs int64
+		db.Model(&models.Alternative{}).Where("status = ?", models.AlternativeStatusApproved).Count(&totalPairs)
+
+		var categories []models.Category
+		db.Where("parent_id IS NULL").Find(&categories)
+
+		var aiCount int64
+		db.Model(&models.AI{}).Count(&aiCount)
+
+		var currentUser *models.User
+		session := sessions.Default(c)
+		if uid, ok := session.Get(sessionUserIDKey).(uint); ok && uid > 0 {
+			var u models.User
+			if db.First(&u, uid).Error == nil {
+				currentUser = &u
+			}
+		}
+
+		domain := config.C.App.Domain
+		canonicalURL := fmt.Sprintf("https://%s/alternatives", domain)
+
+		items := make([]ldListItem, 0, len(cards))
+		for i, card := range cards {
+			items = append(items, ldListItem{
+				Type:     "ListItem",
+				Position: i + 1,
+				Name:     fmt.Sprintf("Alternatives to %s", card.Name),
+				URL:      fmt.Sprintf("https://%s/alternatives/%s", domain, card.Slug),
+			})
+		}
+		var itemListJSON template.JS
+		if len(items) > 0 {
+			itemListJSON = marshalLD(ldItemList{
+				Context:         "https://schema.org",
+				Type:            "ItemList",
+				Name:            "AI Tool Alternatives",
+				ItemListElement: items,
+			})
+		}
+
+		c.HTML(http.StatusOK, "alternatives_index.tmpl", gin.H{
+			"Latest":       latest,
+			"Cards":        cards,
+			"TotalPairs":   totalPairs,
+			"Categories":   categories,
+			"AICount":      aiCount,
+			"CurrentUser":  currentUser,
+			"SavedIDs":     savedIDSet(db, currentUser),
+			"CanonicalURL": canonicalURL,
+			"ItemListJSON": itemListJSON,
 		})
 	}
 }

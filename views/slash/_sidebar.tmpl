@@ -52,6 +52,21 @@
             class="whitespace-nowrap text-sm font-medium">Lists</span>
     </a>
 
+    <a href="/alternatives"
+       :class="open ? 'justify-start' : 'justify-center'"
+       class="group flex items-center gap-3 rounded-md px-1 py-1 text-zinc-500 dark:text-white hover:bg-white dark:hover:bg-white/5 hover:text-zinc-900 transition-colors">
+      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-white dark:bg-[#2d2e39] group-hover:bg-white dark:group-hover:bg-white/5 transition-colors">
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-9L21 3m0 0-4.5 4.5M21 3H7.5"/>
+        </svg>
+      </span>
+      <span x-show="open" x-transition:enter="transition-opacity duration-150 delay-75"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity duration-75"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="whitespace-nowrap text-sm font-medium">Alternatives</span>
+    </a>
+
     <a href="/leaderboard"
        :class="open ? 'justify-start' : 'justify-center'"
        class="group flex items-center gap-3 rounded-md px-1 py-1 text-zinc-500 dark:text-white hover:bg-white dark:hover:bg-white/5 hover:text-zinc-900 transition-colors">

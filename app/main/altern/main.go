@@ -149,6 +149,7 @@ func main() {
 	r.GET("/categories", slash.CategoriesHandler(database.DB))
 	r.GET("/categories/:slug", slash.CategoryHandler(database.DB))
 	r.GET("/page/:slug", slash.PageHandler(database.DB))
+	r.GET("/alternatives", slash.AlternativesIndexHandler(database.DB))
 	r.GET("/alternatives/:slug", slash.AlternativesHandler(database.DB))
 	r.GET("/search", slash.SearchPage(database.DB))
 	r.GET("/search/suggest", slash.SearchAPI(database.DB))

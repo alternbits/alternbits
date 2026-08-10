@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>AI Alternatives — Find the Best Alternative to Any AI Tool — {{ appName }}</title>
+  <meta name="description" content="Browse {{ .TotalPairs }} community-approved alternatives across {{ len .Cards }}+ AI tools. Find alternatives to ChatGPT-style assistants, image generators, coding copilots, and more — updated as new ones are added.">
+  <link rel="canonical" href="{{ .CanonicalURL }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Alternatives — Find the Best Alternative to Any AI Tool — {{ appName }}">
+  <meta property="og:description" content="Browse {{ .TotalPairs }} community-approved AI tool alternatives, updated regularly.">
+  <meta property="og:url" content="{{ .CanonicalURL }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AI Alternatives — Find the Best Alternative to Any AI Tool — {{ appName }}">
+  <meta name="twitter:description" content="Browse {{ .TotalPairs }} community-approved AI tool alternatives, updated regularly.">
+  {{ if .ItemListJSON }}
+  <script type="application/ld+json">{{ .ItemListJSON }}</script>
+  {{ end }}
+  {{ template "_slash_head.tmpl" . }}
+</head>
+<body x-data="{
+  darkMode: document.documentElement.classList.contains('dark'),
+  toggle() {
+    this.darkMode = !this.darkMode;
+    this.darkMode
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+  }
+}" class="min-h-screen bg-white dark:bg-[#2d2e39] text-zinc-900 dark:text-white antialiased">
+
+  {{ template "_header.tmpl" . }}
+  {{ template "_sidebar.tmpl" . }}
+
+  <div class="md:pl-[3.75rem]">
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-zinc-100 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-4 py-8 text-center sm:px-6 sm:py-10">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(249,115,22,0.08),transparent)] dark:bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(245,158,11,0.08),transparent)]"></div>
+    <div class="relative mx-auto max-w-2xl">
+      <h1 class="text-2xl font-bold leading-[1.1] tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
+        Find the best alternative<br class="hidden sm:block"> to any AI tool
+      </h1>
+
+      <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-zinc-500 dark:text-white">
+        Browse {{ .TotalPairs }} editor-approved alternative{{ if ne .TotalPairs 1 }}s{{ end }}
+        across {{ len .Cards }} AI tools and compare before you switch.
+      </p>
+
+      <form action="/search" method="GET" class="mx-auto mt-6 max-w-lg">
+        <div class="flex items-center gap-3 rounded-lg border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#343434] px-5 py-3.5 shadow-sm focus-within:border-zinc-400 dark:focus-within:border-amber-500/50 focus-within:ring-4 focus-within:ring-zinc-900/5 dark:focus-within:ring-amber-500/10 transition-colors">
+          <svg class="h-5 w-5 shrink-0 text-zinc-400 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
+          <input name="q" type="text" autocomplete="off" spellcheck="false"
+                 placeholder="Search for an AI tool to see its alternatives…"
+                 class="flex-1 bg-transparent text-base text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 outline-none">
+          <button type="submit"
+                  class="shrink-0 rounded-md bg-zinc-900 dark:bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 dark:hover:bg-amber-400 transition-colors">
+            Search
+          </button>
+        </div>
+      </form>
+
+      {{ if .Cards }}
+      <div class="mx-auto mt-5 flex max-w-xl flex-wrap items-center justify-center gap-2">
+        <span class="text-xs text-zinc-400 dark:text-zinc-500">Popular:</span>
+        {{ range $i, $card := .Cards }}
+        {{ if lt $i 8 }}
+        <a href="/alternatives/{{ .Slug }}"
+           class="rounded-full border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-3 py-1 text-xs font-medium text-zinc-600 dark:text-white hover:border-orange-300 dark:hover:border-amber-500/40 hover:bg-white dark:hover:bg-white/5 hover:text-orange-600 dark:hover:text-amber-400 transition-colors">
+          {{ .Name }}
+        </a>
+        {{ end }}
+        {{ end }}
+      </div>
+      {{ end }}
+    </div>
+  </section>
+
+  <!-- Latest alternatives -->
+  {{ if .Latest }}
+  <section class="px-4 py-12 sm:px-6">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Latest alternatives</h2>
+          <p class="mt-0.5 text-sm text-zinc-500 dark:text-white">Recently approved by our editors.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {{ range .Latest }}
+        <a href="/alternatives/{{ .AI.Slug }}"
+           class="group flex items-center gap-3 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] p-3.5 hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+          <div class="flex shrink-0 items-center">
+            {{ if .AlternativeAI.LogoURL }}
+            <img src="{{ .AlternativeAI.LogoURL }}" alt="{{ .AlternativeAI.Name }}"
+                 class="h-9 w-9 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1 ring-2 ring-white dark:ring-[#2d2e39]">
+            {{ else if .AlternativeAI.Website }}
+            <img src="{{ faviconURL .AlternativeAI.Website }}" alt="{{ .AlternativeAI.Name }}"
+                 class="h-9 w-9 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1 ring-2 ring-white dark:ring-[#2d2e39]">
+            {{ else }}
+            <div class="flex h-9 w-9 items-center justify-center rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] text-sm font-semibold text-zinc-500 ring-2 ring-white dark:ring-[#2d2e39]">
+              {{ if .AlternativeAI.Name }}{{ slice .AlternativeAI.Name 0 1 }}{{ end }}
+            </div>
+            {{ end }}
+            <div class="-ml-3 flex h-9 w-9 items-center justify-center rounded-[22%] bg-zinc-100 dark:bg-[#414141] ring-2 ring-white dark:ring-[#2d2e39]">
+              {{ if .AI.LogoURL }}
+              <img src="{{ .AI.LogoURL }}" alt="{{ .AI.Name }}" class="h-9 w-9 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1">
+              {{ else if .AI.Website }}
+              <img src="{{ faviconURL .AI.Website }}" alt="{{ .AI.Name }}" class="h-9 w-9 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1">
+              {{ else }}
+              <span class="text-xs font-semibold text-zinc-500">{{ if .AI.Name }}{{ slice .AI.Name 0 1 }}{{ end }}</span>
+              {{ end }}
+            </div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm text-zinc-900 dark:text-white">
+              <span class="font-semibold">{{ .AlternativeAI.Name }}</span>
+              <span class="text-zinc-400 dark:text-zinc-500">is an alternative to</span>
+              <span class="font-semibold">{{ .AI.Name }}</span>
+            </p>
+            <p class="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">{{ .CreatedAt.Format "Jan 2, 2006" }}</p>
+          </div>
+          <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  {{ end }}
+
+  <!-- Browse by tool -->
+  <section class="border-t border-zinc-100 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] px-4 py-12 sm:px-6">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">Browse alternatives by tool</h2>
+        <p class="mt-0.5 text-sm text-zinc-500 dark:text-white">Every AI tool below has its own alternatives page.</p>
+      </div>
+
+      {{ if .Cards }}
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {{ range .Cards }}
+        <a href="/alternatives/{{ .Slug }}"
+           class="group flex items-center gap-3 rounded-md border border-zinc-200 dark:border-[#43444c] bg-white dark:bg-[#2d2e39] p-4 hover:border-zinc-300 dark:hover:border-[#4c4d56] hover:shadow-sm dark:hover:shadow-black/20 transition-all">
+          {{ if .LogoURL }}
+          <img src="{{ .LogoURL }}" alt="{{ .Name }}"
+               class="h-10 w-10 shrink-0 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1.5">
+          {{ else if .Website }}
+          <img src="{{ faviconURL .Website }}" alt="{{ .Name }}"
+               class="h-10 w-10 shrink-0 rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] object-contain p-1.5">
+          {{ else }}
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[22%] bg-gradient-to-br from-white via-[#f7f3ea] to-[#ece2cc] text-sm font-semibold text-zinc-500">
+            {{ if .Name }}{{ slice .Name 0 1 }}{{ end }}
+          </div>
+          {{ end }}
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-semibold text-zinc-900 dark:text-white">Alternatives to {{ .Name }}</p>
+            <p class="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">{{ .Count }} alternative{{ if ne .Count 1 }}s{{ end }}</p>
+          </div>
+          <svg class="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white group-hover:text-zinc-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+        {{ end }}
+      </div>
+      {{ else }}
+      <div class="rounded-md border border-dashed border-zinc-200 dark:border-[#43444c] py-20 text-center text-sm text-zinc-400 dark:text-white">
+        No approved alternatives yet — check back soon.
+      </div>
+      {{ end }}
+    </div>
+  </section>
+
+  </div>
+
+  {{ template "_footer.tmpl" . }}
+
+</body>
+</html>
